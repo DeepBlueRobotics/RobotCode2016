@@ -83,4 +83,13 @@ public class Drivetrain extends Subsystem {
 			robotDrive.tankDrive(left, right);
 		}
     }
+    
+    public double getRangeFinderInchesLeft(){
+    	return leftUltrasonic.getRangeInches();
+    }
+    
+    public double getRangeFinderInchesRight(){
+    	return rightUltrasonic.getRangeInches();
+    }
+    
 }
