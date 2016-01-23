@@ -185,5 +185,8 @@ public class Drivetrain extends Subsystem {
 	}
 	
 }
+<<<<<<< HEAD
 
+>>>>>>> Adam-Stafford-2016-Robotics-Code
+=======
 >>>>>>> Adam-Stafford-2016-Robotics-Code
