@@ -94,6 +94,9 @@ public class Drivetrain extends Subsystem {
     	return rightUltrasonic.getRangeInches();
     }
     
+    public double getRangefinderDistance(){
+    	return (getRangeFinderInchesLeft() + getRangeFinderInchesRight())/2;
+    }
     
     //Requires PID
     public void updateRangefinder() {
@@ -101,7 +104,7 @@ public class Drivetrain extends Subsystem {
 //		arcadeInput(-distancePID.getOutput(),0);
 	} 
     
-    public void setRangefinderTarget(double target) { // PID
+    public void setRangefinderTarget(double target) { 
 //		distancePID.setTarget(target);
 	}
     
