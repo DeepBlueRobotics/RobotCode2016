@@ -73,21 +73,20 @@ public class Drivetrain extends Subsystem {
     public void tankInput(double left, double right) {
     	robotDrive.tankDrive(left, right);
     }
+    
     public void drive() {
-    	if(true){
-        	
-        	double x = Robot.oi.getRightJoystick().getX();
-        	double y = Robot.oi.getLeftJoystick().getY();
-        	robotDrive.arcadeDrive(y, x);
-        	
-        	}else{
-        			
-        	double x = Robot.oi.getLeftJoystick().getX();
-        	double y = Robot.oi.getRightJoystick().getY();
-        	robotDrive.tankDrive(x, y);
-        			
-        	}
+    	boolean arcadedrive = true;
+    	if(arcadedrive){
+			double x = Robot.oi.getRightJoystick().getX();
+			double y = Robot.oi.getLeftJoystick().getY();
+			robotDrive.arcadeDrive(y, x);
+		} else {
+			double left = Robot.oi.getLeftJoystick().getY();
+			double right = Robot.oi.getRightJoystick().getY();
+			robotDrive.tankDrive(left, right);
+		}
     }
+<<<<<<< HEAD
 
 	/**
 	 * Sets the target for the auto PID
@@ -185,3 +184,6 @@ public class Drivetrain extends Subsystem {
 	
 }
 
+=======
+}
+>>>>>>> master
