@@ -45,16 +45,15 @@ public class RobotMap {
     public static Ultrasonic drivetrainLeftUltrasonic;
     public static Ultrasonic drivetrainRightUltrasonic;
     public static Compressor drivetrainCompressor;
-    public static SpeedController shooterLeftMotor;
-    public static SpeedController shooterRightMotor;
-    public static Encoder shooterLeftEncoder;
-    public static Encoder shooterRightEncoder;
-    public static Solenoid shooterRaisePiston;
-    public static DoubleSolenoid shooterFeederPiston;
+    public static DoubleSolenoid drivetrainShifter;
+    public static SpeedController shooterFlywheelMotor;
+    public static Encoder shooterFlywheelEncoder;
     public static SpeedController intakeRollerMotor;
     public static SpeedController intakePivotMotor;
     public static DigitalInput intakeUpperLimit;
     public static DigitalInput intakeLowerLimit;
+    public static SpeedController intakeBeltMotor;
+    public static DigitalInput intakeBallSensor;
     public static Solenoid climberExtendPiston;
     public static SpeedController climberWinchMotor;
     public static DigitalInput climberRungDetector;
@@ -96,26 +95,16 @@ public class RobotMap {
         drivetrainCompressor = new Compressor(0);
         
         
-        shooterLeftMotor = new Talon(2);
-        LiveWindow.addActuator("Shooter", "LeftMotor", (Talon) shooterLeftMotor);
+        drivetrainShifter = new DoubleSolenoid(0, 0, 1);
+        LiveWindow.addActuator("Drivetrain", "Shifter", drivetrainShifter);
         
-        shooterRightMotor = new Talon(3);
-        LiveWindow.addActuator("Shooter", "RightMotor", (Talon) shooterRightMotor);
+        shooterFlywheelMotor = new Talon(2);
+        LiveWindow.addActuator("Shooter", "FlywheelMotor", (Talon) shooterFlywheelMotor);
         
-        shooterLeftEncoder = new Encoder(8, 9, false, EncodingType.k4X);
-        LiveWindow.addSensor("Shooter", "LeftEncoder", shooterLeftEncoder);
-        shooterLeftEncoder.setDistancePerPulse(1.0);
-        shooterLeftEncoder.setPIDSourceType(PIDSourceType.kRate);
-        shooterRightEncoder = new Encoder(10, 11, false, EncodingType.k4X);
-        LiveWindow.addSensor("Shooter", "RightEncoder", shooterRightEncoder);
-        shooterRightEncoder.setDistancePerPulse(1.0);
-        shooterRightEncoder.setPIDSourceType(PIDSourceType.kRate);
-        shooterRaisePiston = new Solenoid(0, 0);
-        LiveWindow.addActuator("Shooter", "RaisePiston", shooterRaisePiston);
-        
-        shooterFeederPiston = new DoubleSolenoid(0, 1, 2);
-        LiveWindow.addActuator("Shooter", "FeederPiston", shooterFeederPiston);
-        
+        shooterFlywheelEncoder = new Encoder(8, 9, false, EncodingType.k4X);
+        LiveWindow.addSensor("Shooter", "FlywheelEncoder", shooterFlywheelEncoder);
+        shooterFlywheelEncoder.setDistancePerPulse(1.0);
+        shooterFlywheelEncoder.setPIDSourceType(PIDSourceType.kRate);
         intakeRollerMotor = new Talon(4);
         LiveWindow.addActuator("Intake", "RollerMotor", (Talon) intakeRollerMotor);
         
@@ -127,6 +116,12 @@ public class RobotMap {
         
         intakeLowerLimit = new DigitalInput(13);
         LiveWindow.addSensor("Intake", "LowerLimit", intakeLowerLimit);
+        
+        intakeBeltMotor = new Talon(3);
+        LiveWindow.addActuator("Intake", "BeltMotor", (Talon) intakeBeltMotor);
+        
+        intakeBallSensor = new DigitalInput(10);
+        LiveWindow.addSensor("Intake", "BallSensor", intakeBallSensor);
         
         climberExtendPiston = new Solenoid(0, 3);
         LiveWindow.addActuator("Climber", "ExtendPiston", climberExtendPiston);
