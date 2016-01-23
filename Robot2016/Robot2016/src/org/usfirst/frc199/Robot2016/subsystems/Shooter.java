@@ -54,7 +54,7 @@ public class Shooter extends Subsystem {
         // setDefaultCommand(new MySpecialCommand());
     }
     public void shooter (double speed) {
-    	Robot.intake.spin(speed);
+    	Robot.intake.setRoller(speed);
     }
     }
 

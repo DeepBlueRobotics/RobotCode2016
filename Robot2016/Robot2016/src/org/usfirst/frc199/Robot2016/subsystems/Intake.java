@@ -50,27 +50,29 @@ public class Intake extends Subsystem {
 		// setDefaultCommand(new MySpecialCommand());
 	}
 
-	public void spin(double speed) {
+	public void setRoller(double speed) {
 		rollerMotor.set(speed);
 	}
 
 	public void raise(double speed) {
-		if (upperLimit.get() == true) {
+		if (upperLimit.get()) {
 			speed = 0;
 		}
 		pivotMotor.set(speed);
 	}
 
 	public void lower(double speed) {
-		if (lowerLimit.get() == true) {
+		if (lowerLimit.get()) {
 			speed = 0;
 		}
+		pivotMotor.set(speed);
 	}
 
-	public void chain(double speed) {
-		if (ballSensor.get() == true) {
-			speed = 0;
-		}
+	public void runBelt(double speed) {
 		beltMotor.set(speed);
+	}
+	
+	public boolean getBallSensor() {
+		return ballSensor.get();
 	}
 }
