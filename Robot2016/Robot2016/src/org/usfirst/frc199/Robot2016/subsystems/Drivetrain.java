@@ -103,12 +103,12 @@ public class Drivetrain extends Subsystem {
     
     //Requires PID
     public void updateRangefinder() {
-//		distancePID.update(getRangefinderDistance());
-//		arcadeInput(-distancePID.getOutput(),0);
+		distancePID.update(getRangefinderDistance());
+		arcadeInput(-distancePID.getOutput(),0);
 	} 
     
     public void setRangefinderTarget(double target) { 
-//		distancePID.setTarget(target);
+		distancePID.setTarget(target);
 	}
     
 
