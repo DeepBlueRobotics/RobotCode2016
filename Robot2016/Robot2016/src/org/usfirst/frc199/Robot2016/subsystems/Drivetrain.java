@@ -11,6 +11,7 @@
 
 package org.usfirst.frc199.Robot2016.subsystems;
 
+import org.usfirst.frc199.Robot2016.Robot;
 import org.usfirst.frc199.Robot2016.RobotMap;
 import org.usfirst.frc199.Robot2016.commands.TeleopDriveMode;
 
@@ -60,6 +61,29 @@ public class Drivetrain extends Subsystem {
 
         // Set the default command for a subsystem here.
         // setDefaultCommand(new MySpecialCommand());
+    }
+    
+    public void arcadeInput(double speed, double turn) {
+    	robotDrive.arcadeDrive(speed, turn);
+    }
+    
+    public void tankInput(double left, double right) {
+    	robotDrive.tankDrive(left, right);
+    }
+    public void drive() {
+    	if(true){
+        	
+        	double x = Robot.oi.getRightJoystick().getX();
+        	double y = Robot.oi.getLeftJoystick().getY();
+        	robotDrive.arcadeDrive(y, x);
+        	
+        	}else{
+        			
+        	double x = Robot.oi.getLeftJoystick().getX();
+        	double y = Robot.oi.getRightJoystick().getY();
+        	robotDrive.tankDrive(x, y);
+        			
+        	}
     }
 }
 
