@@ -11,6 +11,7 @@
 
 package org.usfirst.frc199.Robot2016.subsystems;
 
+import org.usfirst.frc199.Robot2016.Robot;
 import org.usfirst.frc199.Robot2016.RobotMap;
 import org.usfirst.frc199.Robot2016.commands.*;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
@@ -52,5 +53,9 @@ public class Shooter extends Subsystem {
         // Set the default command for a subsystem here.
         // setDefaultCommand(new MySpecialCommand());
     }
-}
+    public void shooter (double speed) {
+    	Robot.intake.spin(speed);
+    }
+    }
+
 
