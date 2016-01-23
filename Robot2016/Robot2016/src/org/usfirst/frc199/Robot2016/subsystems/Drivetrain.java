@@ -87,6 +87,11 @@ public class Drivetrain extends Subsystem {
 		}
     }
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+}
+=======
+>>>>>>> master
 
 	/**
 	 * Sets the target for the auto PID
@@ -184,6 +189,10 @@ public class Drivetrain extends Subsystem {
 	
 }
 
+<<<<<<< HEAD
 =======
 }
+>>>>>>> master
+=======
+>>>>>>> Adam-Stafford-2016-Robotics-Code
 >>>>>>> master
