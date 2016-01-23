@@ -86,9 +86,6 @@ public class Drivetrain extends Subsystem {
 			robotDrive.tankDrive(left, right);
 		}
     }
-<<<<<<< HEAD
-}
-=======
 
 	/**
 	 * Sets the target for the auto PID
@@ -185,8 +182,3 @@ public class Drivetrain extends Subsystem {
 	}
 	
 }
-<<<<<<< HEAD
-
->>>>>>> Adam-Stafford-2016-Robotics-Code
-=======
->>>>>>> Adam-Stafford-2016-Robotics-Code
