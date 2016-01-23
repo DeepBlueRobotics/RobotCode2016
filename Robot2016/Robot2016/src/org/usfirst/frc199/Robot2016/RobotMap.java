@@ -88,9 +88,10 @@ public class RobotMap {
         drivetrainRightEncoder.setPIDSourceType(PIDSourceType.kRate);
         drivetrainLeftUltrasonic = new Ultrasonic(4, 5);
         LiveWindow.addSensor("Drivetrain", "LeftUltrasonic", drivetrainLeftUltrasonic);
-        
+        drivetrainLeftUltrasonic.setDistanceUnits(Ultrasonic.Unit.kInches);
         drivetrainRightUltrasonic = new Ultrasonic(6, 7);
         LiveWindow.addSensor("Drivetrain", "RightUltrasonic", drivetrainRightUltrasonic);
+        drivetrainRightUltrasonic.setDistanceUnits(Ultrasonic.Unit.kInches);
         
         drivetrainCompressor = new Compressor(0);
         
