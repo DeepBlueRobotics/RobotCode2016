@@ -1,2 +1,4 @@
 *.class
 .metadata/*
+/Widgets2015/build/
+/Widgets2015/nbproject/private/
