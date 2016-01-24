@@ -27,6 +27,11 @@
 			<locationURI>PARENT-5-PROJECT_LOC/wpilib/java/current/lib/NetworkTables.jar</locationURI>
 		</link>
 		<link>
+			<name>PID.java</name>
+			<type>1</type>
+			<locationURI>PROJECT_LOC/src/org/usfirst/frc199/Robot2016/PID.java</locationURI>
+		</link>
+		<link>
 			<name>WPILib-sources.jar</name>
 			<type>1</type>
 			<locationURI>PARENT-5-PROJECT_LOC/wpilib/java/current/lib/WPILib-sources.jar</locationURI>
