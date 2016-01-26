@@ -1,104 +1,119 @@
 package team199.smartdashboard.extensions;
 
 import edu.wpi.first.smartdashboard.gui.StaticWidget;
-import edu.wpi.first.smartdashboard.gui.Widget;
 import edu.wpi.first.smartdashboard.properties.Property;
+import edu.wpi.first.smartdashboard.robot.Robot;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.tables.ITable;
-import edu.wpi.first.wpilibj.tables.ITableListener;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.util.ArrayList;
 import java.util.Arrays;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
 
 /**
  * A widget that provides an easy way to view and modify preferences.
- * @author Paul
  */
 public class PreferenceWidget extends StaticWidget {
 
-    public static final String NAME = "Preference Viewer";
-    private JComboBox keyBox = new JComboBox();
+    public static final String NAME = "Preference Widget";
+    private final JComboBox keyBox = new JComboBox();
     private final JTextField valueField = new JTextField();
-    private final ITable prefs = NetworkTable.getTable("Preferences");
-    private ArrayList<Object> labels = new ArrayList<>();
-    private ArrayList<Widget.EditorTextField> fields = new ArrayList<>();
+    private final JButton saveButton = new JButton("Save");
+    private final JButton removeButton = new JButton("Remove");
+    private ITable prefs;
 
     @Override
     public void init() {
-        setPreferredSize(new Dimension(415, 40));
+        try {
+            prefs = Robot.getPreferences();
+        } catch(Exception e) {
+            prefs = NetworkTable.getTable("Preferences");
+            System.out.println("Preferences not found");
+        }
+        setPreferredSize(new Dimension(215, 90));
         keyBox.setPreferredSize(new Dimension(200, 25));
         valueField.setPreferredSize(new Dimension(200, 25));
-        
-        keyBox.addItem("Generate Preference");
-
-        // If the user changes the JComboBox, update the value field
-        keyBox.addActionListener(new ActionListener() {
+        saveButton.setPreferredSize(new Dimension(100, 25));
+        removeButton.setPreferredSize(new Dimension(100, 25));
+        keyBox.addItem("New Preference");
+        add(keyBox);
+        add(valueField);
+        add(saveButton);
+        add(removeButton);
+        update();
+        keyBox.addActionListener((ActionEvent e) -> {
+            readValueOfCurrentKey();
+        });
+        keyBox.addFocusListener(new FocusAdapter() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                if(prefs.containsKey(keyBox.getSelectedItem()+"")){
-                    valueField.setText(prefs.getValue(keyBox.getSelectedItem()+"")+"");
-                }
+            public void focusGained(FocusEvent e) {
+                update();
             }
         });
-
-        // If the user changes the JTextField, update the subtable
         valueField.addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
-                if(keyBox.getSelectedItem().equals("Generate Preference") && !valueField.getText().equals("") 
-                        && !prefs.containsKey(valueField.getText())){
-                    prefs.putString(valueField.getText(), "");
-                } else {
-                    prefs.putString(keyBox.getSelectedItem() + "", valueField.getText());
-                }
+                writeValueOfCurrentKey();
             }
         });
-
-        // If a key is added to the subtable, it is added to the JComboBox
-        // If the value of the selected preference is changed, the JTextArea will be updated
-        prefs.addTableListener(new ITableListener() {
-            @Override
-            public void valueChanged(ITable itable, String key, Object value, boolean isNew) {
-                if (isNew && !key.equals("Generate Preference")) {
-                    System.out.println("Added pref");
-                    keyBox.addItem(key);
-                    sort();
-                }
-                if (key.equals(keyBox.getSelectedItem())) {
-                    valueField.setText(value + "");
-                }
-            }
+        prefs.addTableListener((ITable itable, String key, Object value, boolean isNew) -> {
+            readValueOfCurrentKey();
         }, true);
-
-        add(keyBox);
-        add(valueField);
+        saveButton.addActionListener((ActionEvent e) -> {
+            Robot.getPreferences().putBoolean(Robot.PREF_SAVE_FIELD, true);
+        });
+        removeButton.addActionListener((ActionEvent e) -> {
+            String key = keyBox.getSelectedItem() + "";
+            prefs.delete(key);
+            valueField.setText("");
+            update();
+        });
     }
 
     @Override
     public void propertyChanged(Property prprt) {
     }
     
-    //Organizes the JComboBox display alphabetically
-    public void sort() {
-        System.out.println("sort");
-        int size = keyBox.getItemCount() - 1;
-        Object[] temp = new String[size];
-        for(int i = 0; i < size; i++) {
-            temp[i] = keyBox.getItemAt(i+1);
-        }      
+    // Organizes the JComboBox to display alphabetically
+    private void update() {
+        String key = keyBox.getSelectedItem() + "";
+        Object[] temp = prefs.getKeys().toArray();
         Arrays.sort(temp);
-        
         keyBox.removeAllItems();
-        keyBox.addItem("Generate Preference");
-        for(int i = 0; i < size; i++){
-            keyBox.addItem(temp[i]);
+        keyBox.addItem("New Preference");
+        for (Object o: temp) {
+            keyBox.addItem(o);
         }
-        
+        keyBox.setSelectedItem(key);
+        repaint();
+    }
+
+    // Sets the value field to the correct value
+    private void readValueOfCurrentKey() {
+        String key = keyBox.getSelectedItem() + "";
+        if (prefs.containsKey(key)) {
+            valueField.setText(prefs.getValue(key, "") + "");
+        } else {
+            valueField.setText("");
+        }    
+    }
+    
+    // Changes the value of the selected key in the preferences table
+    private void writeValueOfCurrentKey() {
+        String key = keyBox.getSelectedItem() + "";
+        String value = valueField.getText();
+        // Add key
+        if (key.equals("New Preference") && !value.equals("") && !prefs.containsKey(value)) {
+            prefs.putString(value, "");
+            update();
+        }
+        // Change value
+        if(!key.equals("New Preference")) {
+            prefs.putString(key, value);
+        }
     }
 }
