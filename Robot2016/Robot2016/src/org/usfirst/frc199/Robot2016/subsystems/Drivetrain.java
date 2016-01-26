@@ -96,6 +96,15 @@ public class Drivetrain extends Subsystem {
 		distancePID.setTarget(target);
 	}
     
+    public void setAutoAlignAngleTarget(){
+    	anglePID.setTarget(0);
+    }
+    
+    public void updateAutoAlignPID(double angle){
+    	anglePID.update(angle);
+    	arcadeInput(0, -anglePID.getOutput());
+    }
+    
 
 	/**
 	 * Sets the target for the auto PID

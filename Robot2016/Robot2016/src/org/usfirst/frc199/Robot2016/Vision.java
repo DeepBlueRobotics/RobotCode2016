@@ -16,4 +16,10 @@ public class Vision {
 	}
 	
 	
+	// Just has to a rough estimate: RIGHT: negative LEFT: positive
+	public int degreeToTarget(){
+		return 0;
+	}
+	
+	
 }
