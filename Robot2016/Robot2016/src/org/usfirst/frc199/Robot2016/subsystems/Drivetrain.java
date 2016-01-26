@@ -89,7 +89,7 @@ public class Drivetrain extends Subsystem {
     //Requires PID
     public void updateRangefinder() {
 		distancePID.update(getRangefinderDistance());
-		arcadeInput(-distancePID.getOutput(),0);
+		arcadeInput(distancePID.getOutput(),0);
 	} 
     
     public void setRangefinderTarget(double target) { 
@@ -102,7 +102,7 @@ public class Drivetrain extends Subsystem {
     
     public void updateAutoAlignPID(double angle){
     	anglePID.update(angle);
-    	arcadeInput(0, -anglePID.getOutput());
+    	arcadeInput(0, anglePID.getOutput());
     }
     
 
