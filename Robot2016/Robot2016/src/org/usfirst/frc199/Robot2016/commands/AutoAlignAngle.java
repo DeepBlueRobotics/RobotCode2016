@@ -73,13 +73,17 @@ public class AutoAlignAngle extends Command {
 			
 			// Rotate towards left
 			Robot.drivetrain.arcadeInput(0, -1);
-			// if vision sees target: stop
+			if(Robot.vision.isTargetInVisionOfRobotCamera()){
+				end();
+			}
 			
 		}else if(direction.equals(RIGHT)){
 			
 			// Rotate towards right
 			Robot.drivetrain.arcadeInput(0, 1);
-			// if vision sees target: stop
+			if(Robot.vision.isTargetInVisionOfRobotCamera()){
+				end();
+			}
 			
 		}else{
 			end();
