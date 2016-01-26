@@ -43,24 +43,20 @@ public class RetractClimber extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	RobotMap.climberWinchMotor.set(1); 
+    	Robot.climber.setMotor(1.0); 
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-    /* No encoder right now, so act as if there was one. 
-      Also 8 is a random value, change the value after testing.
-     */
-    	if(RobotMap.climberWinchMotor.getEncoder() > 8){
-    		return true;
-    	}
-        	return false;
+	    /* No encoder right now, so act as if there was one. 
+	      Also 8 is a random value, change the value after testing.
+	     */
+    	return Robot.climber.getEncoder() > 8;
     }
 
     // Called once after isFinished returns true
     protected void end() {
-    	RobotMap.climberWinchMotor.set(0);
-    	
+    	Robot.climber.setMotor(0);
     }
 
     // Called when another command which requires one or more of the same
