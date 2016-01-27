@@ -27,7 +27,7 @@ public class AutoMode extends CommandGroup {
 		// addSequential(new Command2());
 		// these will run in order.
 
-		addSequential(new AutoDrive(10));
+		addSequential(new AutoDrive(30));
 
 		switch (defense) {
 		case 2: // portcullis
