@@ -1,163 +1,99 @@
 package org.usfirst.frc199.Robot2016;
 
-import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
- * Creates a PID loop, has methods to set the target value and get the output.
- * Automatically generates new SmartDashboard values and preferences.
+ * Creates a PID loop, that automatically generates new
+ * SmartDashboard values and preferences.
  */
 public class PID {
-
-	private final String name; // The loop's unique identifier
-	private double kP = 0.0, kI = 0.0, kD = 0.0, kF = 0.0; // PID constants
-	private double input = 0.0; // Scaled value from sensor
-	private double currentValue = 0.0; // Raw value from sensor
-	private double target = 0.0; // Target for the PID loop
-	private double offset = 0.0; // Offset from input value to the zero value
-	private double error = 0.0; // Distance from target value
-	private double lastError = 0.0, totalError = 0.0; // Stores previous error
-	private double output = 0.0; // Loop output value
-	private double interval = 0.0; // Time between loops
-	private double rate = 0.0; // Change in error per second
-	private Timer timer = new Timer(); // Keeps track of loop frequency
-
-	/**
-	 * Instantiates a PID loop
-	 * 
-	 * @param name - The unique identifier of the system for preferences and
-	 *     dashboard values
-	 */
-	public PID(String name) {
-		kP = Preferences.getInstance().getDouble(name + "_kP", 0);
-		kI = Preferences.getInstance().getDouble(name + "_kI", 0);
-		kD = Preferences.getInstance().getDouble(name + "_kD", 0);
-		kF = Preferences.getInstance().getDouble(name + "_kF", 0);
-		SmartDashboard.putNumber("PID/"+name + " kP", kP);
-		SmartDashboard.putNumber("PID/"+name + " kI", kI);
-		SmartDashboard.putNumber("PID/"+name + " kD", kD);
-		SmartDashboard.putNumber("PID/"+name + " kF", kF);
-		SmartDashboard.putNumber("PID/"+name + " TestTarget", 0);
-
-		this.name = name;
-		timer.start();
-		displayData();
+	// parameters (provided by user)
+	private double target; // setpoint; the value PID will attempt to reach
+	private double P; // Proportional factor
+	private double I; // Integral factor
+	private double D; // Derivative factor
+	private double errorTolerance;
+	private double rateTolerance;
+	
+	// state
+	private boolean alreadyReceivedInput; // true if lastError has a value (to handle initialization properly)
+	private Timer intervalTimer; // keeps track of loop frequency
+	private double lastError; // previous displacement from target value
+	private double totalError; // weighted sum of previous
+	private double rate;
+	
+	private SmartDashboardHandler ui;
+	
+	public PID(String subsystem) {
+		ui.identifyAs(subsystem+"/PID");
+		reset();
 	}
-
-	/**
-	 * Updates the PID loop using new input data, call before using other
-	 * methods
-	 * 
-	 * @param newValue - The new input value from the sensor
-	 */
-	public void update(double newValue) {
-		kP = Preferences.getInstance().getDouble(name + "_kP", 0);
-		kI = Preferences.getInstance().getDouble(name + "_kI", 0);
-		kD = Preferences.getInstance().getDouble(name + "_kD", 0);
-		kF = Preferences.getInstance().getDouble(name + "_kF", 0);
-		currentValue = newValue;
-		interval = timer.get();
-		input = currentValue - offset;
-		lastError = error;
-		error = target - input;
-		if (Math.abs(output) < Preferences.getInstance().getDouble(name + "IntegralLimit", 0)
-				&& interval < 1.0)
-			totalError += error * interval;
-		if (interval != 0)
-			rate = (error - lastError) / interval;
-		output = kP * error + kI * totalError + kD * rate;
-		timer.reset();
-		displayData();
-		SmartDashboard.putNumber("kP value", kP);
-		SmartDashboard.putNumber("input value", input);
-		SmartDashboard.putNumber("target value", target);
-		SmartDashboard.putNumber("output value", output);
-		SmartDashboard.putNumber("error value", error);
+	
+	public void setTarget(double value) {
+		target = value;
+		reset();
+		
+		ui.putNum("Target", target);
 	}
-
+	
 	/**
-	 * Getter method for error (call update first)
-	 * 
-	 * @return The displacement from the target value
+	 * @return time between consecutive loops
 	 */
-	public double getError() {
-		return error;
+	private double interval() {
+		double timeDifference = intervalTimer.get();
+		intervalTimer.reset();
+		return timeDifference;
 	}
-
+	
 	/**
-	 * Getter method for input (call update first)
-	 * 
-	 * @return The raw sensor value
+	 * Get rid of built-up state.
 	 */
-	public double getInputValue() {
-		return input;
+	private void reset() {
+		alreadyReceivedInput = false;
+		totalError = 0;
+		rate = 0;
 	}
-
+	
 	/**
-	 * Getter method for output (call update first)
-	 * 
-	 * @return The PID output value
+	 * Connects source input, caches results.
+	 * Call this method first in order for the input to register.
+	 * @param input new raw data from sensor
 	 */
-	public double getOutput() {
-		return output;
+	public void update(double input) {
+		final double thisError = target-input;
+		
+		if (alreadyReceivedInput) {
+			final double dError = thisError-lastError;
+			final double dt = interval();
+			totalError += thisError*dt;
+			rate = dError/dt;
+			
+			ui.putNum("Interval", dt);
+			ui.putNum("Output", output());
+			ui.putNum("Rate", rate);
+		} else {
+			alreadyReceivedInput = true;
+			intervalTimer.start();
+		}
+		
+		lastError = thisError;
+		
+		ui.putNum("Input", input);
+		ui.putNum("Error", lastError);
+		ui.putNum("Total Error", totalError);
+		ui.putBool("Reached Target", reachedTarget());
 	}
-
-	/**
-	 * Setter method for target
-	 * 
-	 * @param newTarget - The target value the PID will attempt to reach
-	 */
-	public void setTarget(double newTarget) {
-		target = newTarget;
-		error = target - input;
-		totalError = error * kF;
-		displayData();
+	
+	public double output() {
+		assert alreadyReceivedInput;
+	   	return P*lastError + I*totalError + D*rate;
 	}
-
+	
 	/**
-	 * Getter method for target
-	 * 
-	 * @return The current target for the PID loop
-	 */
-	public double getTarget() {
-		return target;
-	}
-
-	/**
-	 * Sets the relative value of the current location
-	 * 
-	 * @param value - The desired value of the current location
-	 */
-	public void setRelativeLocation(double value) {
-		offset += input - value;
-		input = value;
-		setTarget(target);
-	}
-
-	/**
-	 * Determines if error and rate are within acceptable tolerances
-	 * 
-	 * @return Whether the PID loop has reached the target
+	 * @return whether error and rate are within acceptable tolerances
 	 */
 	public boolean reachedTarget() {
-		return Math.abs(error) < Preferences.getInstance().getDouble(name + "ErrorTolerance", 0)
-				&& Math.abs(rate) < Preferences.getInstance().getDouble(name
-						+ "RateTolerance", 0);
-	}
-
-	/**
-	 * Displays data on the SmartDashboard
-	 */
-	private void displayData() {
-		SmartDashboard.putNumber("PID/"+name + " Error", error);
-		SmartDashboard.putNumber("PID/"+name + " Target", target);
-		SmartDashboard.putNumber("PID/"+name + " Input", input);
-		SmartDashboard.putNumber("PID/"+name + " Output", output);
-		SmartDashboard.putNumber("PID/"+name + " Interval", interval);
-		SmartDashboard.putNumber("PID/"+name + " Rate", rate);
-		SmartDashboard.putNumber("PID/"+name + " SensorValue", currentValue);
-		SmartDashboard.putNumber("PID/"+name + " TotalError", totalError);
-		SmartDashboard.putBoolean("PID/"+name + " Reached Target", reachedTarget());
+		return Math.abs(lastError) < errorTolerance
+		    && Math.abs(rate) < rateTolerance;
 	}
 }
