@@ -10,7 +10,7 @@ public class AutoMode extends CommandGroup {
 	/**
 	 * 
 	 * @param defense
-	 *            the defense which we are trying to pass 1 - low bar 2 -
+	 *            the defense which we are trying to pass 1 - low bar (X) 2 -
 	 *            portcullis (A) 3 - cheval de frise (A) 4 - Moat (B) 5 -
 	 *            Ramparts (B) 6 - Drawbridge (C) 7 - Sally Port (C) 8 - Rock
 	 *            Wall (D) 9 - Rough Terrain (D)
@@ -30,38 +30,58 @@ public class AutoMode extends CommandGroup {
 		addSequential(new AutoDrive(10));
 
 		switch (defense) {
-		case 2:
+		case 2: // portcullis
+			addSequential(new AutoDrive(20)); // 20 inches
+			addSequential(new RaiseIntake());
 			break;
-		case 3:
+		case 3: // cheval de frise
+			addSequential(new AutoDrive(20)); // 20 inches
+			addSequential(new LowerIntake());
 			break;
-		case 4:
+		case 4: // moat
+			addSequential(new AutoDrive(50)); // 50 inches
 			break;
-		case 5:
+		case 5: // ramparts
+			addSequential(new AutoDrive(50)); // 50 inches
 			break;
-		case 6:
+		case 6: // drawbridge
 			break;
-		case 7:
+		case 7: // sally port
 			break;
-		case 8:
+		case 8: // rock wall
+			addSequential(new AutoDrive(50)); // 50 inches
 			break;
-		case 9:
+		case 9: // rough terrain
+			addSequential(new AutoDrive(50)); // 50 inches
 			break;
 		default:
+			System.out.println("Wrong Defense");
 			break;
 		}
 
+		addSequential(new AutoDrive(60)); // 60 inches
+		
 		switch (position) {
 		case 2:
+			addSequential(new AutoTurn(-30)); // -40 degrees (towards the right)
+			addSequential(new AutoAlignAngle()); // Of Course, assuming that the camera can see the target in its current position
 			break;
 		case 3:
+			addSequential(new AutoAlignAngle()); // Of Course, assuming that the camera can see the target in its current position
 			break;
 		case 4:
+			addSequential(new AutoAlignAngle()); // Of Course, assuming that the camera can see the target in its current position
 			break;
 		case 5:
+			addSequential(new AutoTurn(10)); // 10 degrees (towards the left)
+			addSequential(new AutoAlignAngle()); // Of Course, assuming that the camera can see the target in its current position
 			break;
 		default:
+			System.out.println("Wrong position");
 			break;
 		}
+		
+		addSequential(new RunShooter());
 
 		// To run multiple commands at the same time,
 		// use addParallel()
