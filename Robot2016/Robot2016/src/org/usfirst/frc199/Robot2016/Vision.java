@@ -1,10 +1,15 @@
 package org.usfirst.frc199.Robot2016;
 
+import edu.wpi.first.wpilibj.vision.USBCamera;
+import com.ni.vision.NIVision;
+
 public class Vision {
 
+	USBCamera cam;
+	NIVision x;
 	
-	public Vision(){
-		
+	public Vision(USBCamera camera){
+		cam = camera;
 	}
 	
 	/**

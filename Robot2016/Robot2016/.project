@@ -41,6 +41,11 @@
 			<type>1</type>
 			<locationURI>PARENT-5-PROJECT_LOC/wpilib/java/current/lib/WPILib.jar</locationURI>
 		</link>
+		<link>
+			<name>sfx.jar</name>
+			<type>1</type>
+			<locationURI>PARENT-5-PROJECT_LOC/wpilib/tools/sfx.jar</locationURI>
+		</link>
 	</linkedResources>
 	<filteredResources>
 		<filter>
