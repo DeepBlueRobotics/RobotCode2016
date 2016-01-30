@@ -46,10 +46,10 @@ public class NewClass extends StaticWidget {
         valueField.setPreferredSize(new Dimension(200, 25));
         saveButton.setPreferredSize(new Dimension(100, 25));
         removeButton.setPreferredSize(new Dimension(100, 25));
-        /*Defense[0].setLocation(0, 100);
+        Defense[0].setLocation(0, 100);
         Defense[1].setLocation(50, 100);
         Defense[2].setLocation(100, 100);
-        Defense[3].setLocation(150, 100);*/
+        Defense[3].setLocation(150, 100);
         keyBox.addItem("New Preference");
         add(keyBox);
         add(valueField);
