@@ -21,7 +21,7 @@ import javax.swing.JTextField;
  */
 public class NewClass extends StaticWidget {
 
-    public static final String NAME = "Test Auto Mode";
+    public static final String NAME = "Test Auto Mode 2";
     private final JComboBox keyBox = new JComboBox();
     private final JTextField valueField = new JTextField();
     private ITable prefs = NetworkTable.getTable("Preferences");
