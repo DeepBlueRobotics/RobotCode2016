@@ -9,6 +9,7 @@ package team199.smartdashboard.extensions;
 import edu.wpi.first.smartdashboard.gui.StaticWidget;
 import edu.wpi.first.smartdashboard.gui.Widget;
 import edu.wpi.first.smartdashboard.properties.Property;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -31,11 +32,11 @@ public class TestAutoModeWidget extends StaticWidget {
     private final JComboBox startingPosition = new JComboBox(new Integer[]{1, 2, 3, 4});
     private ArrayList<Object> labels = new ArrayList<>();
     private ArrayList<Widget.EditorTextField> fields = new ArrayList<>();
-
     public TestAutoModeWidget() {
         this.field = new JPanel() {
             @Override
             public void paint(Graphics g) {
+                setPreferredSize(new Dimension(215, 90));
                 Toolkit toolkit = Toolkit.getDefaultToolkit();
                 Image field1 = toolkit.getImage("Field.png");
                 g.drawImage(field1, 0, 0, field);
@@ -53,6 +54,7 @@ public class TestAutoModeWidget extends StaticWidget {
         for (JComboBox DEFENSE : Defense) {
             DEFENSE = new JComboBox(defenses);
         }
+        
         Defense[0].setLocation(0, 200);
         Defense[1].setLocation(50, 200);
         Defense[2].setLocation(100, 200);
