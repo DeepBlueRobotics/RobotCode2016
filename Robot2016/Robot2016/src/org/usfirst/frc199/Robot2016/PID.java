@@ -1,99 +1,146 @@
 package org.usfirst.frc199.Robot2016;
 
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Timer;
 
 /**
- * Creates a PID loop, that automatically generates new
+ * Creates a PID loop and automatically generates new
  * SmartDashboard values and preferences.
  */
-public class PID {
-	// parameters (provided by user)
-	private double target; // setpoint; the value PID will attempt to reach
-	private double P; // Proportional factor
-	private double I; // Integral factor
-	private double D; // Derivative factor
-	private double errorTolerance;
-	private double rateTolerance;
+public class PID implements DashboardSubsystem {
 	
-	// state
-	private boolean alreadyReceivedInput; // true if lastError has a value (to handle initialization properly)
-	private Timer intervalTimer; // keeps track of loop frequency
-	private double lastError; // previous displacement from target value
-	private double totalError; // weighted sum of previous
-	private double rate;
+	// Parameters (provided by user):
+	private double target; // The value PID will attempt to reach (setpoint)
+	private double kP; // Proportional factor
+	private double kI; // Integral factor
+	private double kD; // Derivative factor
+	private final String name; // The name of the loop for preferences and SmartDashboard
 	
-	private SmartDashboardHandler ui;
+	// Current state:
+	private Timer intervalTimer; // Keeps track of loop frequency
+	private double input; // Current input value
+	private double error; // Current error value
+	private double lastError; // Previous error value
+	private double totalError; // Integral of error over time
+	private double output; // The computed PID output
+	private double rate; // Change in error over time
+	private double interval; // Time elapsed since last update
+	private double offset; // Sets what the "zero" value is
+	private boolean reset; // Flag indicating loop needs to be reset
 	
-	public PID(String subsystem) {
-		ui.identifyAs(subsystem+"/PID");
-		reset();
+	/**
+	 * Creates a new PID loop
+	 * @param name - The identifier of the loop
+	 */
+	public PID(String name) {
+		this.name = name;
+		Robot.subsystems.add(this);
+		intervalTimer.start();
+		checkPref("kP");
+		checkPref("kI");
+		checkPref("kD");
+		checkPref("ErrorTolerance");
+		checkPref("RateTolerance");
+		display("kP", getPref("kP"));
+		display("kI", getPref("kI"));
+		display("kD", getPref("kD"));
+		display("TestTarget", 0);
 	}
 	
+	/**
+	 * Sets the target value of the loop
+	 * @param value - The target value in real units
+	 */
 	public void setTarget(double value) {
 		target = value;
-		reset();
-		
-		ui.putNum("Target", target);
+		reset = true;
+		output = 0.0;
 	}
 	
 	/**
-	 * @return time between consecutive loops
+	 * Updates state based on a new input value
+	 * @param newValue - new input value in real units
 	 */
-	private double interval() {
-		double timeDifference = intervalTimer.get();
+	public void update(double newValue) {
+		kP = getNumber("kP");
+		kI = getNumber("kI");
+		kD = getNumber("kD");
+		input = newValue - offset;
+		error = target - input;
+		interval = intervalTimer.get();
 		intervalTimer.reset();
-		return timeDifference;
-	}
-	
-	/**
-	 * Get rid of built-up state.
-	 */
-	private void reset() {
-		alreadyReceivedInput = false;
-		totalError = 0;
-		rate = 0;
-	}
-	
-	/**
-	 * Connects source input, caches results.
-	 * Call this method first in order for the input to register.
-	 * @param input new raw data from sensor
-	 */
-	public void update(double input) {
-		final double thisError = target-input;
-		
-		if (alreadyReceivedInput) {
-			final double dError = thisError-lastError;
-			final double dt = interval();
-			totalError += thisError*dt;
-			rate = dError/dt;
-			
-			ui.putNum("Interval", dt);
-			ui.putNum("Output", output());
-			ui.putNum("Rate", rate);
+		output = kP * error;
+		if(interval > 0.0 && interval < 1.0 && !reset) {
+			totalError += error*interval;
+			rate = (error - lastError)/interval;
+			output += kI*totalError + kD*rate;
 		} else {
-			alreadyReceivedInput = true;
-			intervalTimer.start();
+			totalError = 0;
+			rate = 0;
 		}
-		
-		lastError = thisError;
-		
-		ui.putNum("Input", input);
-		ui.putNum("Error", lastError);
-		ui.putNum("Total Error", totalError);
-		ui.putBool("Reached Target", reachedTarget());
-	}
-	
-	public double output() {
-		assert alreadyReceivedInput;
-	   	return P*lastError + I*totalError + D*rate;
+		lastError = error;
 	}
 	
 	/**
-	 * @return whether error and rate are within acceptable tolerances
+	 * Sets the relative value of the current location
+	 * @param value - The desired value of the current location
+	 */
+	public void setRelativeLocation(double value) {
+		offset += input - value;
+		input = value;
+		setTarget(target);
+	}
+
+	/**
+	 * Gets the computed PID output
+	 * @return - The computed PID output
+	 */
+	public double getOutput() {
+		return output;
+	}
+	
+	/**
+	 * Determines if target has been reached
+	 * @return True if error and rate are within acceptable tolerances
 	 */
 	public boolean reachedTarget() {
-		return Math.abs(lastError) < errorTolerance
-		    && Math.abs(rate) < rateTolerance;
+		return Math.abs(lastError) < getPref("ErrorTolerance")
+		    && Math.abs(rate) < getPref("RateTolerance");
+	}
+	
+	/**
+	 * Gets a preference for the specific instance of the PID class
+	 * @param key - The name of the preference
+	 * @return The value of the preference
+	 */
+	private double getPref(String key) {
+		return Preferences.getInstance().getDouble(name + key, 0.0);
+	}
+	
+	/**
+	 * Creates a preference if it does not yet exist
+	 * @param key - The name of the preference
+	 */
+	private void checkPref(String key) {
+		if(!Preferences.getInstance().containsKey(name + key)) {
+			Preferences.getInstance().putDouble(name + key, 0.0);
+		}
+	}
+	
+	@Override
+	public String getKey(String originalKey) {
+		return "PID/" + name + originalKey;
+	}
+	
+	@Override
+	public void displayData() {
+		display("Error", error);
+		display("Target", target);
+		display("Input", input);
+		display("Output", output);
+		display("Interval", interval);
+		display("Rate", rate);
+		display("TotalError", totalError);
+		display("Reached Target", reachedTarget());
 	}
 }
