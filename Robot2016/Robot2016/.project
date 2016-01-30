@@ -44,7 +44,7 @@
 		<link>
 			<name>opencv-310.jar</name>
 			<type>1</type>
-			<locationURI>PARENT-5-PROJECT_LOC/Downloads/opencv/build/java/opencv-310.jar</locationURI>
+			<locationURI>copy_PARENT/Downloads/opencv/build/java/opencv-310.jar</locationURI>
 		</link>
 		<link>
 			<name>sfx.jar</name>
@@ -63,4 +63,10 @@
 			</matcher>
 		</filter>
 	</filteredResources>
+	<variableList>
+		<variable>
+			<name>copy_PARENT</name>
+			<value>$%7BPARENT-5-PROJECT_LOC%7D</value>
+		</variable>
+	</variableList>
 </projectDescription>
