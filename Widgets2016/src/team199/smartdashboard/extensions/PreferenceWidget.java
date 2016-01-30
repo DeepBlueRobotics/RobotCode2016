@@ -28,7 +28,7 @@ public class PreferenceWidget extends StaticWidget {
     private final ITable prefs = NetworkTable.getTable("Preferences");
     private ArrayList<Object> labels = new ArrayList<>();
     private ArrayList<Widget.EditorTextField> fields = new ArrayList<>();
-
+ 
     @Override
     public void init() {
         setPreferredSize(new Dimension(415, 40));
