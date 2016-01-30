@@ -10,7 +10,7 @@ package team199.smartdashboard.extensions;
  * @author adamstafford
  */
 public enum Defenses {
-    MOAT(0),CHEVAL_DE_FRISE(1),ROCKWALL(2);
+    PORTCULLIS(1),CHEVAL_DE_FRISE(2),MOAT(3),RAMPARTS(4),DRAWBRIDGE(5),SALLY_PORT(6),ROCK_WALL(7),ROUGH_TERRAIN(8);
     public final int value;
     Defenses(int value) {
         this.value = value;
