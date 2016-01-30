@@ -180,7 +180,7 @@ public class VisionAssist extends StaticWidget {
 
     @Override
     public void init() {
-        setPreferredSize(new Dimension(100, 100));
+        setPreferredSize(new Dimension(128, 72));
         this.addMouseListener(listener);
         ipString = ipProperty.getSaveValue();
         bgThread.start();
