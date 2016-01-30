@@ -45,7 +45,7 @@ public class NewClass extends StaticWidget {
         Defense[1] = new JComboBox(defenses);
         Defense[2] = new JComboBox(defenses);
         Defense[3] = new JComboBox(defenses);
-        setPreferredSize(new Dimension(500, 300));
+        setPreferredSize(new Dimension(600, 300));
         //keyBox.setPreferredSize(new Dimension(200, 25));
         //valueField.setPreferredSize(new Dimension(200, 25));
         //saveButton.setPreferredSize(new Dimension(100, 25));
