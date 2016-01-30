@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 /**
  * Moves the robot around the field.
  */
-public class Drivetrain extends Subsystem {
+public class Drivetrain extends Subsystem implements DashboardSubsystem {
 	
 	public static final int AngleOfRangeFinders = 10;// in degrees
 
