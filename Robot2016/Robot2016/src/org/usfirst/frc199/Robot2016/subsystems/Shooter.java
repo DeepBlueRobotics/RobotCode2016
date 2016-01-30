@@ -1,5 +1,6 @@
 package org.usfirst.frc199.Robot2016.subsystems;
 
+import org.usfirst.frc199.Robot2016.DashboardSubsystem;
 import org.usfirst.frc199.Robot2016.PID;
 import org.usfirst.frc199.Robot2016.Robot;
 import org.usfirst.frc199.Robot2016.RobotMap;
@@ -65,7 +66,7 @@ public class Shooter extends Subsystem implements DashboardSubsystem {
      */
     public double updateSpeed() {
     	shooterPID.update(currentSpeed());
-    	return shooterPID.output();
+    	return shooterPID.getOutput();
     }
     
 }
