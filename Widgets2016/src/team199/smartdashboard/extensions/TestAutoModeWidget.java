@@ -61,9 +61,8 @@ public class TestAutoModeWidget extends StaticWidget {
         for (JComboBox DEFENSE: Defense)
             add(DEFENSE);
         update();
-        }
-    public void update()
-    {
+    }
+    public void update() {
         for (JComboBox DEFENSE : Defense) {
             String key = DEFENSE.getSelectedItem() + "";
             DEFENSE.removeAllItems();
