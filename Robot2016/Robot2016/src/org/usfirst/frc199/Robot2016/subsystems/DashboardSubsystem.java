@@ -32,11 +32,20 @@ public interface DashboardSubsystem {
 		}
 	}
 	
+	/**
+	 * Modifies SmartDashboard keys for compatibility with the subsystem widget
+	 * @param originalKey - The name of the key
+	 * @return A modified version of the key
+	 */
 	public default String getKey(String originalKey) {
 		return getName() + "/" + originalKey;
 	}
 	
+	/**
+	 * Gets the name of the subsystem
+	 * @return - The name of the subsystem
+	 */
 	public default String getName() {
-		return getClass().getName();
+		return getClass().getSimpleName();
 	}
 }

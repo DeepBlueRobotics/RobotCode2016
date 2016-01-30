@@ -37,8 +37,7 @@ public class UpdateDashboard extends Command {
     	subsystems.add(Robot.intake);
     	subsystems.add(Robot.drivetrain);
     	for(DashboardSubsystem s: subsystems) {
-    		s.display(key, value);
-    		Elevator/~TYPE~", "SubSystem");
+    		s.display("~TYPE~", "SubSystem");
     	}
     }
 
