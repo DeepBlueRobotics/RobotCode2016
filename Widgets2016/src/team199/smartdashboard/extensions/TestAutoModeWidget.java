@@ -60,8 +60,19 @@ public class TestAutoModeWidget extends StaticWidget {
         Defense[3].setLocation(150, 200);
         for (JComboBox DEFENSE: Defense)
             add(DEFENSE);
-        repaint();
         }
+    public void update()
+    {
+        for (JComboBox DEFENSE : Defense) {
+            String key = DEFENSE.getSelectedItem() + "";
+            DEFENSE.removeAllItems();
+            for (Object o: defenses) {
+                DEFENSE.addItem(o);
+            }
+            DEFENSE.setSelectedItem(key);
+        }
+        repaint();
+    }
 
     @Override
     public void propertyChanged(Property prprt) {
