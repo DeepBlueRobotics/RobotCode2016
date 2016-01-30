@@ -42,19 +42,19 @@ public class NewClass extends StaticWidget {
             System.out.println("Preferences not found");
         }
         setPreferredSize(new Dimension(215, 300));
-        keyBox.setPreferredSize(new Dimension(200, 25));
+        /*keyBox.setPreferredSize(new Dimension(200, 25));
         valueField.setPreferredSize(new Dimension(200, 25));
         saveButton.setPreferredSize(new Dimension(100, 25));
-        removeButton.setPreferredSize(new Dimension(100, 25));
-        Defense[0].setLocation(0, 100);
-        Defense[1].setLocation(50, 100);
-        Defense[2].setLocation(100, 100);
-        Defense[3].setLocation(150, 100);
+        removeButton.setPreferredSize(new Dimension(100, 25));*/
+        Defense[0].setPreferredSize(new Dimension(200, 25));
+        Defense[1].setPreferredSize(new Dimension(200, 25));
+        Defense[2].setPreferredSize(new Dimension(100, 25));
+        Defense[3].setPreferredSize(new Dimension(100, 25));
         keyBox.addItem("New Preference");
-        add(keyBox);
-        add(valueField);
-        add(saveButton);
-        add(removeButton);
+        add(Defense[0]);
+        add(Defense[1]);
+        add(Defense[2]);
+        add(Defense[3]);
         update();
         keyBox.addActionListener((ActionEvent e) -> {
             readValueOfCurrentKey();
