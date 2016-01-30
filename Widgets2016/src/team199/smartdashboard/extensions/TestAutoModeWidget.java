@@ -28,12 +28,38 @@ public class TestAutoModeWidget extends StaticWidget {
     public static final String NAME = "Test Auto Mode";
     private final Defenses[] defenses = Defenses.values();
     private final JComboBox Defense[] = new JComboBox[4];
-    private final JPanel field;
     private final JComboBox startingPosition = new JComboBox(new Integer[]{1, 2, 3, 4});
     private ArrayList<Object> labels = new ArrayList<>();
     private ArrayList<Widget.EditorTextField> fields = new ArrayList<>();
-    public TestAutoModeWidget() {
-        this.field = new JPanel() {
+        
+
+    @Override
+    public void init() {
+        for (JComboBox DEFENSE : Defense) {
+            DEFENSE = new JComboBox(defenses);
+        }
+        this.setPreferredSize(new Dimension(215, 300));
+        Defense[0].setLocation(0, 100);
+        Defense[1].setLocation(50, 100);
+        Defense[2].setLocation(100, 100);
+        Defense[3].setLocation(150, 100);
+        add(Defense[0]);
+        //for (JComboBox DEFENSE: Defense)
+        //    add(DEFENSE);
+        update();
+    }
+    private void update() {
+        for (JComboBox DEFENSE : Defense) {
+            String key = DEFENSE.getSelectedItem() + "";
+            DEFENSE.removeAllItems();
+            for (Object o: defenses) {
+                DEFENSE.addItem(o);
+            }
+            DEFENSE.setSelectedItem(key);
+        }
+        repaint();
+    }
+    /*this.field = new JPanel() {
             @Override
             public void paint(Graphics g) {
                 Toolkit toolkit = Toolkit.getDefaultToolkit();
@@ -45,34 +71,7 @@ public class TestAutoModeWidget extends StaticWidget {
                     g.drawImage(defenseImages[i], i*100, 200, field);
                 }
             }
-        };
-    }
-
-    @Override
-    public void init() {
-        for (JComboBox DEFENSE : Defense) {
-            DEFENSE = new JComboBox(defenses);
-        }
-        setPreferredSize(new Dimension(215, 300));
-        Defense[0].setLocation(0, 100);
-        Defense[1].setLocation(50, 100);
-        Defense[2].setLocation(100, 100);
-        Defense[3].setLocation(150, 100);
-        for (JComboBox DEFENSE: Defense)
-            add(DEFENSE);
-        update();
-    }
-    public void update() {
-        for (JComboBox DEFENSE : Defense) {
-            String key = DEFENSE.getSelectedItem() + "";
-            DEFENSE.removeAllItems();
-            for (Object o: defenses) {
-                DEFENSE.addItem(o);
-            }
-            DEFENSE.setSelectedItem(key);
-        }
-        repaint();
-    }
+        };*/
 
     @Override
     public void propertyChanged(Property prprt) {
