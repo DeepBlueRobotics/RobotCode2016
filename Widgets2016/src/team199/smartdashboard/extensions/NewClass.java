@@ -41,6 +41,10 @@ public class NewClass extends StaticWidget {
             prefs = NetworkTable.getTable("Preferences");
             System.out.println("Preferences not found");
         }
+        Defense[0] = new JComboBox(defenses);
+        Defense[1] = new JComboBox(defenses);
+        Defense[2] = new JComboBox(defenses);
+        Defense[3] = new JComboBox(defenses);
         setPreferredSize(new Dimension(215, 300));
         keyBox.setPreferredSize(new Dimension(200, 25));
         valueField.setPreferredSize(new Dimension(200, 25));
