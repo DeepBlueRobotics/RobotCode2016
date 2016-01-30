@@ -28,10 +28,10 @@ public class NewClass extends StaticWidget {
     private ArrayList<Object> labels = new ArrayList<>();
     private final JButton saveButton = new JButton("Save");
     private final JButton removeButton = new JButton("Remove");
-    private final Defenses[] defenses = Defenses.values();
+    /*private final Defenses[] defenses = Defenses.values();
     private final JComboBox Defense[] = new JComboBox[4];
     private final JComboBox startingPosition = new JComboBox(new Integer[]{1, 2, 3, 4});
-    private ArrayList<Widget.EditorTextField> fields = new ArrayList<>();
+    private ArrayList<Widget.EditorTextField> fields = new ArrayList<>();*/
 
     @Override
     public void init() {
@@ -46,10 +46,10 @@ public class NewClass extends StaticWidget {
         valueField.setPreferredSize(new Dimension(200, 25));
         saveButton.setPreferredSize(new Dimension(100, 25));
         removeButton.setPreferredSize(new Dimension(100, 25));
-        Defense[0].setLocation(0, 100);
+        /*Defense[0].setLocation(0, 100);
         Defense[1].setLocation(50, 100);
         Defense[2].setLocation(100, 100);
-        Defense[3].setLocation(150, 100);
+        Defense[3].setLocation(150, 100);*/
         keyBox.addItem("New Preference");
         add(keyBox);
         add(valueField);
