@@ -17,7 +17,6 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
-import team199.smartdashboard.extensions.Defenses;
 
 /**
  *
@@ -41,8 +40,9 @@ public class TestAutoModeWidget extends StaticWidget {
                 Image field1 = toolkit.getImage("Field.png");
                 g.drawImage(field1, 0, 0, field);
                 Image[] defenseImages = new Image[4];
-                for (Defenses defense : defenses) {
-                    
+                for (int i = 0;i < 4;i++) {
+                    defenseImages[i] = toolkit.getImage("Image" + Defense[i].getSelectedItem() + ".png");
+                    g.drawImage(defenseImages[i], i*100, 200, field);
                 }
             }
         };
