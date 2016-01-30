@@ -36,7 +36,7 @@ public class TestAutoModeWidget extends StaticWidget {
         this.field = new JPanel() {
             @Override
             public void paint(Graphics g) {
-                setPreferredSize(new Dimension(215, 90));
+                setPreferredSize(new Dimension(215, 300));
                 Toolkit toolkit = Toolkit.getDefaultToolkit();
                 Image field1 = toolkit.getImage("Field.png");
                 g.drawImage(field1, 0, 0, field);
