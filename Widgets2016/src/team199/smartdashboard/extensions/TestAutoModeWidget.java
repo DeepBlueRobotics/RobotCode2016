@@ -36,7 +36,6 @@ public class TestAutoModeWidget extends StaticWidget {
         this.field = new JPanel() {
             @Override
             public void paint(Graphics g) {
-                setPreferredSize(new Dimension(215, 300));
                 Toolkit toolkit = Toolkit.getDefaultToolkit();
                 Image field1 = toolkit.getImage("Field.png");
                 g.drawImage(field1, 0, 0, field);
@@ -54,7 +53,7 @@ public class TestAutoModeWidget extends StaticWidget {
         for (JComboBox DEFENSE : Defense) {
             DEFENSE = new JComboBox(defenses);
         }
-        
+        setPreferredSize(new Dimension(215, 300));
         Defense[0].setLocation(0, 200);
         Defense[1].setLocation(50, 200);
         Defense[2].setLocation(100, 200);
