@@ -58,7 +58,8 @@ public class TestAutoModeWidget extends StaticWidget {
         Defense[1].setLocation(50, 200);
         Defense[2].setLocation(100, 200);
         Defense[3].setLocation(150, 200);
-        
+        for (JComboBox DEFENSE: Defense)
+            add(DEFENSE);
         }
 
     @Override
