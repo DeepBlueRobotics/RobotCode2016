@@ -27,10 +27,7 @@ public class TestAutoModeWidget extends StaticWidget {
 
     public static final String NAME = "Test Auto Mode";
     private final Defenses[] defenses = Defenses.values();
-    private final JComboBox defense0 = new JComboBox(defenses);
-    private final JComboBox defense1 = new JComboBox(defenses);
-    private final JComboBox defense2 = new JComboBox(defenses);
-    private final JComboBox defense3 = new JComboBox(defenses);
+    private final JComboBox Defense[] = new JComboBox[4];
     private final JPanel field;
     private final JComboBox startingPosition = new JComboBox(new Integer[]{1, 2, 3, 4});
     private ArrayList<Object> labels = new ArrayList<>();
@@ -53,23 +50,18 @@ public class TestAutoModeWidget extends StaticWidget {
 
     @Override
     public void init() {
-        defense0.setLocation(0, 200);
-        defense1.setLocation(50, 200);
-        defense2.setLocation(100, 200);
-        defense3.setLocation(150, 200);
-
-        class MyListener implements ActionListener {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                repaint();
-            }
-
+        for (JComboBox DEFENSE : Defense) {
+            DEFENSE = new JComboBox(defenses);
         }
-    }
+        Defense[0].setLocation(0, 200);
+        Defense[1].setLocation(50, 200);
+        Defense[2].setLocation(100, 200);
+        Defense[3].setLocation(150, 200);
+        
+        }
 
     @Override
     public void propertyChanged(Property prprt) {
-        
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
