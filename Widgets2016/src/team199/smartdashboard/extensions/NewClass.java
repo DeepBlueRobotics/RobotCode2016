@@ -1,6 +1,7 @@
 package team199.smartdashboard.extensions;
 
 import edu.wpi.first.smartdashboard.gui.StaticWidget;
+import edu.wpi.first.smartdashboard.gui.Widget;
 import edu.wpi.first.smartdashboard.properties.Property;
 import edu.wpi.first.smartdashboard.robot.Robot;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
@@ -20,13 +21,17 @@ import javax.swing.JTextField;
  */
 public class NewClass extends StaticWidget {
 
-    public static final String NAME = "Preference Widget";
+    public static final String NAME = "Test Auto Mode";
     private final JComboBox keyBox = new JComboBox();
     private final JTextField valueField = new JTextField();
     private ITable prefs = NetworkTable.getTable("Preferences");
     private ArrayList<Object> labels = new ArrayList<>();
     private final JButton saveButton = new JButton("Save");
     private final JButton removeButton = new JButton("Remove");
+    private final Defenses[] defenses = Defenses.values();
+    private final JComboBox Defense[] = new JComboBox[4];
+    private final JComboBox startingPosition = new JComboBox(new Integer[]{1, 2, 3, 4});
+    private ArrayList<Widget.EditorTextField> fields = new ArrayList<>();
 
     @Override
     public void init() {
@@ -36,11 +41,15 @@ public class NewClass extends StaticWidget {
             prefs = NetworkTable.getTable("Preferences");
             System.out.println("Preferences not found");
         }
-        setPreferredSize(new Dimension(215, 90));
+        setPreferredSize(new Dimension(215, 300));
         keyBox.setPreferredSize(new Dimension(200, 25));
         valueField.setPreferredSize(new Dimension(200, 25));
         saveButton.setPreferredSize(new Dimension(100, 25));
         removeButton.setPreferredSize(new Dimension(100, 25));
+        Defense[0].setLocation(0, 100);
+        Defense[1].setLocation(50, 100);
+        Defense[2].setLocation(100, 100);
+        Defense[3].setLocation(150, 100);
         keyBox.addItem("New Preference");
         add(keyBox);
         add(valueField);
