@@ -8,8 +8,7 @@ public class Vision {
 	USBCamera cam;
 	NIVision x;
 	
-	public Vision(USBCamera camera){
-		cam = camera;
+	public Vision(){
 	}
 	
 	/**
