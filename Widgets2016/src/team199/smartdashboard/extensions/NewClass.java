@@ -6,14 +6,25 @@ import edu.wpi.first.smartdashboard.properties.Property;
 import edu.wpi.first.smartdashboard.robot.Robot;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.tables.ITable;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 /**
@@ -32,65 +43,62 @@ public class NewClass extends StaticWidget {
     private final JComboBox Defense[] = new JComboBox[4];
     private final JComboBox startingPosition = new JComboBox(new Integer[]{1, 2, 3, 4});
     private ArrayList<Widget.EditorTextField> fields = new ArrayList<>();
+    private JPanel field;
+    
+
+    
+        
 
     @Override
     public void init() {
-        try {
+        /*try {
             prefs = Robot.getPreferences();
         } catch(Exception e) {
             prefs = NetworkTable.getTable("Preferences");
             System.out.println("Preferences not found");
-        }
+        }*/
+        this.field = new JPanel() {
+            @Override
+            public void paint(Graphics g) {
+                Toolkit toolkit = Toolkit.getDefaultToolkit();
+                Image field1 = null;
+                try {
+                    field1 = ImageIO.read(NewClass.class.getResource("Field.png"));
+                } catch (Exception ex) {
+                    System.out.println(ex.getMessage());
+                    System.exit(1);
+                }
+                try {
+                    g.drawImage(field1, 0, 0, null);
+                } catch (Exception ex) {
+                    System.out.println(ex.getCause());
+                    System.exit(1);
+                }
+                /*Image[] defenseImages = new Image[4];
+                for (int i = 0;i < 4;i++) {
+                defenseImages[i] = toolkit.getImage("Image" + Defense[i].getSelectedItem() + ".png");
+                g.drawImage(defenseImages[i], i*100, 200, null);
+                }*/
+            }
+        };
         Defense[0] = new JComboBox(defenses);
         Defense[1] = new JComboBox(defenses);
         Defense[2] = new JComboBox(defenses);
         Defense[3] = new JComboBox(defenses);
+        final BufferedImage image = (new BufferedImage(500, 500, BufferedImage.TYPE_INT_ARGB));
         setPreferredSize(new Dimension(800, 500));
-        //keyBox.setPreferredSize(new Dimension(200, 25));
-        //valueField.setPreferredSize(new Dimension(200, 25));
-        //saveButton.setPreferredSize(new Dimension(100, 25));
-        //removeButton.setPreferredSize(new Dimension(100, 25));
         Defense[0].setPreferredSize(new Dimension(175, 25));
         Defense[1].setPreferredSize(new Dimension(175, 25));
         Defense[2].setPreferredSize(new Dimension(175, 25));
         Defense[3].setPreferredSize(new Dimension(175, 25));
-        keyBox.addItem("New Preference");
-        /*add(keyBox);
-        add(valueField);
-        add(saveButton);
-        add(removeButton);*/
+        field.setPreferredSize(new Dimension(450,450));
         add(Defense[0]);
         add(Defense[1]);
         add(Defense[2]);
         add(Defense[3]);
+        this.add(field);
+        this.setVisible(true);
         update();
-        keyBox.addActionListener((ActionEvent e) -> {
-            readValueOfCurrentKey();
-        });
-        keyBox.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                update();
-            }
-        });
-        valueField.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusLost(FocusEvent e) {
-                writeValueOfCurrentKey();
-            }
-        });
-        prefs.addTableListener((ITable itable, String key, Object value, boolean isNew) -> {
-            readValueOfCurrentKey();
-        }, true);
-        saveButton.addActionListener((ActionEvent e) -> {
-            Robot.getPreferences().putBoolean(Robot.PREF_SAVE_FIELD, true);
-        });
-        removeButton.addActionListener((ActionEvent e) -> {
-            String key = keyBox.getSelectedItem() + "";
-            prefs.delete(key);
-            valueField.setText("");
-            update();
-        });
     }
 
     @Override
@@ -99,40 +107,6 @@ public class NewClass extends StaticWidget {
     
     // Organizes the JComboBox to display alphabetically
     private void update() {
-        String key = keyBox.getSelectedItem() + "";
-        Object[] temp = prefs.getKeys().toArray();
-        Arrays.sort(temp);
-        keyBox.removeAllItems();
-        keyBox.addItem("New Preference");
-        for (Object o: temp) {
-            keyBox.addItem(o);
-        }
-        keyBox.setSelectedItem(key);
         repaint();
-    }
-
-    // Sets the value field to the correct value
-    private void readValueOfCurrentKey() {
-        String key = keyBox.getSelectedItem() + "";
-        if (prefs.containsKey(key)) {
-            valueField.setText(prefs.getValue(key, "") + "");
-        } else {
-            valueField.setText("");
-        }    
-    }
-    
-    // Changes the value of the selected key in the preferences table
-    private void writeValueOfCurrentKey() {
-        String key = keyBox.getSelectedItem() + "";
-        String value = valueField.getText();
-        // Add key
-        if (key.equals("New Preference") && !value.equals("") && !prefs.containsKey(value)) {
-            prefs.putString(value, "");
-            update();
-        }
-        // Change value
-        if(!key.equals("New Preference")) {
-            prefs.putString(key, value);
-        }
     }
 }
