@@ -129,7 +129,7 @@ public class PID implements DashboardSubsystem {
 	
 	@Override
 	public String getKey(String originalKey) {
-		return "PID/" + name + originalKey;
+		return "PID/" + name + " " + originalKey;
 	}
 	
 	@Override
