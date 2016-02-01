@@ -62,7 +62,9 @@ public class OI {
         intakeButton = new JoystickButton(leftJoystick, 1);
         intakeButton.whileHeld(new IntakeBoulder());
 
-
+        SmartDashboard.putData("PID/Test DriveDistance PID", new TestPID(TestPID.System.DRIVEDISTANCE));
+		SmartDashboard.putData("PID/Test DriveSlide PID", new TestPID(TestPID.System.DRIVEANGLE));
+		SmartDashboard.putData("PID/Test DriveAngle PID", new TestPID(TestPID.System.SHOOTER));
         // SmartDashboard Buttons
         SmartDashboard.putData("AutoMode", new AutoMode(4, 2));
         SmartDashboard.putData("AutoDelay", new AutoDelay(0));

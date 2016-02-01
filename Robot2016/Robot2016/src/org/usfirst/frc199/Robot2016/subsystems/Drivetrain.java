@@ -1,5 +1,6 @@
 package org.usfirst.frc199.Robot2016.subsystems;
 
+import org.usfirst.frc199.Robot2016.DashboardSubsystem;
 import org.usfirst.frc199.Robot2016.PID;
 import org.usfirst.frc199.Robot2016.Robot;
 import org.usfirst.frc199.Robot2016.RobotMap;
@@ -17,7 +18,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 /**
  * Moves the robot around the field.
  */
-public class Drivetrain extends Subsystem {
+public class Drivetrain extends Subsystem implements DashboardSubsystem {
 	
 	public static final int AngleOfRangeFinders = 10;// in degrees
 

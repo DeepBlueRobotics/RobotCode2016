@@ -9,6 +9,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.util.ArrayList;
 import java.util.Arrays;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -22,9 +23,10 @@ public class PreferenceWidget extends StaticWidget {
     public static final String NAME = "Preference Widget";
     private final JComboBox keyBox = new JComboBox();
     private final JTextField valueField = new JTextField();
+    private ITable prefs = NetworkTable.getTable("Preferences");
+    private ArrayList<Object> labels = new ArrayList<>();
     private final JButton saveButton = new JButton("Save");
     private final JButton removeButton = new JButton("Remove");
-    private ITable prefs;
 
     @Override
     public void init() {
