@@ -1,7 +1,5 @@
 package org.usfirst.frc199.Robot2016;
 
-import java.io.IOException;
-
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 
 public class Vision {
@@ -19,6 +17,9 @@ public class Vision {
 	Process gettingTargets;
 
 	public Vision() {
+	}
+	
+	public void init() {
 		startGripCommand();
 	}
 	
@@ -37,10 +38,6 @@ public class Vision {
 	 */
 	public void destoryGripCommand(){
 		gettingTargets.destroyForcibly();
-	}
-
-	public void initCamera() {
-		
 	}
 	
 	/**	
