@@ -1,57 +1,31 @@
 package org.usfirst.frc199.Robot2016;
 
-import org.opencv.core.Mat;
-import org.opencv.core.Size;
-import org.opencv.imgproc.Imgproc;
-import org.opencv.videoio.VideoCapture;
+import edu.wpi.first.wpilibj.networktables.NetworkTable;
 
 public class Vision {
+
+	NetworkTable table;
+
+	private final static String GRIP_CMD = "/usr/local/frc/JRE/bin/java -jar /home/lvuser/grip.jar /home/lvuser/FindingTargets.grip";
 
 	final String UrlOfCamera = "http://10.1.0.11";
 	final int CannyDefaultThreshold = 50;
 
-	VideoCapture camera;
-	Mat frame = new Mat();
-	Mat greyscale;
-
 	public Vision() {
-		try {
-			System.out.println("It started the camera constructor.");
-			camera = new VideoCapture(UrlOfCamera);
-			Thread.sleep(500);
-		} catch (InterruptedException e) {
-		}
+		table = NetworkTable.getTable("GRIP/myContourReport");
 	}
 
 	public void initCamera() {
-		camera.retrieve(frame);
-		System.out.println("Frame Obtained");
 	}
-	
-	/**
-	 * 
-	 * Applies canny edge detection to given image. In this case, that image is
-	 * a mat (Matrix with rgb values)
-	 * 
-	 * @param image Image inputed by camera 
-	 * @return A matrix that 
-	 */
-	public Mat doCanny(Mat image){
-		Mat grayImage = new Mat();
-		Mat detectedEdges = new Mat();
-		Imgproc.cvtColor(image, grayImage, Imgproc.COLOR_BGR2GRAY);
-		Imgproc.blur(grayImage, detectedEdges, new Size(3,3));
-		Imgproc.Canny(detectedEdges, detectedEdges, CannyDefaultThreshold, CannyDefaultThreshold * 3, 3, false);
-		return image;
-	}
-	
+
 	/**
 	 * did the target (retro-reflective tape) enter the camera's vision?
 	 * 
-	 * @return true if the entire U shape of retro-reflective tape is in the frame
+	 * @return true if the entire U shape of retro-reflective tape is in the
+	 *         frame
 	 */
-	public boolean isTargetInVisionOfRobotCamera(Mat image) {
-		
+	public boolean isTargetInVisionOfRobotCamera() {
+
 		return false;
 	}
 
