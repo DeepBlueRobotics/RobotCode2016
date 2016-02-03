@@ -14,13 +14,29 @@ public class Vision {
 
 	final String UrlOfCamera = "http://10.1.0.11";
 	final int CannyDefaultThreshold = 50;
+	
+	ProcessBuilder builder = new ProcessBuilder(GRIP_CMD).inheritIO();  //.inheritIO().start()
+	Process gettingTargets;
 
 	public Vision() {
+		startGripCommand();
+	}
+	
+	/**
+	 * Starting the grip command and assign to a Process to allow it to be destroyed.
+	 */
+	public void startGripCommand(){
 		try {
-            new ProcessBuilder(GRIP_CMD).inheritIO().start();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+			gettingTargets = builder.start();
+		} catch (Exception e) {
+		}
+	}
+	
+	/**
+	 * You need the total destruction
+	 */
+	public void destoryGripCommand(){
+		gettingTargets.destroyForcibly();
 	}
 
 	public void initCamera() {
@@ -47,7 +63,7 @@ public class Vision {
 	}
 	
 	/**
-	 * returns index at which it has max double value in array input
+	 * Returns index at which it has max double value in array input
 	 * @param input
 	 * @return
 	 */
