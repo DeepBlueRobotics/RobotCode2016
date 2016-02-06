@@ -11,7 +11,9 @@ import edu.wpi.first.wpilibj.CameraServer;
 public class Vision {
 
 	CameraServer server;
+	String camera = "cam0";
 	
+	int session;
 	Image frame;
 	Image binaryFrame;
 
@@ -19,25 +21,34 @@ public class Vision {
 
 	public Vision() {
 		
-		server = CameraServer.getInstance();
-		server.setQuality(50);
-		server.startAutomaticCapture("cam0");
+//		server = CameraServer.getInstance();
+//		server.setQuality(50);
+//		server.startAutomaticCapture(camera);
 		
-		frame = NIVision.imaqCreateImage(ImageType.IMAGE_RGB, 0);
-		binaryFrame = NIVision.imaqCreateImage(ImageType.IMAGE_U8, 0);
+		frame = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
 
-//		startLookingForTarget();
+        // the camera name (ex "cam0") can be found through the roborio web interface
+        session = NIVision.IMAQdxOpenCamera("cam0",
+                NIVision.IMAQdxCameraControlMode.CameraControlModeController);
+        NIVision.IMAQdxConfigureGrab(session);
+
+		startLookingForTarget();
 	}
 
 	public void startLookingForTarget() {
 
+		NIVision.IMAQdxStartAcquisition(session);
 		NIVision.Rect rect = new NIVision.Rect(10, 10, 100, 100);
 
 		while (isEnabled) {
-			NIVision.imaqDrawShapeOnImage(frame, frame, rect,
-                    DrawMode.DRAW_VALUE, ShapeMode.SHAPE_OVAL, 0.0f);
-			server.setImage(frame);
+			NIVision.IMAQdxGrab(session, frame, 1);
+            NIVision.imaqDrawShapeOnImage(frame, frame, rect,
+                    DrawMode.DRAW_VALUE, ShapeMode.SHAPE_RECT, 1.0f);
+            
+            CameraServer.getInstance().setImage(frame);
 		}
+		
+		NIVision.IMAQdxStopAcquisition(session);
 
 	}
 
