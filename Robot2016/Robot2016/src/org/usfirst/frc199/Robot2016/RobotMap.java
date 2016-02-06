@@ -12,6 +12,10 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.Ultrasonic;
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/master
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 /**
@@ -37,12 +41,17 @@ public class RobotMap {
     public static SpeedController intakePivotMotor;
     public static DigitalInput intakeUpperLimit;
     public static DigitalInput intakeLowerLimit;
+    public static DigitalInput intakeBallLimit; 
     public static SpeedController intakeBeltMotor;
     public static DigitalInput intakeBallSensor;
     public static Solenoid climberExtendPiston;
     public static SpeedController climberWinchMotor;
     public static DigitalInput climberRungDetector;
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/master
     public static void init() {
         drivetrainLeftMotor = new Talon(0);
         LiveWindow.addActuator("Drivetrain", "LeftMotor", (Talon) drivetrainLeftMotor);
@@ -100,6 +109,9 @@ public class RobotMap {
         intakeLowerLimit = new DigitalInput(13);
         LiveWindow.addSensor("Intake", "LowerLimit", intakeLowerLimit);
         
+        intakeBallLimit = new DigitalInput(15);
+        LiveWindow.addSensor("Intake", "MidLimit", intakeBallLimit);
+        
         intakeBeltMotor = new Talon(3);
         LiveWindow.addActuator("Intake", "BeltMotor", (Talon) intakeBeltMotor);
         
@@ -114,5 +126,10 @@ public class RobotMap {
         
         climberRungDetector = new DigitalInput(14);
         LiveWindow.addSensor("Climber", "RungDetector", climberRungDetector);
+<<<<<<< HEAD
+=======
+        
+
+>>>>>>> origin/master
     }
 }

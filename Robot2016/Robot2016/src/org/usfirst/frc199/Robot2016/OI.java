@@ -24,8 +24,14 @@ public class OI {
     public JoystickButton retractClimberButton;
     public JoystickButton manualIntakeButton;
     public JoystickButton manualShooterButton;
+    public JoystickButton intakeUpButton;
+    public JoystickButton intakeDownButton;
     public Joystick manipulator;
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> origin/master
     public OI() {
 
         manipulator = new Joystick(2);
@@ -42,6 +48,11 @@ public class OI {
         feedShooterButton.whileHeld(new FeedShooter());
         runShooterButton = new JoystickButton(manipulator, 8);
         runShooterButton.whileHeld(new RunShooter());
+        intakeUpButton = new JoystickButton(manipulator, 4);
+        intakeUpButton.whileHeld(new RaiseIntake());
+        intakeDownButton = new JoystickButton(manipulator, 2);
+        intakeDownButton.whileHeld(new LowerIntake());
+        
         rightJoystick = new Joystick(1);
         
         shiftLowButton = new JoystickButton(rightJoystick, 3);
@@ -50,12 +61,15 @@ public class OI {
         alignDistanceButton.whileHeld(new AutoAlignDistance());
         shootLowButton = new JoystickButton(rightJoystick, 1);
         shootLowButton.whileHeld(new ShootLow());
+        
         leftJoystick = new Joystick(0);
         
         alignAngleButton = new JoystickButton(leftJoystick, 2);
         alignAngleButton.whileHeld(new AutoAlignAngle());
         intakeButton = new JoystickButton(leftJoystick, 1);
         intakeButton.whileHeld(new IntakeBoulder());
+        
+        
 
         SmartDashboard.putData("PID/Test DriveDistance PID", new TestPID(TestPID.System.DRIVEDISTANCE));
 		SmartDashboard.putData("PID/Test DriveSlide PID", new TestPID(TestPID.System.DRIVEANGLE));
