@@ -25,8 +25,10 @@ public interface DashboardSubsystem {
 		key = getKey(key);
 		if(value instanceof String) {
 			SmartDashboard.putString(key, (String)value);
-		} else if(value instanceof Double || value instanceof Integer) {
+		} else if(value instanceof Double) {
 			SmartDashboard.putNumber(key, (double)value);
+		} else if(value instanceof Integer) {
+			SmartDashboard.putNumber(key, ((Integer)value).doubleValue());
 		} else if(value instanceof Boolean) {
 			SmartDashboard.putBoolean(key, (boolean)value);
 		} else if(value instanceof Sendable) {
