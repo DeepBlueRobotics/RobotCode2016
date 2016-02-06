@@ -39,7 +39,9 @@ public class OmniWidget extends AbstractTableWidget{
             }
         }, false);
         prefs.getKeys().stream().forEach((key) -> {
-            addNew(key, prefs.getValue(key, ""));
+            if(!key.equals("~TYPE~")) {
+                addNew(key, prefs.getValue(key, ""));
+            }
         });
     }
 

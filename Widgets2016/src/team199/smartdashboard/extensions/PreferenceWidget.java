@@ -108,7 +108,7 @@ public class PreferenceWidget extends StaticWidget {
         String value = valueField.getText();
         // Add key
         if (key.equals("New Preference") && !value.equals("") && !prefs.containsKey(value)) {
-            write(value, "");
+            write(value, "0.0");
             update();
         }
         // Change value
@@ -119,12 +119,14 @@ public class PreferenceWidget extends StaticWidget {
     
     // Writes a preference to the table
     private void write(String key, String value) {
-        if(key.matches("\\d+(\\.\\d+)?")) {
-            prefs.putNumber(key, Double.parseDouble(value));
-        } else if(value.equals("true")||value.equals("false")) {
+        if(value.equals("true")||value.equals("false")) {
             prefs.putBoolean(key, value.equals("true"));
         } else {
-            prefs.putString(key, value);
+            try {
+                prefs.putNumber(key, Double.parseDouble(value));
+            } catch(Exception e) {
+                System.out.println("Error: Wrong data type");
+            }
         }
     }
 }
