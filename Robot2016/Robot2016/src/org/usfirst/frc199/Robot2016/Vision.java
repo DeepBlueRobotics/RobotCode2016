@@ -1,13 +1,17 @@
 package org.usfirst.frc199.Robot2016;
 
 import com.ni.vision.NIVision;
+import com.ni.vision.NIVision.DrawMode;
 import com.ni.vision.NIVision.Image;
 import com.ni.vision.NIVision.ImageType;
+import com.ni.vision.NIVision.ShapeMode;
 
 import edu.wpi.first.wpilibj.CameraServer;
 
 public class Vision {
 
+	CameraServer server;
+	
 	int session;
 	Image frame;
 	Image binaryFrame;
@@ -15,6 +19,11 @@ public class Vision {
 	boolean isEnabled = true;
 
 	public Vision() {
+		
+		server = CameraServer.getInstance();
+		server.setQuality(50);
+		server.startAutomaticCapture("cam0");
+		
 		frame = NIVision.imaqCreateImage(ImageType.IMAGE_RGB, 0);
 		binaryFrame = NIVision.imaqCreateImage(ImageType.IMAGE_U8, 0);
 
@@ -22,18 +31,20 @@ public class Vision {
 
 		NIVision.IMAQdxConfigureGrab(session);
 
-		startLookingForTarget();
+//		startLookingForTarget();
 	}
 
 	public void startLookingForTarget() {
 		NIVision.IMAQdxStartAcquisition(session);
 
-		CameraServer.getInstance().setImage(frame);
+		NIVision.Rect rect = new NIVision.Rect(10, 10, 100, 100);
 
 		while (isEnabled) {
 
 			NIVision.IMAQdxGrab(session, frame, 1);
-			
+			NIVision.imaqDrawShapeOnImage(frame, frame, rect,
+                    DrawMode.DRAW_VALUE, ShapeMode.SHAPE_OVAL, 0.0f);
+			server.setImage(frame);
 
 		}
 
