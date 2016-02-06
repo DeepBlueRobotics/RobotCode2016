@@ -1,9 +1,11 @@
 package org.usfirst.frc199.Robot2016.subsystems;
 
 import org.usfirst.frc199.Robot2016.DashboardSubsystem;
+import org.usfirst.frc199.Robot2016.PID;
 import org.usfirst.frc199.Robot2016.RobotMap;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
@@ -15,10 +17,14 @@ public class Intake extends Subsystem implements DashboardSubsystem {
 	private final SpeedController rollerMotor = RobotMap.intakeRollerMotor;
 	private final SpeedController pivotMotor = RobotMap.intakePivotMotor;
 	private final DigitalInput upperLimit = RobotMap.intakeUpperLimit;
-	private final DigitalInput midLimit = RobotMap.intakeBallLimit;
 	private final DigitalInput lowerLimit = RobotMap.intakeLowerLimit;
 	private final SpeedController beltMotor = RobotMap.intakeBeltMotor;
 	private final DigitalInput ballSensor = RobotMap.intakeBallSensor;
+	private final Encoder pivotEncoder = RobotMap.intakePivotEncoder;
+	
+	private PID pivotPID = new PID("IntakePivot");
+	private double midLowAngle = 0;	//Measure angle between mid and low positions
+	private double midHighAngle = 0; 	//Measure angle between mid and high positions
 
 
 	// Put methods for controlling this subsystem
@@ -41,9 +47,17 @@ public class Intake extends Subsystem implements DashboardSubsystem {
 	 * @param speed - The speed at which the motor should run
 	 */
 	public void pivot(double speed) {
-		pivotMotor.set(-speed);
+		pivotMotor.set(speed);
 	}
 	
+	public void setTargetAngle(double angle) {
+		pivotEncoder.reset();
+		pivotPID.setTarget(angle);
+	}
+	
+	public void updateAngle(double newAngle) {
+		pivotPID.update(pivotEncoder.getDistance());
+	}
 	/**
 	 * Returns true when the intake has reached one spot past its initial position  
 	 * 
@@ -52,8 +66,9 @@ public class Intake extends Subsystem implements DashboardSubsystem {
 	public boolean shouldStop(int initPos) {
 		switch (initPos) {
 		case 1: 
+			return pivotPID.reachedTarget() || lowerLimit.get();
 		case 3:
-			return midLimit.get();
+			return pivotPID.reachedTarget() || upperLimit.get();
 		case 2:
 			return lowerLimit.get() || upperLimit.get();
 		case 0:
@@ -73,14 +88,12 @@ public class Intake extends Subsystem implements DashboardSubsystem {
 	
 	public int getPosition() {
 		int pos = 0;
-		if( upperLimit.get() && !midLimit.get() && !lowerLimit.get()) {
+		if( upperLimit.get() && !lowerLimit.get()) {
 			pos = 1;
-		} else if( midLimit.get() && !upperLimit.get() && !lowerLimit.get() ) {
+		} else if( !upperLimit.get() && !lowerLimit.get() ) {
 			pos = 2;
-		} else if( lowerLimit.get() && !upperLimit.get() && !midLimit.get() ) {
+		} else if( lowerLimit.get() && !upperLimit.get() ) {
 			pos = 3;
-		} else if( !upperLimit.get() && !midLimit.get() && !lowerLimit.get()) {
-			pos = 2;
 		} else {
 			System.out.println("Multiple limit switches activated on intake.");
 		}

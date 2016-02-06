@@ -7,6 +7,7 @@ import org.usfirst.frc199.Robot2016.RobotMap;
 import org.usfirst.frc199.Robot2016.commands.TeleopDriveMode;
 
 import edu.wpi.first.wpilibj.AnalogGyro;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
@@ -28,8 +29,7 @@ public class Drivetrain extends Subsystem implements DashboardSubsystem {
     private final AnalogGyro gyro = RobotMap.drivetrainGyro;
     private final Encoder leftEncoder = RobotMap.drivetrainLeftEncoder;
     private final Encoder rightEncoder = RobotMap.drivetrainRightEncoder;
-    private final Ultrasonic leftUltrasonic = RobotMap.drivetrainLeftUltrasonic;
-    private final Ultrasonic rightUltrasonic = RobotMap.drivetrainRightUltrasonic;
+    private final AnalogInput ultrasonic = RobotMap.drivetrainUltrasonic;
     private final Compressor compressor = RobotMap.drivetrainCompressor;
     
     private final DoubleSolenoid shifter = RobotMap.drivetrainShifter;
@@ -61,16 +61,8 @@ public class Drivetrain extends Subsystem implements DashboardSubsystem {
 		}
     }
     
-    public double getRangeFinderInchesLeft(){
-    	return leftUltrasonic.getRangeInches();
-    }
-    
-    public double getRangeFinderInchesRight(){
-    	return rightUltrasonic.getRangeInches();
-    }
-    
     public double getRangefinderDistance(){
-    	return (getRangeFinderInchesLeft() + getRangeFinderInchesRight())/2;
+    	return ultrasonic.getAverageVoltage();		//put in formula for conversion
     }
     
     //Requires PID

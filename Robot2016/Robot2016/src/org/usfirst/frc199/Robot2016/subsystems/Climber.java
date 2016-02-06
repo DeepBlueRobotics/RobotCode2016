@@ -13,9 +13,8 @@ import edu.wpi.first.wpilibj.command.Subsystem;
  */
 public class Climber extends Subsystem implements DashboardSubsystem {
 	
-	private final Solenoid extendPiston = RobotMap.climberExtendPiston;
+	private final SpeedController extendPiston = RobotMap.climberExtendMotor;
     private final SpeedController winchMotor = RobotMap.climberWinchMotor;
-    private final DigitalInput rungDetector = RobotMap.climberRungDetector;
 
     public void initDefaultCommand() {
     	
