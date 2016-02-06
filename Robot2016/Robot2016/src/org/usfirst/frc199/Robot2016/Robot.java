@@ -46,6 +46,11 @@ public class Robot extends IterativeRobot {
     	subsystems.add(intake);
     	subsystems.add(drivetrain);
         oi = new OI();
+        for(DashboardSubsystem s: Robot.subsystems) {
+    		if(!s.getKey("").substring(0, 4).equals("PID/")) {
+    			s.display("~TYPE~", "SubSystem");
+    		}
+    	}
     }
 
     /**

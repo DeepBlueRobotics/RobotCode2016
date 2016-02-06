@@ -16,11 +16,6 @@ public class UpdateDashboard extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	for(DashboardSubsystem s: Robot.subsystems) {
-    		if(!s.getKey("").substring(0, 4).equals("PID/")) {
-    			s.display("~TYPE~", "SubSystem");
-    		}
-    	}
     }
 
     // Called repeatedly when this Command is scheduled to run
