@@ -17,7 +17,7 @@ public class PID implements DashboardSubsystem {
 	private final String name; // The name of the loop for preferences and SmartDashboard
 	
 	// Current state:
-	private Timer intervalTimer; // Keeps track of loop frequency
+	private Timer intervalTimer = new Timer(); // Keeps track of loop frequency
 	private double input; // Current input value
 	private double error; // Current error value
 	private double lastError; // Previous error value
