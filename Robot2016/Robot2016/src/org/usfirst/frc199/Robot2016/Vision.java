@@ -12,7 +12,6 @@ public class Vision {
 
 	CameraServer server;
 	
-	int session;
 	Image frame;
 	Image binaryFrame;
 
@@ -27,21 +26,15 @@ public class Vision {
 		frame = NIVision.imaqCreateImage(ImageType.IMAGE_RGB, 0);
 		binaryFrame = NIVision.imaqCreateImage(ImageType.IMAGE_U8, 0);
 
-		session = NIVision.IMAQdxOpenCamera("cam0", NIVision.IMAQdxCameraControlMode.CameraControlModeController);
-
-		NIVision.IMAQdxConfigureGrab(session);
-
 //		startLookingForTarget();
 	}
 
 	public void startLookingForTarget() {
-		NIVision.IMAQdxStartAcquisition(session);
 
 		NIVision.Rect rect = new NIVision.Rect(10, 10, 100, 100);
 
 		while (isEnabled) {
 
-			NIVision.IMAQdxGrab(session, frame, 1);
 			NIVision.imaqDrawShapeOnImage(frame, frame, rect,
                     DrawMode.DRAW_VALUE, ShapeMode.SHAPE_OVAL, 0.0f);
 			server.setImage(frame);
