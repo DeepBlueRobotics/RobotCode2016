@@ -3,6 +3,9 @@ package org.usfirst.frc199.Robot2016;
 import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+/**
+ * An interface for subsystems capable of being displayed on the dashboard.
+ */
 public interface DashboardSubsystem {
 	
 	/**

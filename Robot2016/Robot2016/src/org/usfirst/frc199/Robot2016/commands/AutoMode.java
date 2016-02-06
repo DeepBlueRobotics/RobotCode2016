@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class AutoMode extends CommandGroup {
 
 	/**
-	 * 
 	 * @param defense - 
 	 *            the defense which we are trying to pass 1 - Low bar (X) 2 -
 	 *            Portcullis (A) 3 - Cheval de frise (A) 4 - Moat (B) 5 -
@@ -16,7 +15,6 @@ public class AutoMode extends CommandGroup {
 	 *            Wall (D) 9 - Rough Terrain (D)
 	 * @param position - 
 	 *            can be 1, 2, 3, 4, 5
-	 * 
 	 */
 	public AutoMode(int defense, int position) {
 
