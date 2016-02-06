@@ -66,10 +66,12 @@ public class Robot extends IterativeRobot {
     }
 
     public void autonomousInit() {
+    	Scheduler.getInstance().removeAll();
     	int defense = (int)SmartDashboard.getNumber("Auto/Defense");
     	int position = (int)SmartDashboard.getNumber("Auto/Position");
     	autonomousCommand = new AutoMode(defense, position);
     	autonomousCommand.start();
+    	new UpdateDashboard().start();
     }
 
     /**
@@ -80,8 +82,9 @@ public class Robot extends IterativeRobot {
     }
 
     public void teleopInit() {
-        if (autonomousCommand != null) autonomousCommand.cancel();
+        Scheduler.getInstance().removeAll();
         new StartCompressor().start();
+        new UpdateDashboard().start();
     }
 
     /**
