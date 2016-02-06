@@ -34,11 +34,9 @@ public class Vision {
 		NIVision.Rect rect = new NIVision.Rect(10, 10, 100, 100);
 
 		while (isEnabled) {
-
 			NIVision.imaqDrawShapeOnImage(frame, frame, rect,
                     DrawMode.DRAW_VALUE, ShapeMode.SHAPE_OVAL, 0.0f);
 			server.setImage(frame);
-
 		}
 
 	}
