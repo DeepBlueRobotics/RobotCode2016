@@ -27,11 +27,7 @@ public class OI {
     public JoystickButton intakeUpButton;
     public JoystickButton intakeDownButton;
     public Joystick manipulator;
-<<<<<<< HEAD
-    
-=======
 
->>>>>>> origin/master
     public OI() {
 
         manipulator = new Joystick(2);

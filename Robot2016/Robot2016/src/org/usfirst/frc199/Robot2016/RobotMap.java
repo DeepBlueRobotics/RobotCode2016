@@ -12,10 +12,6 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.Ultrasonic;
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/master
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 /**
@@ -48,10 +44,6 @@ public class RobotMap {
     public static SpeedController climberWinchMotor;
     public static DigitalInput climberRungDetector;
 
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/master
     public static void init() {
         drivetrainLeftMotor = new Talon(0);
         LiveWindow.addActuator("Drivetrain", "LeftMotor", (Talon) drivetrainLeftMotor);
@@ -126,10 +118,5 @@ public class RobotMap {
         
         climberRungDetector = new DigitalInput(14);
         LiveWindow.addSensor("Climber", "RungDetector", climberRungDetector);
-<<<<<<< HEAD
-=======
-        
-
->>>>>>> origin/master
     }
 }
