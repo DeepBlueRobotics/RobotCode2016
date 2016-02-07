@@ -7,80 +7,78 @@ import com.ni.vision.NIVision.ImageType;
 import com.ni.vision.NIVision.ShapeMode;
 
 import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.wpilibj.networktables.NetworkTable;
 
 public class Vision {
 
 	CameraServer server;
 	String camera = "cam0";
-	
+
 	int session;
 	Image frame;
+	Image frame2;
 	Image binaryFrame;
+
+	NIVision.Range hue = new NIVision.Range(0, 105);
+	NIVision.Range sat = new NIVision.Range(32, 255);
+	NIVision.Range val = new NIVision.Range(0, 255);
+
+	NIVision.Rect rect;
 
 	boolean isEnabled = true;
 
 	public Vision() {
-		
-//		server = CameraServer.getInstance();
-//		server.setQuality(50);
-//		server.startAutomaticCapture(camera);
-		
+
 		frame = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
+		frame2 = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
+		binaryFrame = NIVision.imaqCreateImage(ImageType.IMAGE_U8, 0);
 
-        // the camera name (ex "cam0") can be found through the roborio web interface
-        session = NIVision.IMAQdxOpenCamera("cam0",
-                NIVision.IMAQdxCameraControlMode.CameraControlModeController);
-        NIVision.IMAQdxConfigureGrab(session);
+		int square = 50;
+		rect = new NIVision.Rect(480 / 2 - square / 2, 640 / 2 - square / 2, square, square);
 
-		startLookingForTarget();
-	}
-
-	public void startLookingForTarget() {
+		session = NIVision.IMAQdxOpenCamera(camera, NIVision.IMAQdxCameraControlMode.CameraControlModeController);
+		NIVision.IMAQdxConfigureGrab(session);
 
 		NIVision.IMAQdxStartAcquisition(session);
-		NIVision.Rect rect = new NIVision.Rect(10, 10, 100, 100);
-
-		while (isEnabled) {
-			NIVision.IMAQdxGrab(session, frame, 1);
-            NIVision.imaqDrawShapeOnImage(frame, frame, rect,
-                    DrawMode.DRAW_VALUE, ShapeMode.SHAPE_RECT, 1.0f);
-            
-            CameraServer.getInstance().setImage(frame);
-		}
-		
-		NIVision.IMAQdxStopAcquisition(session);
-
+		runCameraViewer();
+		init();
 	}
 
-	// private final static String GRIP_CMD = "/usr/local/frc/JRE/bin/java -jar
-	// /home/lvuser/grip.jar /home/lvuser/FindingTargets.grip";
-	// NetworkTable table = NetworkTable.getTable("GRIP/myContoursReport");
+	public void runCameraViewer() {
+		int counter = 0;
+		while (isEnabled) {
+			NIVision.IMAQdxGrab(session, frame, 1);
 
-	// ProcessBuilder builder = new ProcessBuilder(GRIP_CMD).inheritIO();
-	// //.inheritIO().start()
-	// Process gettingTargets;
+			// Manipulate frame
+			NIVision.imaqDrawShapeOnImage(frame, frame, rect, DrawMode.PAINT_VALUE, ShapeMode.SHAPE_RECT, 0);
 
-	// public void init() {
-	// startGripCommand();
-	// }
-	//
-	// /**
-	// * Starting the grip command and assign to a Process to allow it to be
-	// destroyed.
-	// */
-	// public void startGripCommand(){
-	// try {
-	// gettingTargets = builder.start();
-	// } catch (Exception e) {
-	// }
-	// }
-	//
-	// /**
-	// * You need the total destruction
-	// */
-	// public void destoryGripCommand(){
-	// gettingTargets.destroyForcibly();
-	// }
+			// Send frame2 to a widget
+			CameraServer.getInstance().setImage(frame);
+			counter++;
+			if (counter > 10000)
+				isEnabled = !isEnabled;
+		}
+		NIVision.IMAQdxCloseCamera(session);
+	}
+
+	private final static String[] GRIP_ARGS = new String[] { "/usr/local/frc/JRE/bin/java", "-jar",
+			"/home/lvuser/grip.jar", "/home/lvuser/project.grip" };
+	NetworkTable table = NetworkTable.getTable("GRIP/myContoursReport");
+
+	public void init() {
+		startGripCommand();
+	}
+
+	/**
+	 * Starting the grip command and assign to a Process to allow it to be
+	 * destroyed.
+	 */
+	public void startGripCommand() {
+		try {
+			Runtime.getRuntime().exec(GRIP_ARGS);
+		} catch (Exception e) {
+		}
+	}
 
 	/**
 	 * 
