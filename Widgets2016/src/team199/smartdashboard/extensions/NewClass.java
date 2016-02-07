@@ -96,6 +96,7 @@ public class NewClass extends StaticWidget {
                     System.out.println(defenseImages[i]);
                     g.drawImage(defenseImages[i], 87, i*70+105, 50, 50, null);
                 }
+                NewClass.this.repaint();
             }
         };
         final BufferedImage image = (new BufferedImage(500, 500, BufferedImage.TYPE_INT_ARGB));
