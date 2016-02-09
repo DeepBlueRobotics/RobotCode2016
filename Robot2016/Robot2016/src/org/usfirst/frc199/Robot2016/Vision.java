@@ -1,13 +1,12 @@
 package org.usfirst.frc199.Robot2016;
 
 import com.ni.vision.NIVision;
-import com.ni.vision.NIVision.DrawMode;
 import com.ni.vision.NIVision.Image;
-import com.ni.vision.NIVision.ImageType;
-import com.ni.vision.NIVision.ShapeMode;
+import com.ni.vision.NIVision.RGBValue;
 
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Vision {
 
@@ -19,10 +18,11 @@ public class Vision {
 	Image frame2;
 	Image binaryFrame;
 
+	Thread runCamera;
+
 	NIVision.Range hue = new NIVision.Range(0, 105);
 	NIVision.Range sat = new NIVision.Range(32, 255);
 	NIVision.Range val = new NIVision.Range(0, 255);
-
 	NIVision.Rect rect;
 
 	boolean isEnabled = true;
@@ -30,35 +30,34 @@ public class Vision {
 	public Vision() {
 
 		frame = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
-		frame2 = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
-		binaryFrame = NIVision.imaqCreateImage(ImageType.IMAGE_U8, 0);
 
 		int square = 50;
 		rect = new NIVision.Rect(480 / 2 - square / 2, 640 / 2 - square / 2, square, square);
 
 		session = NIVision.IMAQdxOpenCamera(camera, NIVision.IMAQdxCameraControlMode.CameraControlModeController);
 		NIVision.IMAQdxConfigureGrab(session);
-
-		NIVision.IMAQdxStartAcquisition(session);
-		runCameraViewer();
-		init();
 	}
 
-	public void runCameraViewer() {
-		int counter = 0;
-		while (isEnabled) {
-			NIVision.IMAQdxGrab(session, frame, 1);
-
-			// Manipulate frame
-			NIVision.imaqDrawShapeOnImage(frame, frame, rect, DrawMode.PAINT_VALUE, ShapeMode.SHAPE_RECT, 0);
-
-			// Send frame2 to a widget
-			CameraServer.getInstance().setImage(frame);
-			counter++;
-			if (counter > 10000)
-				isEnabled = !isEnabled;
-		}
-		NIVision.IMAQdxCloseCamera(session);
+	public void startCamera() {
+		runCamera = new Thread() {
+			public synchronized void run() {
+				try {
+					isEnabled = true;
+					NIVision.IMAQdxStartAcquisition(session);
+					while (true) {
+						NIVision.IMAQdxGrab(session, frame, 1);
+						CameraServer.getInstance().setImage(frame);
+						Thread.sleep(50);
+					}
+				} catch (Exception e) {
+					SmartDashboard.putString("Thread failure", e.toString());
+					NIVision.IMAQdxCloseCamera(session);
+					isEnabled = false;
+				}
+			}
+		};
+		runCamera.start();
+		SmartDashboard.putString("Start thread?", runCamera.isAlive() + "");
 	}
 
 	private final static String[] GRIP_ARGS = new String[] { "/usr/local/frc/JRE/bin/java", "-jar",
@@ -77,6 +76,18 @@ public class Vision {
 		try {
 			Runtime.getRuntime().exec(GRIP_ARGS);
 		} catch (Exception e) {
+		}
+	}
+
+	NIVision.RGBValue rgb = new RGBValue();
+
+	public void writingImage(NIVision.Image image) {
+		try {
+			Image bi = image;
+			String outputfile = "/home/lvuser/Image.png";
+			NIVision.imaqWriteFile(bi, outputfile, rgb);
+		} catch (Exception e) {
+			System.err.println(e);
 		}
 	}
 

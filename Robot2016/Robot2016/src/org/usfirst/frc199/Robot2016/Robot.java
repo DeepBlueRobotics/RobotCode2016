@@ -29,7 +29,7 @@ public class Robot extends IterativeRobot {
     public static Shooter shooter;
     public static Intake intake;
     public static Climber climber;
-
+    
     /**
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
@@ -37,6 +37,7 @@ public class Robot extends IterativeRobot {
     public void robotInit() {
     	RobotMap.init();
     	vision = new Vision();
+    	vision.startCamera();
         drivetrain = new Drivetrain();
         shooter = new Shooter();
         intake = new Intake();
@@ -67,8 +68,8 @@ public class Robot extends IterativeRobot {
 
     public void autonomousInit() {
     	Scheduler.getInstance().removeAll();
-    	int defense = (int)SmartDashboard.getNumber("Auto/Defense");
-    	int position = (int)SmartDashboard.getNumber("Auto/Position");
+    	int defense = (int)SmartDashboard.getNumber("Auto/Defense", 0.0);
+    	int position = (int)SmartDashboard.getNumber("Auto/Position", 0.0);
     	autonomousCommand = new AutoMode(defense, position);
     	autonomousCommand.start();
     	new UpdateDashboard().start();
