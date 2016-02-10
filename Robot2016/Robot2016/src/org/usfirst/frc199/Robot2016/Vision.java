@@ -1,5 +1,7 @@
 package org.usfirst.frc199.Robot2016;
 
+import java.util.Scanner;
+
 import com.ni.vision.NIVision;
 import com.ni.vision.NIVision.Image;
 import com.ni.vision.NIVision.RGBValue;
@@ -15,15 +17,20 @@ public class Vision {
 
 	int session;
 	Image frame;
-	Image frame2;
-	Image binaryFrame;
+	
+	Process process;
 
 	Thread runCamera;
+	Thread runGrip;
+
+	RGBValue rgb = new RGBValue();
 
 	NIVision.Range hue = new NIVision.Range(0, 105);
 	NIVision.Range sat = new NIVision.Range(32, 255);
 	NIVision.Range val = new NIVision.Range(0, 255);
 	NIVision.Rect rect;
+
+	private final NetworkTable grip = NetworkTable.getTable("grip");
 
 	boolean isEnabled = true;
 
@@ -33,9 +40,12 @@ public class Vision {
 
 		int square = 50;
 		rect = new NIVision.Rect(480 / 2 - square / 2, 640 / 2 - square / 2, square, square);
+		
+		grip.putValue("Test", "test");
 
 		session = NIVision.IMAQdxOpenCamera(camera, NIVision.IMAQdxCameraControlMode.CameraControlModeController);
 		NIVision.IMAQdxConfigureGrab(session);
+
 	}
 
 	public void startCamera() {
@@ -50,7 +60,7 @@ public class Vision {
 						Thread.sleep(50);
 					}
 				} catch (Exception e) {
-					SmartDashboard.putString("Thread failure", e.toString());
+					SmartDashboard.putString("Image Thread failure", e.toString());
 					NIVision.IMAQdxCloseCamera(session);
 					isEnabled = false;
 				}
@@ -62,32 +72,29 @@ public class Vision {
 
 	private final static String[] GRIP_ARGS = new String[] { "/usr/local/frc/JRE/bin/java", "-jar",
 			"/home/lvuser/grip.jar", "/home/lvuser/project.grip" };
-	NetworkTable table = NetworkTable.getTable("GRIP/myContoursReport");
 
 	public void init() {
-		startGripCommand();
-	}
-
-	/**
-	 * Starting the grip command and assign to a Process to allow it to be
-	 * destroyed.
-	 */
-	public void startGripCommand() {
 		try {
-			Runtime.getRuntime().exec(GRIP_ARGS);
+			process = Runtime.getRuntime().exec(GRIP_ARGS);
+			SmartDashboard.putString("Running Grip?", process.isAlive() + "?" + new Scanner(process.getErrorStream()).nextLine());
+			// Error: true?Java HotSpot(TM) Embedded Client VM warning: INFO: os::commit_memory(0xae59a000, 131072, 0) failed; error='Cannot allocate memory' (errno=12)
 		} catch (Exception e) {
+			SmartDashboard.putString("Grip Thread Failure", e.toString());
 		}
 	}
 
-	NIVision.RGBValue rgb = new RGBValue();
+	public void closeGripProcess() {
+		process.destroyForcibly();
+	}
 
-	public void writingImage(NIVision.Image image) {
+	public void writingImage() {
 		try {
-			Image bi = image;
+			Image bi = frame;
 			String outputfile = "/home/lvuser/Image.png";
+			SmartDashboard.putString("Writing File", "successful?");
 			NIVision.imaqWriteFile(bi, outputfile, rgb);
 		} catch (Exception e) {
-			System.err.println(e);
+			SmartDashboard.putString("Writing File", e.toString());
 		}
 	}
 

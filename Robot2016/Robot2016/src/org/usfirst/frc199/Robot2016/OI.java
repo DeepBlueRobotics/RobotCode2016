@@ -91,6 +91,7 @@ public class OI {
         SmartDashboard.putData("UpdateDashboard", new UpdateDashboard());
         SmartDashboard.putData("StartCompressor", new StartCompressor());
         SmartDashboard.putData("ShiftLow", new ShiftLow());
+        SmartDashboard.putData("CameraAnalysis", new GetMaxValue());
     }
 
     public Joystick getLeftJoystick() {
