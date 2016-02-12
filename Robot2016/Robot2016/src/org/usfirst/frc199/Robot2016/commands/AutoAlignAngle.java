@@ -16,26 +16,11 @@ public class AutoAlignAngle extends Command {
 	}
 
 	public AutoAlignAngle(int position) {
-		// Position = "2" "3" "4" "5"
-//		if (position == 2 || position == 3)
-//			direction = RIGHT;
-//		if (position == 4 || position == 5)
-//			direction = LEFT;
 		requires(Robot.drivetrain);
 	}
 
 	// Called just before this Command runs the first time
 	protected void initialize() {
-		
-		// What if the range finder is off the field
-//    		if(Robot.drivetrain.getRangeFinderInchesLeft() > 31 * 12){
-//    			direction = RIGHT;
-//    		}else if(Robot.drivetrain.getRangeFinderInchesRight() > 31 * 12){
-//    			direction = LEFT;
-//    		}else{
-//	    		// SmartDashboard button for driver to choose left/right
-//    		}
-//    	}
     	Robot.drivetrain.setAutoAlignAngleTarget();
     }
 

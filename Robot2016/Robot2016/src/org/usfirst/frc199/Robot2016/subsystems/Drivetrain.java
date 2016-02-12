@@ -70,15 +70,10 @@ public class Drivetrain extends Subsystem implements DashboardSubsystem {
 		distancePID.update(getRangefinderDistance());
 		anglePID.update(gyro.getAngle());
 		arcadeInput(distancePID.getOutput(),0);
-	} 
-    
-    public void setRangefinderTarget(double target) { 
-		distancePID.setTarget(target);
-		anglePID.setTarget(0);
 	}
     
     public void setAutoAlignAngleTarget(){
-    	anglePID.setTarget(0);
+    	anglePID.setTarget(Robot.vision.degreeToTarget());
     }
     
     public void updateAutoAlignPID(double angle){

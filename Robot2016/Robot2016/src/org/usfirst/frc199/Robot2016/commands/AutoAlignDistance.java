@@ -9,7 +9,7 @@ import org.usfirst.frc199.Robot2016.Robot;
  */
 public class AutoAlignDistance extends Command {
 
-	int distance;
+	double distance;
 	boolean targetAcquired;
 	
 	public AutoAlignDistance() {
@@ -17,7 +17,7 @@ public class AutoAlignDistance extends Command {
         requires(Robot.drivetrain);
     }
     
-    public AutoAlignDistance(int distance){
+    public AutoAlignDistance(double distance){
     	this.distance = distance;
     	requires(Robot.drivetrain);
     }
@@ -25,7 +25,7 @@ public class AutoAlignDistance extends Command {
     // Called just before this Command runs the first time
     protected void initialize() {
     	targetAcquired = false; 
-    	Robot.drivetrain.setRangefinderTarget(distance);
+    	Robot.drivetrain.setAutoTarget(distance, 0);
     }
 
     // Called repeatedly when this Command is scheduled to run
