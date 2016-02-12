@@ -17,7 +17,7 @@ public class Vision {
 
 	CameraServer server;
 	USBCamera camera;
-	static final int WIDTH = 320, HEIGHT = 240;
+	static final int WIDTH = 128, HEIGHT = 72;
 
 	int session;
 
@@ -31,9 +31,6 @@ public class Vision {
 
 	RGBValue rgb = new RGBValue();
 
-	NIVision.Range hue = new NIVision.Range(0, 105);
-	NIVision.Range sat = new NIVision.Range(32, 255);
-	NIVision.Range val = new NIVision.Range(0, 255);
 	NIVision.Rect rect;
 
 	// Image processing that we did in GRIP: HSL - H:71-105, S:32-255, L:70-195
@@ -42,10 +39,6 @@ public class Vision {
 	// Min Area: 75; Min Perimeter: 150; Min/Max Width: 0,100; Min/Max Height:
 	// 0,100; Solidity: 0-100
 	// Published Contours Report
-
-	NIVision.Range hueForHSL = new NIVision.Range(71, 105);
-	NIVision.Range satForHSL = new NIVision.Range(32, 255);
-	NIVision.Range luminescenceForHSL = new NIVision.Range(70, 195);
 
 	int minArea = 75, minPerimeter = 150;
 	int minWidth = 0, maxWidth = 100;
@@ -70,6 +63,26 @@ public class Vision {
 		public int imageHeight;
 		public int imageWidth;
 		public int boundingRectWidth;
+		
+		public ParticleReport() {
+			implementation();
+		}
+		
+		private void implementation(){
+			percentAreaToImageArea = 0;
+			area = 0;
+			convexHullArea = 0;
+			convexHullPerimeter = 0;
+			boundingRectBottom = 0;
+			boundingRectLeft = 0;
+			boundingRectRight = 0;
+			boundingRectTop = 0;
+			boundingRectWidth = 0;
+			center_mass_x = 0;
+			center_mass_y = 0;
+			imageHeight = 0;
+			imageWidth = 0;
+		}
 
 		@Override
 		public int compare(ParticleReport r1, ParticleReport r2) {
@@ -88,7 +101,7 @@ public class Vision {
 	public Vision() {
 
 		frame = NIVision.imaqCreateImage(ImageType.IMAGE_RGB, 0);
-		hslimage = NIVision.imaqCreateImage(ImageType.IMAGE_RGB, 0);
+		hslimage = NIVision.imaqCreateImage(ImageType.IMAGE_U8, 0);
 
 		// int square = 50;
 		reports = null;
@@ -109,13 +122,15 @@ public class Vision {
 					isEnabled = true;
 					camera.startCapture();
 					while (true) {
-						// for testing, upload hslimage to camera server and not the normal frame.
-						
+						// for testing, upload hslimage to camera server and not
+						// the normal frame.
+
 						camera.getImage(frame);
+						applyHSLFilter();
+
+						// updateParticalAnalysisReports(frame);
+						// uploadToContourReport();
 						CameraServer.getInstance().setImage(frame);
-						implementHSLFilter(hslimage, frame);
-						updateParticalAnalysisReports(hslimage);
-						uploadToContourReport();
 						Thread.sleep(50);
 					}
 				} catch (Exception e) {
@@ -126,7 +141,50 @@ public class Vision {
 			}
 		};
 		runCamera.start();
-		SmartDashboard.putString("Start camera?", runCamera.isAlive() + "");
+		// try {
+		// SmartDashboard.putNumber("Particles count: ",
+		// NIVision.imaqCountParticles(frame, 1));
+		// } catch (Exception e) {
+		// SmartDashboard.putString("Count Particles", "Doesn't work");
+		// }
+	}
+
+	NIVision.Range hueRange = new NIVision.Range(0, 255);// 71, 105);
+	NIVision.Range satRange = new NIVision.Range(0, 255);// 32, 255);
+	NIVision.Range luminescenceForHSL = new NIVision.Range(0, 255);// 70, 195);
+	NIVision.Range valueForHSV = new NIVision.Range(0, 255);// (0,255);
+
+	private void applyHSLFilter() {
+		NIVision.imaqColorThreshold(hslimage, frame, 255, NIVision.ColorMode.HSL, hueRange, satRange,
+				luminescenceForHSL);
+	}
+
+	public void updateParticalAnalysisReports(NIVision.Image image) {
+		final int numParticles = NIVision.imaqCountParticles(image, 0);
+		SmartDashboard.putNumber("Object removal blobs:", numParticles);
+		final Vector<ParticleReport> particles = new Vector<ParticleReport>();
+		if (numParticles > 0) {
+			for (int particleIndex = 0; particleIndex < numParticles; particleIndex++) {
+				final ParticleReport par = new ParticleReport();
+				par.percentAreaToImageArea = NIVision.imaqMeasureParticle(image, particleIndex, 0,
+						NIVision.MeasurementType.MT_AREA_BY_IMAGE_AREA);
+				par.area = NIVision.imaqMeasureParticle(image, particleIndex, 0, NIVision.MeasurementType.MT_AREA);
+				par.convexHullArea = NIVision.imaqMeasureParticle(image, particleIndex, 0,
+						NIVision.MeasurementType.MT_CONVEX_HULL_AREA);
+				par.convexHullPerimeter = NIVision.imaqMeasureParticle(image, particleIndex, 0,
+						NIVision.MeasurementType.MT_CONVEX_HULL_PERIMETER);
+				par.center_mass_x = (int) NIVision.imaqMeasureParticle(image, particleIndex, 0,
+						NIVision.MeasurementType.MT_CENTER_OF_MASS_X);
+				par.center_mass_y = (int) NIVision.imaqMeasureParticle(image, particleIndex, 0,
+						NIVision.MeasurementType.MT_CENTER_OF_MASS_Y);
+				par.imageHeight = NIVision.imaqGetImageSize(image).height;
+				par.imageWidth = NIVision.imaqGetImageSize(image).width;
+				particles.add(par);
+			}
+			particles.sort(null);
+		}
+		this.reports = new ParticleReport[particles.size()];
+		particles.copyInto(this.reports);
 	}
 
 	// private final static String[] GRIP_ARGS = new String[] {
@@ -158,54 +216,6 @@ public class Vision {
 	// SmartDashboard.putString("Writing File", e.toString());
 	// }
 	// }
-
-	public void updateParticalAnalysisReports(NIVision.Image image) {
-		final int numParticles = NIVision.imaqCountParticles(image, 0);
-		System.out.println("Object removal blobs: " + NIVision.imaqCountParticles(image, 0));
-		final Vector<ParticleReport> particles = new Vector<ParticleReport>();
-		if (numParticles > 0) {
-			for (int particleIndex = 0; particleIndex < numParticles; particleIndex++) {
-				final ParticleReport par = new ParticleReport();
-				par.percentAreaToImageArea = NIVision.imaqMeasureParticle(image, particleIndex, 0,
-						NIVision.MeasurementType.MT_AREA_BY_IMAGE_AREA);
-				par.area = NIVision.imaqMeasureParticle(image, particleIndex, 0, NIVision.MeasurementType.MT_AREA);
-				par.convexHullArea = NIVision.imaqMeasureParticle(image, particleIndex, 0,
-						NIVision.MeasurementType.MT_CONVEX_HULL_AREA);
-				par.convexHullPerimeter = NIVision.imaqMeasureParticle(image, particleIndex, 0,
-						NIVision.MeasurementType.MT_CONVEX_HULL_PERIMETER);
-				par.boundingRectTop = (int) NIVision.imaqMeasureParticle(image, particleIndex, 0,
-						NIVision.MeasurementType.MT_BOUNDING_RECT_TOP);
-				par.boundingRectLeft = (int) NIVision.imaqMeasureParticle(image, particleIndex, 0,
-						NIVision.MeasurementType.MT_BOUNDING_RECT_LEFT);
-				par.boundingRectBottom = (int) NIVision.imaqMeasureParticle(image, particleIndex, 0,
-						NIVision.MeasurementType.MT_BOUNDING_RECT_BOTTOM);
-				par.boundingRectRight = (int) NIVision.imaqMeasureParticle(image, particleIndex, 0,
-						NIVision.MeasurementType.MT_BOUNDING_RECT_RIGHT);
-				par.boundingRectWidth = (int) NIVision.imaqMeasureParticle(image, particleIndex, 0,
-						NIVision.MeasurementType.MT_BOUNDING_RECT_WIDTH);// par.boundingRectRight
-				// -
-				// par.boundingRectLeft;
-				par.center_mass_x = (int) NIVision.imaqMeasureParticle(image, particleIndex, 0,
-						NIVision.MeasurementType.MT_CENTER_OF_MASS_X);
-				par.center_mass_y = (int) NIVision.imaqMeasureParticle(image, particleIndex, 0,
-						NIVision.MeasurementType.MT_CENTER_OF_MASS_Y);
-				par.imageHeight = NIVision.imaqGetImageSize(image).height;
-				par.imageWidth = NIVision.imaqGetImageSize(image).width;
-				particles.add(par);
-			}
-			particles.sort(null);
-		}
-		this.reports = new ParticleReport[particles.size()];
-		particles.copyInto(this.reports);
-		image.free(); // THIS MIGHT GIVE AN ERROR
-	}
-
-	public void implementHSLFilter(NIVision.Image dest, NIVision.Image source) {
-		NIVision.imaqColorThreshold(dest, source, 255, NIVision.ColorMode.HSL, hueForHSL, satForHSL,
-				luminescenceForHSL);
-		dest.free(); // THIS MIGHT GIVE AN ERROR
-		source.free(); // THIS MIGHT GIVE AN ERROR
-	}
 
 	// Analyze reports
 	public void uploadToContourReport() {
