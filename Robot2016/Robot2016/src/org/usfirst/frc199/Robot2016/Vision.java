@@ -4,8 +4,12 @@ import java.util.Comparator;
 import java.util.Vector;
 
 import com.ni.vision.NIVision;
+import com.ni.vision.NIVision.CannyOptions;
+import com.ni.vision.NIVision.ColorMode;
+import com.ni.vision.NIVision.GetBisectingLineResult;
 import com.ni.vision.NIVision.Image;
 import com.ni.vision.NIVision.ImageType;
+import com.ni.vision.NIVision.MorphologyMethod;
 import com.ni.vision.NIVision.RGBValue;
 
 import edu.wpi.first.wpilibj.CameraServer;
@@ -127,17 +131,12 @@ public class Vision {
 					isEnabled = true;
 					camera.startCapture();
 					while (true) {
-
 						camera.getImage(frame);
-						applyHSLFilter();
-						CameraServer.getInstance().setImage(hslimage); // For
-																		// Testing
-																		// Purposes
-						// CameraServer.getInstance().setImage(frame);
-						// updateParticalAnalysisReports(frame);
+						applyFilters();
+						// updateParticalAnalysisReports(hslimage);
 						// uploadToContourReport();
-
-						Thread.sleep(50);
+						CameraServer.getInstance().setImage(frame);
+						Thread.sleep(100);
 					}
 				} catch (Exception e) {
 					SmartDashboard.putString("Image Thread failure", e.toString());
@@ -146,23 +145,16 @@ public class Vision {
 				}
 			}
 		};
+
 		runCamera.start();
-		// try {
-		// SmartDashboard.putNumber("Particles count: ",
-		// NIVision.imaqCountParticles(frame, 1));
-		// } catch (Exception e) {
-		// SmartDashboard.putString("Count Particles", "Doesn't work");
-		// }
+		contourReport.putString("Test1", "starts?");
 	}
 
-	NIVision.Range hueRange = new NIVision.Range(0, 255);// 71, 105);
-	NIVision.Range satRange = new NIVision.Range(0, 255);// 32, 255);
-	NIVision.Range luminescenceForHSL = new NIVision.Range(0, 255);// 70, 195);
-	NIVision.Range valueForHSV = new NIVision.Range(0, 255);// (0,255);
+	final NIVision.Range GET_BRIGHTNESS = new NIVision.Range(240, 255);
 
-	private void applyHSLFilter() {
-		NIVision.imaqColorThreshold(hslimage, frame, 255, NIVision.ColorMode.HSL, hueRange, satRange,
-				luminescenceForHSL);
+	public void applyFilters() {
+		NIVision.imaqColorThreshold(hslimage, frame, 255, ColorMode.RGB, GET_BRIGHTNESS, GET_BRIGHTNESS,
+				GET_BRIGHTNESS);
 	}
 
 	public void updateParticalAnalysisReports(NIVision.Image image) {
@@ -212,16 +204,16 @@ public class Vision {
 	// process.destroyForcibly();
 	// }
 	//
-	// public void writingImage() {
-	// try {
-	// Image bi = frame;
-	// String outputfile = "/home/lvuser/Image.png";
-	// SmartDashboard.putString("Writing File", "successful?");
-	// NIVision.imaqWriteFile(bi, outputfile, rgb);
-	// } catch (Exception e) {
-	// SmartDashboard.putString("Writing File", e.toString());
-	// }
-	// }
+	public void writingImage() {
+		try {
+			Image bi = frame;
+			String outputfile = "/home/lvuser/Image.png";
+			SmartDashboard.putString("Writing File", "successful?");
+			NIVision.imaqWriteFile(bi, outputfile, rgb);
+		} catch (Exception e) {
+			SmartDashboard.putString("Writing File", e.toString());
+		}
+	}
 
 	// Analyze reports
 	public void uploadToContourReport() {
