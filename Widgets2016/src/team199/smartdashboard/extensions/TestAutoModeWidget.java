@@ -44,7 +44,7 @@ public class TestAutoModeWidget extends StaticWidget {
     private final JButton removeButton = new JButton("Remove");
     private final Defenses[] defenses = Defenses.values();
     private final JComboBox Defense[] = new JComboBox[4];
-    private final JComboBox startingPosition = new JComboBox(new Integer[]{1, 2, 3, 4});
+    private final JComboBox startingPosition = new JComboBox(new Integer[]{2, 3, 4, 5});
     private ArrayList<Widget.EditorTextField> fields = new ArrayList<>();
     private JPanel field;
     private JPanel menus;
@@ -97,12 +97,12 @@ public class TestAutoModeWidget extends StaticWidget {
                         System.exit(1);
                     }
                     System.out.println(defenseImages[i]);
-                    g.drawImage(defenseImages[i], 87, i*70+105, 50, 50, null);
+                    g.drawImage(defenseImages[i], 87, -i*70+105+3*70, 50, 50, null);
                     if (startingPosition.getSelectedIndex() == i)
                     {
-                        g.drawImage(robotImage, 20, i*70+105, 50, 50, null);
+                        g.drawImage(robotImage, 160, -i*70+105+3*70, 50, 50, null);
                         ntable.putNumber("Defense", ((Defenses)Defense[i].getSelectedItem()).ordinal());
-                        ntable.putNumber("Position", i+1);
+                        ntable.putNumber("Position", i+2);
                     }
                 }
                 TestAutoModeWidget.this.repaint();
@@ -117,7 +117,7 @@ public class TestAutoModeWidget extends StaticWidget {
         Defense[2].setSize(new Dimension(175, 25));
         Defense[3].setSize(new Dimension(175, 25));
         for (int i = 0;i < 4;i++) {
-            Defense[i].setLocation(350,135+72*i);
+            Defense[i].setLocation(350,3*72+135-72*i);
         }
         startingPosition.setSize(175, 25);
         startingPosition.setLocation(350,135-72);
