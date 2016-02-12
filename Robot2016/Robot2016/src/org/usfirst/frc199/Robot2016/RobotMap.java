@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDSourceType;
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.SpeedController;
@@ -100,6 +101,7 @@ public class RobotMap {
         
         intakePivotEncoder = new Encoder(6, 7, false, EncodingType.k4X);
         LiveWindow.addSensor("Intake", "PivotEncoder", intakePivotEncoder);
+        intakePivotEncoder.setDistancePerPulse(Preferences.getInstance().getDouble("IntakeEncoderRatio", 1));
         
         intakeBeltMotor = new Talon(3);
         LiveWindow.addActuator("Intake", "BeltMotor", (Talon) intakeBeltMotor);

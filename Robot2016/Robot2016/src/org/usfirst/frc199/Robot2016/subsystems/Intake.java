@@ -6,6 +6,7 @@ import org.usfirst.frc199.Robot2016.RobotMap;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
@@ -23,9 +24,9 @@ public class Intake extends Subsystem implements DashboardSubsystem {
 	private final Encoder pivotEncoder = RobotMap.intakePivotEncoder;
 	
 	private PID pivotPID = new PID("IntakePivot");
-	private double midLowAngle = 0;	//Measure angle between mid and low positions
-	private double midHighAngle = 0; 	//Measure angle between mid and high positions
-
+	private double midLowAngle = Preferences.getInstance().getDouble("MidLowAngle", 0);	//Measure angle between mid and low positions
+	private double midHighAngle = Preferences.getInstance().getDouble("MidHighAngle", 0); 	//Measure angle between mid and high positions
+	private double totalAngle = midLowAngle + midHighAngle;
 
 	// Put methods for controlling this subsystem
 	// here. Call these from Commands.
@@ -50,14 +51,39 @@ public class Intake extends Subsystem implements DashboardSubsystem {
 		pivotMotor.set(speed);
 	}
 	
-	public void setTargetAngle(double angle) {
-		pivotEncoder.reset();
-		pivotPID.setTarget(angle);
+	/**
+	 * Sets pivotPID target angle
+	 * 
+	 * @param initPos - Number representing the intake's initial position
+	 * @param up - boolean indicating whether the intake is raised or lowered
+	 */
+	public void setTargetAngle(int initPos, int dir) {
+		double target = 0;
+		
+		switch (initPos) {
+		case 1: 
+			target = midHighAngle;
+			break;
+		case 2:
+			target = totalAngle;
+			break;
+		case 3:
+			target = midLowAngle;
+			break;
+		}
+		
+		pivotPID.setTarget(target * dir);
 	}
 	
-	public void updateAngle(double newAngle) {
+	/**
+	 * Updates pivotPID
+	 */
+	public double updateAngle() {
 		pivotPID.update(pivotEncoder.getDistance());
+		return pivotPID.getOutput();
 	}
+	
+	
 	/**
 	 * Returns true when the intake has reached one spot past its initial position  
 	 * 
@@ -70,7 +96,7 @@ public class Intake extends Subsystem implements DashboardSubsystem {
 		case 3:
 			return pivotPID.reachedTarget() || upperLimit.get();
 		case 2:
-			return lowerLimit.get() || upperLimit.get();
+			return pivotPID.reachedTarget() || lowerLimit.get() || upperLimit.get();
 		case 0:
 			return true;
 		}
