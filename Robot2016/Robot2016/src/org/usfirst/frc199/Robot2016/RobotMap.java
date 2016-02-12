@@ -1,18 +1,21 @@
 package org.usfirst.frc199.Robot2016;
 
 import edu.wpi.first.wpilibj.AnalogGyro;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDSourceType;
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.livewindow.LiveWindowSendable;
 
 /**
  * The RobotMap is a mapping from the ports sensors and actuators are wired into
@@ -27,8 +30,7 @@ public class RobotMap {
     public static AnalogGyro drivetrainGyro;
     public static Encoder drivetrainLeftEncoder;
     public static Encoder drivetrainRightEncoder;
-    public static Ultrasonic drivetrainLeftUltrasonic;
-    public static Ultrasonic drivetrainRightUltrasonic;
+    public static AnalogInput drivetrainUltrasonic;
     public static Compressor drivetrainCompressor;
     public static DoubleSolenoid drivetrainShifter;
     public static SpeedController shooterFlywheelMotor;
@@ -37,12 +39,11 @@ public class RobotMap {
     public static SpeedController intakePivotMotor;
     public static DigitalInput intakeUpperLimit;
     public static DigitalInput intakeLowerLimit;
-    public static DigitalInput intakeBallLimit; 
+    public static Encoder intakePivotEncoder;
     public static SpeedController intakeBeltMotor;
     public static DigitalInput intakeBallSensor;
-    public static Solenoid climberExtendPiston;
+    public static SpeedController climberExtendMotor;
     public static SpeedController climberWinchMotor;
-    public static DigitalInput climberRungDetector;
 
     public static void init() {
         drivetrainLeftMotor = new Talon(0);
@@ -69,12 +70,9 @@ public class RobotMap {
         LiveWindow.addSensor("Drivetrain", "RightEncoder", drivetrainRightEncoder);
         drivetrainRightEncoder.setDistancePerPulse(1.0);
         drivetrainRightEncoder.setPIDSourceType(PIDSourceType.kRate);
-        drivetrainLeftUltrasonic = new Ultrasonic(4, 5);
-        LiveWindow.addSensor("Drivetrain", "LeftUltrasonic", drivetrainLeftUltrasonic);
-        drivetrainLeftUltrasonic.setDistanceUnits(Ultrasonic.Unit.kInches);
-        drivetrainRightUltrasonic = new Ultrasonic(6, 7);
-        LiveWindow.addSensor("Drivetrain", "RightUltrasonic", drivetrainRightUltrasonic);
-        drivetrainRightUltrasonic.setDistanceUnits(Ultrasonic.Unit.kInches);
+        drivetrainUltrasonic = new AnalogInput(1);
+        LiveWindow.addSensor("Drivetrain", "Ultrasonic", drivetrainUltrasonic);
+        //Any extra code needed for the ultrasonic?
         
         drivetrainCompressor = new Compressor(0);
         
@@ -85,7 +83,7 @@ public class RobotMap {
         shooterFlywheelMotor = new Talon(2);
         LiveWindow.addActuator("Shooter", "FlywheelMotor", (Talon) shooterFlywheelMotor);
         
-        shooterFlywheelEncoder = new Encoder(8, 9, false, EncodingType.k4X);
+        shooterFlywheelEncoder = new Encoder(4, 5, false, EncodingType.k4X);
         LiveWindow.addSensor("Shooter", "FlywheelEncoder", shooterFlywheelEncoder);
         shooterFlywheelEncoder.setDistancePerPulse(1.0);
         shooterFlywheelEncoder.setPIDSourceType(PIDSourceType.kRate);
@@ -95,14 +93,15 @@ public class RobotMap {
         intakePivotMotor = new Talon(5);
         LiveWindow.addActuator("Intake", "PivotMotor", (Talon) intakePivotMotor);
         
-        intakeUpperLimit = new DigitalInput(12);
+        intakeUpperLimit = new DigitalInput(8);
         LiveWindow.addSensor("Intake", "UpperLimit", intakeUpperLimit);
         
-        intakeLowerLimit = new DigitalInput(13);
+        intakeLowerLimit = new DigitalInput(9);
         LiveWindow.addSensor("Intake", "LowerLimit", intakeLowerLimit);
         
-        intakeBallLimit = new DigitalInput(15);
-        LiveWindow.addSensor("Intake", "MidLimit", intakeBallLimit);
+        intakePivotEncoder = new Encoder(6, 7, false, EncodingType.k4X);
+        LiveWindow.addSensor("Intake", "PivotEncoder", intakePivotEncoder);
+        intakePivotEncoder.setDistancePerPulse(Preferences.getInstance().getDouble("IntakeEncoderRatio", 1));
         
         intakeBeltMotor = new Talon(3);
         LiveWindow.addActuator("Intake", "BeltMotor", (Talon) intakeBeltMotor);
@@ -110,13 +109,11 @@ public class RobotMap {
         intakeBallSensor = new DigitalInput(10);
         LiveWindow.addSensor("Intake", "BallSensor", intakeBallSensor);
         
-        climberExtendPiston = new Solenoid(0, 3);
-        LiveWindow.addActuator("Climber", "ExtendPiston", climberExtendPiston);
+        climberExtendMotor = new Talon(7);
+        LiveWindow.addActuator("Climber", "ExtendMotor", (Talon) climberExtendMotor);
         
         climberWinchMotor = new Talon(6);
         LiveWindow.addActuator("Climber", "WinchMotor", (Talon) climberWinchMotor);
         
-        climberRungDetector = new DigitalInput(14);
-        LiveWindow.addSensor("Climber", "RungDetector", climberRungDetector);
     }
 }

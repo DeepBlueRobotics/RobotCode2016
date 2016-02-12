@@ -23,45 +23,26 @@ public class OmniWidget extends AbstractTableWidget{
     private ITable prefs;
     private ArrayList<Object> labels = new ArrayList<>();
     private ArrayList<EditorTextField> fields = new ArrayList<>();
-
-    public void setValueBetter(Object o) {
-        prefs = (ITable)o;
-        prefs.addTableListener(new ITableListener() {
-            @Override
-            public void valueChanged(ITable itable, String key, Object value, boolean isNew) {
-                if(isNew&&!key.equals("~TYPE~")) {
-                    removeAll();
-                    labels.add(key);
-                    if(Double.class.equals(value.getClass())){
-                        fields.add(new NumberTableField(key));
-                    } else if(String.class.equals(value.getClass())){
-                        fields.add(new StringTableField(key));
-                    } else if(Boolean.class.equals(value.getClass())){
-                        fields.add(new BooleanTableField(key));
-                    } else {
-                        labels.remove(key);
-                    }
-                    fields.get(fields.size()-1).setText(value+"");
-                    sort();
-                    add(new JLabel("Subsystem "));
-                    add(new JLabel(getFieldName()));
-                    for(int i=0; i<labels.size();i++){
-                        add(new JLabel(labels.get(i)+""));
-                        add(fields.get(i));
-                    }
-                    revalidate();
-                    repaint();
-                }
-            }
-        }, true);
-    }
     
     @Override
     public void init() {
         layout = new GridLayout(0,2);
         this.setLayout(layout);
         setMaximumSize(new Dimension(Integer.MAX_VALUE, getPreferredSize().height));
-        setValueBetter(NetworkTable.getTable("SmartDashboard/"+getFieldName()));
+        prefs = NetworkTable.getTable("SmartDashboard/"+getFieldName());
+        prefs.addTableListener(new ITableListener() {
+            @Override
+            public void valueChanged(ITable itable, String key, Object value, boolean isNew) {
+                if(isNew&&!key.equals("~TYPE~")) {
+                    addNew(key, value);
+                }
+            }
+        }, false);
+        prefs.getKeys().stream().forEach((key) -> {
+            if(!key.equals("~TYPE~")) {
+                addNew(key, prefs.getValue(key, ""));
+            }
+        });
     }
 
     @Override
@@ -81,5 +62,29 @@ public class OmniWidget extends AbstractTableWidget{
         }
         fields = tempfields;
         labels = new ArrayList<>(Arrays.asList(temp));
+    }
+    
+    public void addNew(String key, Object value) {
+        removeAll();
+        labels.add(key);
+        if(Double.class.equals(value.getClass())){
+            fields.add(new NumberTableField(key));
+        } else if(String.class.equals(value.getClass())){
+            fields.add(new StringTableField(key));
+        } else if(Boolean.class.equals(value.getClass())){
+            fields.add(new BooleanTableField(key));
+        } else {
+            labels.remove(key);
+        }
+        fields.get(fields.size()-1).setText(value+"");
+        sort();
+        add(new JLabel("Subsystem "));
+        add(new JLabel(getFieldName()));
+        for(int i=0; i<labels.size();i++){
+            add(new JLabel(labels.get(i)+""));
+            add(fields.get(i));
+        }
+        revalidate();
+        repaint();
     }
 }

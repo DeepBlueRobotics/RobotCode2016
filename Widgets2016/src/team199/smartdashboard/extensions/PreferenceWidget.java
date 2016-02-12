@@ -9,7 +9,6 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.util.ArrayList;
 import java.util.Arrays;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -24,7 +23,6 @@ public class PreferenceWidget extends StaticWidget {
     private final JComboBox keyBox = new JComboBox();
     private final JTextField valueField = new JTextField();
     private ITable prefs = NetworkTable.getTable("Preferences");
-    private ArrayList<Object> labels = new ArrayList<>();
     private final JButton saveButton = new JButton("Save");
     private final JButton removeButton = new JButton("Remove");
 
@@ -110,12 +108,25 @@ public class PreferenceWidget extends StaticWidget {
         String value = valueField.getText();
         // Add key
         if (key.equals("New Preference") && !value.equals("") && !prefs.containsKey(value)) {
-            prefs.putString(value, "");
+            write(value, "0.0");
             update();
         }
         // Change value
         if(!key.equals("New Preference")) {
-            prefs.putString(key, value);
+            write(key, value);
+        }
+    }
+    
+    // Writes a preference to the table
+    private void write(String key, String value) {
+        if(value.equals("true")||value.equals("false")) {
+            prefs.putBoolean(key, value.equals("true"));
+        } else {
+            try {
+                prefs.putNumber(key, Double.parseDouble(value));
+            } catch(Exception e) {
+                System.out.println("Error: Wrong data type");
+            }
         }
     }
 }
