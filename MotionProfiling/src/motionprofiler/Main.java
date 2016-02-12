@@ -11,8 +11,14 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 public class Main {
+	
 	static Path p;
+	
 	public static void main(String[] args) {
+		startPathDemo();
+	}
+	
+	public static void startPathDemo() {
 		p = new Path(25,25,25,25,0,0,2);
 		JFrame frame = new JFrame("Pathfinder");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -20,6 +26,7 @@ public class Main {
 		JTextField f1 = new JTextField("0");
 		JTextField f2 = new JTextField("0");
 		JTextField f3 = new JTextField("2");
+		@SuppressWarnings("serial")
 		JPanel panel = new JPanel() {
 			@Override
 			public void paint(Graphics g) {
