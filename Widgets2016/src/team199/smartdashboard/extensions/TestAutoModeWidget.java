@@ -48,11 +48,8 @@ public class TestAutoModeWidget extends StaticWidget {
     private ArrayList<Widget.EditorTextField> fields = new ArrayList<>();
     private JPanel field;
     private JPanel menus;
-    
-
-    
-        
-
+    ITable ntable = NetworkTable.getTable("SmartDashboard/Auto");
+           
     @Override
     public void init() {
         /*try {
@@ -86,6 +83,12 @@ public class TestAutoModeWidget extends StaticWidget {
                 }
                 Image[] defenseImages = new Image[4];
                 System.out.println(Defense[0].getSelectedItem());
+                Image robotImage = null;
+                try {
+                    robotImage = ImageIO.read(TestAutoModeWidget.class.getResource("RobotImage.png"));
+                } catch (IOException ex) {
+                    Logger.getLogger(TestAutoModeWidget.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 for (int i = 0;i < 4;i++) {
                     try {
                         defenseImages[i] = ImageIO.read(TestAutoModeWidget.class.getResource("Image" + (((Defenses)Defense[i].getSelectedItem()).ordinal()+1) + ".png"));
@@ -95,6 +98,12 @@ public class TestAutoModeWidget extends StaticWidget {
                     }
                     System.out.println(defenseImages[i]);
                     g.drawImage(defenseImages[i], 87, i*70+105, 50, 50, null);
+                    if (startingPosition.getSelectedIndex() == i)
+                    {
+                        g.drawImage(robotImage, 20, i*70+105, 50, 50, null);
+                        ntable.putNumber("Defense", ((Defenses)Defense[i].getSelectedItem()).ordinal());
+                        ntable.putNumber("Position", i+1);
+                    }
                 }
                 TestAutoModeWidget.this.repaint();
             }
