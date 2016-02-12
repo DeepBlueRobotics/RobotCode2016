@@ -1,11 +1,16 @@
 package motionprofiler;
 
+/**
+ * A path defined by parametric cubic functions of a parameter s.
+ * s is a spline that represents progress along the path as a value from 0 to 1.
+ */
 public class Path {
 	
+	// Constants that define the path
 	private final double Ax, Bx, Cx, Dx, Ay, By, Cy, Dy; 
 	
 	/**
-	 * Creates a path from point 0 to point 1
+	 * Generates a path that satisfies the given constraints
 	 * @param x0 - initial x
 	 * @param y0 - initial y
 	 * @param x1 - final x
@@ -31,19 +36,80 @@ public class Path {
 		Dy = y0;
 	}
 
+	/**
+	 * Gets x value at a point on the path
+	 * @param s - the point on the path from 0 to 1
+	 * @return x(s)
+	 */
 	public double getX(double s) {
 		return Ax*s*s*s+Bx*s*s+Cx*s+Dx;
 	}
 
+	/**
+	 * Gets x velocity value at a point on the path
+	 * @param s - the point on the path from 0 to 1
+	 * @return dx/ds(s)
+	 */
 	public double getVx(double s) {
 		return 3*Ax*s*s+2*Bx*s+Cx;
 	}
 	
+	/**
+	 * Gets y value at a point on the path
+	 * @param s - the point on the path from 0 to 1
+	 * @return y(s)
+	 */
 	public double getY(double s) {
 		return Ay*s*s*s+By*s*s+Cy*s+Dy;
 	}
 
+	/**
+	 * Gets y velocity value at a point on the path
+	 * @param s - the point on the path from 0 to 1
+	 * @return dy/ds(s)
+	 */
 	public double getVy(double s) {
 		return 3*Ay*s*s+2*By*s+Cy;
+	}
+	
+	/**
+	 * Gets arc length from zero to a given point on the path
+	 * @param s - the point on the path from 0 to 1
+	 * @return length of path from 0 to s
+	 */
+	public double getL(double s) {
+		// TODO: Not yet implemented
+		return 0.0;
+	}
+
+	/**
+	 * Gets angular velocity with respect to arc length at a point on the path
+	 * @param s - the point on the path from 0 to 1
+	 * @return dtheta/dL(s)
+	 */
+	public double getW(double s) {
+		// TODO: Not yet implemented
+		return 0.0;
+	}
+	
+	/**
+	 * Gets angular acceleration with respect to arc length at a point on the path
+	 * @param s - the point on the path from 0 to 1
+	 * @return d^2theta/dL^2(s)
+	 */
+	public double getAlpha(double s) {
+		// TODO: Not yet implemented
+		return 0.0;
+	}
+	
+	/**
+	 * Gets the s value for a given arc length
+	 * @param L - arc length
+	 * @return the point on the spline
+	 */
+	public double getS(double L) {
+		// TODO: Not yet implemented
+		// This method might not be necessary, so implement it last
+		return 0.0;
 	}
 }

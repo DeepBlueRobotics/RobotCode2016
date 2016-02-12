@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
  */
 public class Climber extends Subsystem implements DashboardSubsystem {
 	
-	private final SpeedController extendPiston = RobotMap.climberExtendMotor;
+	private final SpeedController extendMotor = RobotMap.climberExtendMotor;
     private final SpeedController winchMotor = RobotMap.climberWinchMotor;
 
     public void initDefaultCommand() {
@@ -26,5 +26,8 @@ public class Climber extends Subsystem implements DashboardSubsystem {
 	
 	public void setMotor(double speed) {
 		winchMotor.set(speed);
+	}
+	public void setMotorExtention(double height) {
+		extendMotor.set(height);
 	}
 }
