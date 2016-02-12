@@ -4,7 +4,6 @@ import java.util.Comparator;
 import java.util.Vector;
 
 import com.ni.vision.NIVision;
-import com.ni.vision.NIVision.ColorMode;
 import com.ni.vision.NIVision.Image;
 import com.ni.vision.NIVision.ImageType;
 import com.ni.vision.NIVision.RGBValue;
@@ -79,6 +78,7 @@ public class Vision {
 		public int compareTo(ParticleReport r) {
 			return (int) (r.area - this.area);
 		}
+		
 	};
 
 	ParticleReport[] reports = null;
@@ -188,10 +188,13 @@ public class Vision {
 		}
 		this.reports = new ParticleReport[particles.size()];
 		particles.copyInto(this.reports);
+		image.free(); // THIS MIGHT GIVE AN ERROR
 	}
 	
 	public void implementHSLFilter(NIVision.Image dest, NIVision.Image source){
 		NIVision.imaqColorThreshold(dest, source, 255, NIVision.ColorMode.HSL, hueForHSL, satForHSL, luminescenceForHSL);
+		dest.free(); // THIS MIGHT GIVE AN ERROR
+		source.free(); // THIS MIGHT GIVE AN ERROR
 	}
 
 	// Analyze reports
