@@ -11,11 +11,13 @@ import com.ni.vision.NIVision.RGBValue;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.vision.USBCamera;
 
 public class Vision {
 
 	CameraServer server;
-	String camera = "cam0";
+	USBCamera camera;
+	static final int WIDTH = 320, HEIGHT = 240;
 
 	int session;
 
@@ -78,21 +80,25 @@ public class Vision {
 		public int compareTo(ParticleReport r) {
 			return (int) (r.area - this.area);
 		}
-		
+
 	};
 
-	ParticleReport[] reports = null;
+	ParticleReport[] reports;
 
 	public Vision() {
 
 		frame = NIVision.imaqCreateImage(ImageType.IMAGE_RGB, 0);
 		hslimage = NIVision.imaqCreateImage(ImageType.IMAGE_RGB, 0);
 
-		int square = 50;
-		rect = new NIVision.Rect(480 / 2 - square / 2, 640 / 2 - square / 2, square, square);
+		// int square = 50;
+		reports = null;
 
-		session = NIVision.IMAQdxOpenCamera(camera, NIVision.IMAQdxCameraControlMode.CameraControlModeController);
-		NIVision.IMAQdxConfigureGrab(session);
+		camera = new USBCamera("cam0");
+		camera.setSize(WIDTH, HEIGHT);
+		// rect = new NIVision.Rect(480 / 2 - square / 2, 640 / 2 - square / 2,
+		// square, square);
+
+		camera.openCamera();
 
 	}
 
@@ -101,24 +107,26 @@ public class Vision {
 			public synchronized void run() {
 				try {
 					isEnabled = true;
-					NIVision.IMAQdxStartAcquisition(session);
+					camera.startCapture();
 					while (true) {
-						NIVision.IMAQdxGrab(session, frame, 1);
+						// for testing, upload hslimage to camera server and not the normal frame.
+						
+						camera.getImage(frame);
 						CameraServer.getInstance().setImage(frame);
-						implementHSLFilter(hslimage,frame);
+						implementHSLFilter(hslimage, frame);
 						updateParticalAnalysisReports(hslimage);
 						uploadToContourReport();
 						Thread.sleep(50);
 					}
 				} catch (Exception e) {
 					SmartDashboard.putString("Image Thread failure", e.toString());
-					NIVision.IMAQdxCloseCamera(session);
+					camera.closeCamera();
 					isEnabled = false;
 				}
 			}
 		};
 		runCamera.start();
-		SmartDashboard.putString("Start thread?", runCamera.isAlive() + "");
+		SmartDashboard.putString("Start camera?", runCamera.isAlive() + "");
 	}
 
 	// private final static String[] GRIP_ARGS = new String[] {
@@ -163,7 +171,8 @@ public class Vision {
 				par.area = NIVision.imaqMeasureParticle(image, particleIndex, 0, NIVision.MeasurementType.MT_AREA);
 				par.convexHullArea = NIVision.imaqMeasureParticle(image, particleIndex, 0,
 						NIVision.MeasurementType.MT_CONVEX_HULL_AREA);
-				par.convexHullPerimeter = NIVision.imaqMeasureParticle(image, particleIndex, 0, NIVision.MeasurementType.MT_CONVEX_HULL_PERIMETER);
+				par.convexHullPerimeter = NIVision.imaqMeasureParticle(image, particleIndex, 0,
+						NIVision.MeasurementType.MT_CONVEX_HULL_PERIMETER);
 				par.boundingRectTop = (int) NIVision.imaqMeasureParticle(image, particleIndex, 0,
 						NIVision.MeasurementType.MT_BOUNDING_RECT_TOP);
 				par.boundingRectLeft = (int) NIVision.imaqMeasureParticle(image, particleIndex, 0,
@@ -190,19 +199,22 @@ public class Vision {
 		particles.copyInto(this.reports);
 		image.free(); // THIS MIGHT GIVE AN ERROR
 	}
-	
-	public void implementHSLFilter(NIVision.Image dest, NIVision.Image source){
-		NIVision.imaqColorThreshold(dest, source, 255, NIVision.ColorMode.HSL, hueForHSL, satForHSL, luminescenceForHSL);
+
+	public void implementHSLFilter(NIVision.Image dest, NIVision.Image source) {
+		NIVision.imaqColorThreshold(dest, source, 255, NIVision.ColorMode.HSL, hueForHSL, satForHSL,
+				luminescenceForHSL);
 		dest.free(); // THIS MIGHT GIVE AN ERROR
 		source.free(); // THIS MIGHT GIVE AN ERROR
 	}
 
 	// Analyze reports
-	public void uploadToContourReport(){
+	public void uploadToContourReport() {
 		contourReport.putString("Test", "test");
-		for(int i = 0; i < reports.length; i++){
-			// Min Area: 75; Min Perimeter: 150; Min/Max Width: 0,100; Min/Max Height: 0,100;
-			if(reports[i].area > 75 && reports[i].convexHullPerimeter > 150 && reports[i].imageWidth < 100 && reports[i].imageHeight < 100){
+		for (int i = 0; i < reports.length; i++) {
+			// Min Area: 75; Min Perimeter: 150; Min/Max Width: 0,100; Min/Max
+			// Height: 0,100;
+			if (reports[i].area > 75 && reports[i].convexHullPerimeter > 150 && reports[i].imageWidth < 100
+					&& reports[i].imageHeight < 100) {
 				contourReport.putNumber("contour" + i + "/area", reports[i].area);
 				contourReport.putNumber("contour" + i + "/percentAreaToImageArea", reports[i].percentAreaToImageArea);
 				contourReport.putNumber("contour" + i + "/convexHullArea", reports[i].convexHullArea);
@@ -216,7 +228,7 @@ public class Vision {
 				contourReport.putNumber("contour" + i + "/center_mass_y", reports[i].center_mass_y);
 				contourReport.putNumber("contour" + i + "/imageWidth", reports[i].imageWidth);
 				contourReport.putNumber("contour" + i + "/imageHeight", reports[i].imageHeight);
-			}else{
+			} else {
 				contourReport.putString("contour" + i + "/Does Not Meet Constraints", "error");
 				contourReport.putNumber("contour" + i + "/area", reports[i].area);
 				contourReport.putNumber("contour" + i + "/convexHullArea", reports[i].convexHullArea);
@@ -251,17 +263,17 @@ public class Vision {
 	 * @param input
 	 * @return
 	 */
-	private int maxIndex(double[] input) {
-		double max = 0;
-		int index = 0;
-		for (int i = 0; i < input.length; i++) {
-			if (input[i] > max) {
-				max = input[i];
-				index = i;
-			}
-		}
-		return index;
-	}
+	// private int maxIndex(double[] input) {
+	// double max = 0;
+	// int index = 0;
+	// for (int i = 0; i < input.length; i++) {
+	// if (input[i] > max) {
+	// max = input[i];
+	// index = i;
+	// }
+	// }
+	// return index;
+	// }
 
 	/**
 	 * did the target (retro-reflective tape) enter the camera's vision?
