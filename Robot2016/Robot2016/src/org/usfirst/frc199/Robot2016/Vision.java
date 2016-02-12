@@ -17,7 +17,10 @@ public class Vision {
 
 	CameraServer server;
 	USBCamera camera;
-	static final int WIDTH = 128, HEIGHT = 72;
+
+	// Camera Constants
+	static final int WIDTH = 320, HEIGHT = 240;
+	static final int BRIGHTNESS = 50, EXPOSURE = 50;
 
 	int session;
 
@@ -63,12 +66,12 @@ public class Vision {
 		public int imageHeight;
 		public int imageWidth;
 		public int boundingRectWidth;
-		
+
 		public ParticleReport() {
 			implementation();
 		}
-		
-		private void implementation(){
+
+		private void implementation() {
 			percentAreaToImageArea = 0;
 			area = 0;
 			convexHullArea = 0;
@@ -108,6 +111,8 @@ public class Vision {
 
 		camera = new USBCamera("cam0");
 		camera.setSize(WIDTH, HEIGHT);
+		// camera.setBrightness(BRIGHTNESS);
+		// camera.setExposureManual(EXPOSURE);
 		// rect = new NIVision.Rect(480 / 2 - square / 2, 640 / 2 - square / 2,
 		// square, square);
 
@@ -122,15 +127,16 @@ public class Vision {
 					isEnabled = true;
 					camera.startCapture();
 					while (true) {
-						// for testing, upload hslimage to camera server and not
-						// the normal frame.
 
 						camera.getImage(frame);
 						applyHSLFilter();
-
+						CameraServer.getInstance().setImage(hslimage); // For
+																		// Testing
+																		// Purposes
+						// CameraServer.getInstance().setImage(frame);
 						// updateParticalAnalysisReports(frame);
 						// uploadToContourReport();
-						CameraServer.getInstance().setImage(frame);
+
 						Thread.sleep(50);
 					}
 				} catch (Exception e) {
