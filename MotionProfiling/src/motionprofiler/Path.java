@@ -1,3 +1,6 @@
+// TODO: allow going backwards
+// TODO: unit tests
+// TODO: binary search for amax and conversion between L and s (more efficient)
 package motionprofiler;
 
 /**
@@ -46,21 +49,21 @@ public class Path {
 	}
 
 	/**
-	 * Gets x velocity value at a point on the path
-	 * @param s - the point on the path from 0 to 1
-	 * @return dx/ds(s)
-	 */
-	public double getVx(double s) {
-		return 3*Ax*s*s+2*Bx*s+Cx;
-	}
-	
-	/**
 	 * Gets y value at a point on the path
 	 * @param s - the point on the path from 0 to 1
 	 * @return y(s)
 	 */
 	public double getY(double s) {
 		return Ay*s*s*s+By*s*s+Cy*s+Dy;
+	}
+	
+	/**
+	 * Gets x velocity value at a point on the path
+	 * @param s - the point on the path from 0 to 1
+	 * @return dx/ds(s)
+	 */
+	public double getVx(double s) {
+		return 3*Ax*s*s+2*Bx*s+Cx;
 	}
 
 	/**
@@ -73,23 +76,34 @@ public class Path {
 	}
 	
 	/**
-	 * Gets arc length from zero to a given point on the path
+	 * Gets y velocity value at a point on the path
 	 * @param s - the point on the path from 0 to 1
-	 * @return length of path from 0 to s
+	 * @return dy/ds(s)
 	 */
-	public double getL(double s) {
-		// TODO: Not yet implemented
-		return 0.0;
+	public double getV(double s) {
+		return Math.sqrt(Math.pow(getVx(s), 2)+Math.pow(getVy(s), 2));
 	}
-
+	
+	/**
+	 * Gets the direction of travel at a point on the path
+	 * @param s - the point on the path from 0 to 1
+	 * @return angle (degrees clockwise from <0, 1>)
+	 */
+	public double getTheta(double s) {
+		return 90.0-Math.toRadians(Math.atan(getVy(s)/Math.max(getVx(s), 0.0000001)));
+	}
+	
 	/**
 	 * Gets angular velocity with respect to arc length at a point on the path
 	 * @param s - the point on the path from 0 to 1
 	 * @return dtheta/dL(s)
 	 */
 	public double getW(double s) {
-		// TODO: Not yet implemented
-		return 0.0;
+		double ds = .000001;
+		double dl = ds*getV(s);
+		double theta0 = getTheta(s);
+		double theta1 = getTheta(s+ds);
+		return (theta1-theta0)/dl;
 	}
 	
 	/**
@@ -98,18 +112,39 @@ public class Path {
 	 * @return d^2theta/dL^2(s)
 	 */
 	public double getAlpha(double s) {
-		// TODO: Not yet implemented
-		return 0.0;
+		double ds = .000001;
+		double dl = ds*getV(s);
+		double w0 = getW(s);
+		double w1 = getW(s+ds);
+		return (w1-w0)/dl;
 	}
-	
+
 	/**
-	 * Gets the s value for a given arc length
+	 * Gets arc length from zero to a given point on the path (accurate to 0.1% of total length)
+	 * @param s - the point on the path from 0 to 1
+	 * @return length of path from 0 to s
+	 */
+	public double getL(double s) {
+		double l = 0;
+		double ds = 0.001;
+		for(double i = 0; i<s; i+=ds) {
+			l+=getV(s)*ds;
+		}
+		return l;
+	}
+
+	/**
+	 * Gets the s value for a given arc length (accurate to 0.1% of total length)
 	 * @param L - arc length
 	 * @return the point on the spline
 	 */
 	public double getS(double L) {
-		// TODO: Not yet implemented
-		// This method might not be necessary, so implement it last
-		return 0.0;
+		double l = 0;
+		double ds = .000001;
+		for(double i = 0; i<1.0; i+=ds) {
+			if(l >= L) return i;
+			l+=getV(i)*ds;
+		}
+		return 1.0;
 	}
 }

@@ -15,7 +15,28 @@ public class Main {
 	static Path p;
 	
 	public static void main(String[] args) {
-		startPathDemo();
+//		double amax = 13;
+//		double alphamax = 27;
+//		double w1 = 16;
+//		double w0 = 37;
+//		double l = 2;
+//		double v = 34;
+//		double a = (amax
+//				* v
+//				* (w1 - w0)
+//				* Math.sqrt(8 * amax * amax * alphamax * w1 * l + amax * amax
+//						* w1 * w1 * v * v + 2 * amax * amax * w1 * w0 * v * v
+//						+ amax * amax * w0 * w0 * v * v + 8 * amax * alphamax
+//						* alphamax * l + 4 * amax * alphamax * w1 * v * v + 4
+//						* amax * alphamax * w0 * v * v + 4 * alphamax
+//						* alphamax * v * v) - amax
+//				* (-4 * amax * alphamax * w1 * l + amax * w1 * w1 * v * v
+//						- amax * w0 * w0 * v * v - 4 * alphamax * alphamax * l
+//						+ 2 * alphamax * w1 * v * v - 2 * alphamax * w0 * v * v))
+//				/ (2 * l * (2 * amax * amax * w1 * w1 + 4 * amax * alphamax
+//						* w1 + 2 * alphamax * alphamax));
+//		System.out.println(a);
+//		startPathDemo();
 	}
 	
 	public static void startPathDemo() {
@@ -63,3 +84,21 @@ public class Main {
 	}
 	
 }
+/*
+		First attempt:
+		
+		return (amax
+		* v
+		* (w1 - w0)
+		* Math.sqrt(8 * amax * amax * alphamax * w1 * l + amax * amax
+				* w1 * w1 * v * v + 2 * amax * amax * w1 * w0 * v * v
+				+ amax * amax * w0 * w0 * v * v + 8 * amax * alphamax
+				* alphamax * l + 4 * amax * alphamax * w1 * v * v + 4
+				* amax * alphamax * w0 * v * v + 4 * alphamax
+				* alphamax * v * v) - amax
+		* (-4 * amax * alphamax * w1 * l + amax * w1 * w1 * v * v
+				- amax * w0 * w0 * v * v - 4 * alphamax * alphamax * l
+				+ 2 * alphamax * w1 * v * v - 2 * alphamax * w0 * v * v))
+		/ (2 * l * (2 * amax * amax * w1 * w1 + 4 * amax * alphamax
+				* w1 + 2 * alphamax * alphamax));
+*/
