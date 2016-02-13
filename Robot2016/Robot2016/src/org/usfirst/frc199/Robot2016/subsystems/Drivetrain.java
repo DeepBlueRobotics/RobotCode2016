@@ -52,7 +52,7 @@ public class Drivetrain extends Subsystem implements DashboardSubsystem {
     	boolean arcadedrive = true;
     	if(arcadedrive){
 			double x = -Robot.oi.getRightJoystick().getX();
-			double y = Robot.oi.getLeftJoystick().getY();
+			double y = -Robot.oi.getLeftJoystick().getY();
 			robotDrive.arcadeDrive(y, x);
 		} else {
 			double left = Robot.oi.getLeftJoystick().getY();
