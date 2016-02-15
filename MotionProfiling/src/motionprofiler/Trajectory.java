@@ -5,8 +5,11 @@ package motionprofiler;
  */
 public class Trajectory {
 	
+	// The path used to generate the trajectory
 	private final Path path;
+	// The constraints on the trajectory
 	private final double vmax, amax, wmax, alphamax;
+	// The set of calculated target velocity values
 	private final double[] velocities;
 	
 	/**
@@ -72,19 +75,46 @@ public class Trajectory {
 	 * @return the maximum allowed velocity
 	 */
 	private double getVmax(int i) {
-		// TODO: Not yet implemented
-		return 0;
+		// point on the spline function
+		double s = 1.0*i/velocities.length;
+		// dtheta/dL (not with respect to t)
+		double w = Math.abs(path.getW(s));
+		// d^2theta/dL^2 (not with respect to t)
+		double alpha = Math.abs(path.getAlpha(s));
+		// velocity limit due to tradeoff between linear and angular velocity
+		double v1 = vmax/(1.0+w*vmax/wmax);
+		// velocity limit due to maximum angular acceleration
+		double v2 = Math.sqrt(alphamax/alpha);
+		// return the smallest velocity limit
+		return Math.min(v1, v2);
 	}
 	
 	/**
 	 * Gets the maximum acceleration allowed at a given point and velocity
 	 * @param i - the point being evaluated
 	 * @param v - the current velocity
-	 * @return the maximum allowed acceleration
+	 * @return the maximum allowed acceleration (accurate to 3 decimal places)
 	 */
 	private double getAmax(int i, double v) {
-		// TODO: Not yet implemented
-		return 0;
+		// old point on the spline function
+		double s0 = 1.0*(i-1)/velocities.length;
+		// new point on the spline function
+		double s1 = 1.0*i/velocities.length;
+		// change in arc length between the two points
+		double l = (s1-s0)*v;
+		// initial dw/dL
+		double w0 = Math.abs(path.getW(s0));
+		// final dw/dL
+		double w1 = Math.abs(path.getW(s1));
+		// acceleration limit due to tradeoff between linear and angular acceleration
+		for(double a = amax; a>0; a-=.001) {
+			double sqrt = Math.sqrt(v*v+2*a*l);
+			double alpha = (w1*a*sqrt-w0*a*v)/(-v+sqrt);
+			if(a<amax-amax*alpha/alphamax) {
+				return a;
+			}
+		}
+		return 0.0;
 	}
 	
 	/**
@@ -102,7 +132,16 @@ public class Trajectory {
 	 * @return the target angular velocity
 	 */
 	public double getW(int i) {
-		// TODO: Not yet implemented
-		return 0.0;
+		double s = 1.0*i/velocities.length;
+		return path.getW(s)*velocities[i];
+	}
+	
+	/**
+	 * Determines the index of a point on the path
+	 * @param distance - the distance traveled along the path
+	 * @return the index of the current point
+	 */
+	public int getCurrentIndex(double distance) {
+		return (int)(path.getS(distance)/velocities.length);
 	}
 }

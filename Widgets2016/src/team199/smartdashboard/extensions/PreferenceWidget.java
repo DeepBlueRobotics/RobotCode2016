@@ -22,7 +22,7 @@ public class PreferenceWidget extends StaticWidget {
     public static final String NAME = "Preference Widget";
     private final JComboBox keyBox = new JComboBox();
     private final JTextField valueField = new JTextField();
-    private ITable prefs = NetworkTable.getTable("Preferences");
+    private ITable prefs = null;//NetworkTable.getTable("Preferences");
     private final JButton saveButton = new JButton("Save");
     private final JButton removeButton = new JButton("Remove");
 
@@ -31,8 +31,9 @@ public class PreferenceWidget extends StaticWidget {
         try {
             prefs = Robot.getPreferences();
         } catch(Exception e) {
-            prefs = NetworkTable.getTable("Preferences");
+//            prefs = NetworkTable.getTable("Preferences");
             System.out.println("Preferences not found");
+            return;
         }
         setPreferredSize(new Dimension(215, 90));
         keyBox.setPreferredSize(new Dimension(200, 25));
@@ -86,7 +87,9 @@ public class PreferenceWidget extends StaticWidget {
         keyBox.removeAllItems();
         keyBox.addItem("New Preference");
         for (Object o: temp) {
-            keyBox.addItem(o);
+            if(!o.equals("~S A V E~")){
+                keyBox.addItem(o);
+            }
         }
         keyBox.setSelectedItem(key);
         repaint();
