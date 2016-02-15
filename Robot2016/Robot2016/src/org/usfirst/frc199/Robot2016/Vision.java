@@ -176,6 +176,7 @@ public class Vision {
 						// methods at the bottom to work with angles to
 						// return boolean about the images.
 
+//						CameraServer.getInstance().setImage(hslimage);
 						CameraServer.getInstance().setImage(frame);
 						Thread.sleep(100);
 					}
@@ -227,6 +228,8 @@ public class Vision {
 
 		NIVision.imaqDrawLineOnImage(frame, frame, DrawMode.DRAW_VALUE, topleft, bottomright, 0);
 		NIVision.imaqDrawLineOnImage(frame, frame, DrawMode.DRAW_VALUE, topright, bottomleft, 0);
+//		NIVision.imaqDrawLineOnImage(hslimage, hslimage, DrawMode.DRAW_VALUE, topleft, bottomright, 0);
+//		NIVision.imaqDrawLineOnImage(hslimage, hslimage, DrawMode.DRAW_VALUE, topright, bottomleft, 0);
 	}
 
 	final NIVision.Range GET_BRIGHTNESS = new NIVision.Range(240, 255);
@@ -302,7 +305,7 @@ public class Vision {
 					&& /*
 						 * reports[i].imageWidth < 100 && reports[i].imageHeight
 						 * < 100 &&
-						 */ reports[i].imageHeight > 0) {
+						 */ reports[i].imageHeight > 0 && reports[i].center_mass_y > 50) {
 				counter++;
 				SmartDashboard.putNumber("Looked for Data", counter);
 				contourReport.putNumber("contour" + num + "/area", reports[i].area);
