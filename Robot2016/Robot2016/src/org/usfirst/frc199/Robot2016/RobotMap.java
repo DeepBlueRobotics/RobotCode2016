@@ -44,7 +44,7 @@ public class RobotMap {
     public static DigitalInput intakeBallSensor;
     public static SpeedController climberExtendMotor;
     public static SpeedController climberWinchMotor;
-    public static DigitalInput climberReachedRung;
+    public static DigitalInput climberExtensionLimit;
 
     public static void init() {
         drivetrainLeftMotor = new Talon(0);
@@ -116,8 +116,8 @@ public class RobotMap {
         climberWinchMotor = new Talon(6);
         LiveWindow.addActuator("Climber", "WinchMotor", (Talon) climberWinchMotor);
         
-        climberReachedRung = new DigitalInput(11);
-        LiveWindow.addSensor("Climber", "Stop", climberReachedRung);
+        climberExtensionLimit = new DigitalInput(11);
+        LiveWindow.addSensor("Climber", "ExtensionLimit", climberExtensionLimit);
         
     }
 }
