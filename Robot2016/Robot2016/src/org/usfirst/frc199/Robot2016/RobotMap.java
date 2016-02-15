@@ -40,10 +40,11 @@ public class RobotMap {
     public static DigitalInput intakeUpperLimit;
     public static DigitalInput intakeLowerLimit;
     public static Encoder intakePivotEncoder;
-    public static SpeedController intakeBeltMotor;
+//    public static SpeedController intakeBeltMotor;
     public static DigitalInput intakeBallSensor;
     public static SpeedController climberExtendMotor;
     public static SpeedController climberWinchMotor;
+    public static DigitalInput climberReachedRung;
 
     public static void init() {
         drivetrainLeftMotor = new Talon(0);
@@ -80,17 +81,17 @@ public class RobotMap {
         drivetrainShifter = new DoubleSolenoid(0, 0, 1);
         LiveWindow.addActuator("Drivetrain", "Shifter", drivetrainShifter);
         
-        shooterFlywheelMotor = new Talon(2);
+        shooterFlywheelMotor = new Talon(4);
         LiveWindow.addActuator("Shooter", "FlywheelMotor", (Talon) shooterFlywheelMotor);
         
         shooterFlywheelEncoder = new Encoder(4, 5, false, EncodingType.k4X);
         LiveWindow.addSensor("Shooter", "FlywheelEncoder", shooterFlywheelEncoder);
         shooterFlywheelEncoder.setDistancePerPulse(1.0);
         shooterFlywheelEncoder.setPIDSourceType(PIDSourceType.kRate);
-        intakeRollerMotor = new Talon(4);
+        intakeRollerMotor = new Talon(3);
         LiveWindow.addActuator("Intake", "RollerMotor", (Talon) intakeRollerMotor);
         
-        intakePivotMotor = new Talon(5);
+        intakePivotMotor = new Talon(2);
         LiveWindow.addActuator("Intake", "PivotMotor", (Talon) intakePivotMotor);
         
         intakeUpperLimit = new DigitalInput(8);
@@ -103,8 +104,8 @@ public class RobotMap {
         LiveWindow.addSensor("Intake", "PivotEncoder", intakePivotEncoder);
         intakePivotEncoder.setDistancePerPulse(Preferences.getInstance().getDouble("IntakeEncoderRatio", 1));
         
-        intakeBeltMotor = new Talon(3);
-        LiveWindow.addActuator("Intake", "BeltMotor", (Talon) intakeBeltMotor);
+//        intakeBeltMotor = new Talon(3);
+//        LiveWindow.addActuator("Intake", "BeltMotor", (Talon) intakeBeltMotor);
         
         intakeBallSensor = new DigitalInput(10);
         LiveWindow.addSensor("Intake", "BallSensor", intakeBallSensor);
@@ -114,6 +115,9 @@ public class RobotMap {
         
         climberWinchMotor = new Talon(6);
         LiveWindow.addActuator("Climber", "WinchMotor", (Talon) climberWinchMotor);
+        
+        climberReachedRung = new DigitalInput(11);
+        LiveWindow.addSensor("Climber", "Stop", climberReachedRung);
         
     }
 }

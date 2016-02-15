@@ -23,9 +23,9 @@ public class IntakeBoulder extends Command {
 	protected void execute() {
 		Robot.intake.setRoller(Preferences.getInstance().getDouble("IntakeRollerSpeed", 0.7));
 		if (!Robot.intake.getBallSensor()) {
-			Robot.intake.runBelt(Preferences.getInstance().getDouble("IntakeBeltSpeed", 0.5));
+			Robot.intake.setRoller(Preferences.getInstance().getDouble("IntakeRollerSpeed", 0.7));
 		} else {
-			Robot.intake.runBelt(0);
+			Robot.intake.setRoller(0);
 		}
 	}
 
@@ -37,7 +37,6 @@ public class IntakeBoulder extends Command {
 	// Called once after isFinished returns true
 	protected void end() {
 		Robot.intake.setRoller(0);
-		Robot.intake.runBelt(0);
 	}
 
 	// Called when another command which requires one or more of the same

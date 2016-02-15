@@ -19,7 +19,7 @@ public class Intake extends Subsystem implements DashboardSubsystem {
 	private final SpeedController pivotMotor = RobotMap.intakePivotMotor;
 	private final DigitalInput upperLimit = RobotMap.intakeUpperLimit;
 	private final DigitalInput lowerLimit = RobotMap.intakeLowerLimit;
-	private final SpeedController beltMotor = RobotMap.intakeBeltMotor;
+//	private final SpeedController beltMotor = RobotMap.intakeBeltMotor;
 	private final DigitalInput ballSensor = RobotMap.intakeBallSensor;
 	private final Encoder pivotEncoder = RobotMap.intakePivotEncoder;
 	
@@ -103,10 +103,6 @@ public class Intake extends Subsystem implements DashboardSubsystem {
 		return false;
 	}
 	
-	
-	public void runBelt(double speed) {
-		beltMotor.set(speed);
-	}
 	
 	public boolean getBallSensor() {
 		return ballSensor.get();

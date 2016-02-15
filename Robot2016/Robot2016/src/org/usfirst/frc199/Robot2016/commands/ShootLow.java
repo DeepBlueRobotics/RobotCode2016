@@ -20,7 +20,6 @@ public class ShootLow extends Command {
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
     	Robot.intake.setRoller(-Preferences.getInstance().getDouble("IntakeRollerSpeed", 0.7));
-    	Robot.intake.runBelt(-Preferences.getInstance().getDouble("IntakeBeltSpeed", 0.5));
     }
 
     // Make this return true when this Command no longer needs to run execute()
@@ -30,8 +29,7 @@ public class ShootLow extends Command {
 
     // Called once after isFinished returns true
     protected void end() {
-    	Robot.intake.setRoller(0);
-    	Robot.intake.runBelt(0);	
+    	Robot.intake.setRoller(0);	
     }
 
     // Called when another command which requires one or more of the same
