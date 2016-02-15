@@ -20,8 +20,6 @@ public class Vision {
 	CameraServer server;
 	USBCamera camera;
 
-	int counter = 0;
-
 	// Camera Constants
 	static final int WIDTH = 320, HEIGHT = 240;
 	static final int BRIGHTNESS = 50, EXPOSURE = 50;
@@ -31,29 +29,21 @@ public class Vision {
 	Image frame;
 	Image hslimage;
 
-	Process process;
-
 	Thread runCamera;
 	Thread runGrip;
 
 	RGBValue rgb = new RGBValue();
+	final NIVision.Range GET_BRIGHTNESS_GREEN = new NIVision.Range(225, 255);
+	final NIVision.Range GET_BRIGHTNESS_GENERAL = new NIVision.Range(235, 255);
 
-	NIVision.Rect rect;
 	NIVision.Line crosshairsl;
 	NIVision.Line crosshairsr;
 
-	// Image processing that we did in GRIP: HSL - H:71-105, S:32-255, L:70-195
-	// Finding contours - filter contours - what is being done in
-	// updateParticleAnalysisReport()
-	// Min Area: 75; Min Perimeter: 150; Min/Max Width: 0,100; Min/Max Height:
-	// 0,100; Solidity: 0-100
-	// Published Contours Report
+	String cx = "center_mass_x";
+	String cy = "center_mass_y";
 
-	int minArea = 75, minPerimeter = 150;
-	int minWidth = 0, maxWidth = 100;
-	int minHeight = 0, maxHeight = 100;
-	NIVision.Range solidity = new NIVision.Range(0, 100);
-	
+	private static int AREA_DEFAULT = 35;
+
 	private final NetworkTable contourReport = NetworkTable.getTable("CONTOURS");
 
 	boolean isEnabled = true;
@@ -112,15 +102,11 @@ public class Vision {
 		frame = NIVision.imaqCreateImage(ImageType.IMAGE_RGB, 0);
 		hslimage = NIVision.imaqCreateImage(ImageType.IMAGE_U8, 0);
 
-		// int square = 50;
 		reports = null;
+		SmartDashboard.putNumber("Is in hsl", 0);
 
 		camera = new USBCamera("cam0");
 		camera.setSize(WIDTH, HEIGHT);
-		// camera.setBrightness(BRIGHTNESS);
-		// camera.setExposureManual(EXPOSURE);
-		// rect = new NIVision.Rect(480 / 2 - square / 2, 640 / 2 - square / 2,
-		// square, square);
 
 		camera.openCamera();
 
@@ -140,7 +126,6 @@ public class Vision {
 						uploadToContourReport();
 
 						generateCrossHairsAtCenterContour(0);
-
 						// Now that we are correctly applying the threshold for
 						// bright objects, we need to make sure
 						// that the methods to get the particle data work.
@@ -167,9 +152,11 @@ public class Vision {
 						// If all that works, the next part would be to get the
 						// methods at the bottom to work with angles to
 						// return boolean about the images.
-
-//						CameraServer.getInstance().setImage(hslimage);
-						CameraServer.getInstance().setImage(frame);
+						double x = SmartDashboard.getNumber("Is in hsl", 0);
+						if (x == 0)
+							CameraServer.getInstance().setImage(frame);
+						else
+							CameraServer.getInstance().setImage(hslimage);
 						Thread.sleep(100);
 					}
 				} catch (Exception e) {
@@ -180,12 +167,8 @@ public class Vision {
 			}
 
 		};
-
 		runCamera.start();
 	}
-
-	String cx = "center_mass_x";
-	String cy = "center_mass_y";
 
 	private void generateCrossHairsAtCenterContour(int i) {
 
@@ -215,25 +198,18 @@ public class Vision {
 		NIVision.Point topright = new NIVision.Point((int) (centerx + length), (int) (centery - length));
 		NIVision.Point bottomleft = new NIVision.Point((int) (centerx - length), (int) (centery + length));
 		NIVision.Point bottomright = new NIVision.Point((int) (centerx + length), (int) (centery + length));
-		
-		SmartDashboard.putString("Putting crosshairs", "true");
 
 		NIVision.imaqDrawLineOnImage(frame, frame, DrawMode.DRAW_VALUE, topleft, bottomright, 0);
 		NIVision.imaqDrawLineOnImage(frame, frame, DrawMode.DRAW_VALUE, topright, bottomleft, 0);
-//		NIVision.imaqDrawLineOnImage(hslimage, hslimage, DrawMode.DRAW_VALUE, topleft, bottomright, 0);
-//		NIVision.imaqDrawLineOnImage(hslimage, hslimage, DrawMode.DRAW_VALUE, topright, bottomleft, 0);
 	}
 
-	final NIVision.Range GET_BRIGHTNESS = new NIVision.Range(240, 255);
-
 	public void applyFilters() {
-		NIVision.imaqColorThreshold(hslimage, frame, 255, ColorMode.RGB, GET_BRIGHTNESS, GET_BRIGHTNESS,
-				GET_BRIGHTNESS);
+		NIVision.imaqColorThreshold(hslimage, frame, 255, ColorMode.RGB, GET_BRIGHTNESS_GENERAL, GET_BRIGHTNESS_GREEN,
+				GET_BRIGHTNESS_GENERAL);
 	}
 
 	public void updateParticalAnalysisReports(NIVision.Image image) {
 		int numParticles = NIVision.imaqCountParticles(image, 0);
-		SmartDashboard.putNumber("Object removal blobs:", numParticles);
 		final Vector<ParticleReport> particles = new Vector<ParticleReport>();
 		if (numParticles > 0) {
 			for (int particleIndex = 0; particleIndex < numParticles; particleIndex++) {
@@ -259,25 +235,6 @@ public class Vision {
 		particles.copyInto(this.reports);
 	}
 
-	// private final static String[] GRIP_ARGS = new String[] {
-	// "/usr/local/frc/JRE/bin/java", "-jar",
-	// "/home/lvuser/grip.jar", "/home/lvuser/project.grip" };
-	//
-	// public void init() {
-	// try {
-	// process = Runtime.getRuntime().exec(GRIP_ARGS);
-	// SmartDashboard.putString("Running Grip?",
-	// process.isAlive() + "?" + new
-	// Scanner(process.getErrorStream()).nextLine());
-	// } catch (Exception e) {
-	// SmartDashboard.putString("Grip Thread Failure", e.toString());
-	// }
-	// }
-	//
-	// public void closeGripProcess() {
-	// process.destroyForcibly();
-	// }
-	//
 	public void writingImage() {
 		try {
 			Image bi = frame;
@@ -289,17 +246,12 @@ public class Vision {
 		}
 	}
 
-	// Analyze reports
 	public void uploadToContourReport() {
 		int num = 0;
 		for (int i = 0; i < reports.length; i++) {
-			if (reports[i].area > 200 && reports[i].convexHullPerimeter > 150 && reports[i].imageWidth > 0
-					&& /*
-						 * reports[i].imageWidth < 100 && reports[i].imageHeight
-						 * < 100 &&
-						 */ reports[i].imageHeight > 0 && reports[i].center_mass_y > 50) {
-				counter++;
-				SmartDashboard.putNumber("Looked for Data", counter);
+			if (reports[i].area > AREA_DEFAULT && reports[i].convexHullPerimeter > 2 * AREA_DEFAULT
+					&& reports[i].imageWidth > 0 && reports[i].imageHeight > 0
+					&& reports[i].center_mass_y > 2 * AREA_DEFAULT) {
 				contourReport.putNumber("contour" + num + "/area", reports[i].area);
 				contourReport.putNumber("contour" + num + "/percentAreaToImageArea", reports[i].percentAreaToImageArea);
 				contourReport.putNumber("contour" + num + "/convexHullArea", reports[i].convexHullArea);
@@ -317,42 +269,6 @@ public class Vision {
 			}
 		}
 	}
-
-	/**
-	 * 
-	 * Given the arrays centerX and centerY from the network tables. Will return
-	 * the x, y coordinates that has the max width in which we want to shoot.
-	 * 
-	 * @return
-	 */
-	// public double[] findMidXYCoords(){
-	// double[] x = new double[0];
-	// table.getNumberArray("centerX", x);
-	// double[] y = new double[0];
-	// table.getNumberArray("centerY", y);
-	// double[] width = new double[0];
-	// table.getNumberArray("centerY", width);
-	// int index = maxIndex(width);
-	// return new double[]{x[index], y[index]};
-	// }
-
-	/**
-	 * Returns index at which it has max double value in array input
-	 * 
-	 * @param input
-	 * @return
-	 */
-	// private int maxIndex(double[] input) {
-	// double max = 0;
-	// int index = 0;
-	// for (int i = 0; i < input.length; i++) {
-	// if (input[i] > max) {
-	// max = input[i];
-	// index = i;
-	// }
-	// }
-	// return index;
-	// }
 
 	/**
 	 * did the target (retro-reflective tape) enter the camera's vision?
@@ -383,5 +299,25 @@ public class Vision {
 	public double degreeToTarget() {
 		return 0;
 	}
+	
+	// private final static String[] GRIP_ARGS = new String[] {
+	// "/usr/local/frc/JRE/bin/java", "-jar",
+	// "/home/lvuser/grip.jar", "/home/lvuser/project.grip" };
+	//
+	// public void init() {
+	// try {
+	// process = Runtime.getRuntime().exec(GRIP_ARGS);
+	// SmartDashboard.putString("Running Grip?",
+	// process.isAlive() + "?" + new
+	// Scanner(process.getErrorStream()).nextLine());
+	// } catch (Exception e) {
+	// SmartDashboard.putString("Grip Thread Failure", e.toString());
+	// }
+	// }
+	//
+	// public void closeGripProcess() {
+	// process.destroyForcibly();
+	// }
+	//
 
 }
