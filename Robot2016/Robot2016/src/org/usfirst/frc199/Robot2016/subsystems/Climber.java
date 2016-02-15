@@ -24,10 +24,10 @@ public class Climber extends Subsystem implements DashboardSubsystem {
 		return 0;
 	}
 	
-	public void setMotor(double speed) {
+	public void setWinchMotor(double speed) {
 		winchMotor.set(speed);
 	}
-	public void setMotorExtention(double height) {
-		extendMotor.set(height);
+	public void setExtendMotor(double speed) {
+		extendMotor.set(speed);
 	}
 }

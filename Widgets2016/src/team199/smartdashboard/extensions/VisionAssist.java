@@ -32,11 +32,11 @@ import javax.imageio.stream.ImageInputStream;
 
 /**
  *
- * @author Joshua
+ * @author Adam
  */
 public class VisionAssist extends StaticWidget {
 
-    public static final String NAME = "Simple Camera Viewer";
+    public static final String NAME = "Simple Camera Viewer Test";
     
 
     private static final int[] START_BYTES = new int[]{0xFF, 0xD8};
