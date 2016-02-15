@@ -3,14 +3,20 @@ package org.usfirst.frc199.Robot2016;
 import java.util.Comparator;
 import java.util.Vector;
 
+import javax.annotation.Generated;
+
 import com.ni.vision.NIVision;
 import com.ni.vision.NIVision.CannyOptions;
 import com.ni.vision.NIVision.ColorMode;
+import com.ni.vision.NIVision.DrawMode;
 import com.ni.vision.NIVision.GetBisectingLineResult;
 import com.ni.vision.NIVision.Image;
 import com.ni.vision.NIVision.ImageType;
+import com.ni.vision.NIVision.Line;
 import com.ni.vision.NIVision.MorphologyMethod;
+import com.ni.vision.NIVision.Point;
 import com.ni.vision.NIVision.RGBValue;
+import com.ni.vision.NIVision.ShapeMode;
 
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
@@ -21,6 +27,8 @@ public class Vision {
 
 	CameraServer server;
 	USBCamera camera;
+
+	int counter = 0;
 
 	// Camera Constants
 	static final int WIDTH = 320, HEIGHT = 240;
@@ -39,6 +47,8 @@ public class Vision {
 	RGBValue rgb = new RGBValue();
 
 	NIVision.Rect rect;
+	NIVision.Line crosshairsl;
+	NIVision.Line crosshairsr;
 
 	// Image processing that we did in GRIP: HSL - H:71-105, S:32-255, L:70-195
 	// Finding contours - filter contours - what is being done in
@@ -51,7 +61,7 @@ public class Vision {
 	int minWidth = 0, maxWidth = 100;
 	int minHeight = 0, maxHeight = 100;
 	NIVision.Range solidity = new NIVision.Range(0, 100);
-
+	
 	private final NetworkTable contourReport = NetworkTable.getTable("CONTOURS");
 
 	boolean isEnabled = true;
@@ -132,9 +142,40 @@ public class Vision {
 					camera.startCapture();
 					while (true) {
 						camera.getImage(frame);
+
 						applyFilters();
-						// updateParticalAnalysisReports(hslimage);
-						// uploadToContourReport();
+						updateParticalAnalysisReports(hslimage);
+						uploadToContourReport();
+
+						generateCrossHairsAtCenterContour(0);
+
+						// Now that we are correctly applying the threshold for
+						// bright objects, we need to make sure
+						// that the methods to get the particle data work.
+
+						// OFF-TOPIC NOTE: we need to make sure that the cameras
+						// are able to be mounted and learn about what
+						// the plans are for the camera/light-ring.
+
+						// So start with testing the particle method
+						// updateParticalAnalysisReports USING THE HSLIMAGE
+						// IMAGE
+						// This is a key because we need to analysis the
+						// filtered image with is the hslimage.
+
+						// Then the next step is to upload that data to the
+						// contour report, so using
+						// the uploadToContourReport method.
+
+						// If all of this works, the next thing to look for is
+						// that the data is accurate and to put a x
+						// on the center of the ORIGINAL FRAME and set that
+						// frame to the camera server.
+
+						// If all that works, the next part would be to get the
+						// methods at the bottom to work with angles to
+						// return boolean about the images.
+
 						CameraServer.getInstance().setImage(frame);
 						Thread.sleep(100);
 					}
@@ -144,10 +185,48 @@ public class Vision {
 					isEnabled = false;
 				}
 			}
+
 		};
 
 		runCamera.start();
-		contourReport.putString("Test1", "starts?");
+	}
+
+	String cx = "center_mass_x";
+	String cy = "center_mass_y";
+
+	private void generateCrossHairsAtCenterContour(int i) {
+
+		double centerx = contourReport.getNumber("contour" + i + "/" + cx, NIVision.imaqGetImageSize(frame).height / 2);
+		double centery = contourReport.getNumber("contour" + i + "/" + cy, NIVision.imaqGetImageSize(frame).width / 2);
+
+		// So, we need to set the cross hairs around the point.
+		// So we need to set the lines around the cross hair to go from the
+		// opposite corners to each other. Something like this:
+		// \----/
+		// -\--/-
+		// --\/--
+		// --/\--
+		// -/--\-
+		// /----\
+		// The center is point (centerx, centery), and lets say that the length
+		// of the lines will be LEN and let x = LEN/2(cos45).
+		// So the top-left corner would be (centerx - x, centery - x) because at
+		// 45 degrees, the length of dx and dy would be identical.
+		// So the corners would be (centerx - x, centery - x), (centerx + x,
+		// centery - y), (centerx - x, centery + y), and
+		// (centerx + x, centery + y).
+
+		// Set length to what we want x to be.
+		int length = 20;
+		NIVision.Point topleft = new NIVision.Point((int) (centerx - length), (int) (centery - length));
+		NIVision.Point topright = new NIVision.Point((int) (centerx + length), (int) (centery - length));
+		NIVision.Point bottomleft = new NIVision.Point((int) (centerx - length), (int) (centery + length));
+		NIVision.Point bottomright = new NIVision.Point((int) (centerx + length), (int) (centery + length));
+		
+		SmartDashboard.putString("Putting crosshairs", "true");
+
+		NIVision.imaqDrawLineOnImage(frame, frame, DrawMode.DRAW_VALUE, topleft, bottomright, 0);
+		NIVision.imaqDrawLineOnImage(frame, frame, DrawMode.DRAW_VALUE, topright, bottomleft, 0);
 	}
 
 	final NIVision.Range GET_BRIGHTNESS = new NIVision.Range(240, 255);
@@ -158,7 +237,7 @@ public class Vision {
 	}
 
 	public void updateParticalAnalysisReports(NIVision.Image image) {
-		final int numParticles = NIVision.imaqCountParticles(image, 0);
+		int numParticles = NIVision.imaqCountParticles(image, 0);
 		SmartDashboard.putNumber("Object removal blobs:", numParticles);
 		final Vector<ParticleReport> particles = new Vector<ParticleReport>();
 		if (numParticles > 0) {
@@ -217,32 +296,29 @@ public class Vision {
 
 	// Analyze reports
 	public void uploadToContourReport() {
-		contourReport.putString("Test", "test");
+		int num = 0;
 		for (int i = 0; i < reports.length; i++) {
-			// Min Area: 75; Min Perimeter: 150; Min/Max Width: 0,100; Min/Max
-			// Height: 0,100;
-			if (reports[i].area > 75 && reports[i].convexHullPerimeter > 150 && reports[i].imageWidth < 100
-					&& reports[i].imageHeight < 100) {
-				contourReport.putNumber("contour" + i + "/area", reports[i].area);
-				contourReport.putNumber("contour" + i + "/percentAreaToImageArea", reports[i].percentAreaToImageArea);
-				contourReport.putNumber("contour" + i + "/convexHullArea", reports[i].convexHullArea);
-				contourReport.putNumber("contour" + i + "/convexHullPerimeter", reports[i].convexHullPerimeter);
-				contourReport.putNumber("contour" + i + "/boundingRectTop", reports[i].boundingRectTop);
-				contourReport.putNumber("contour" + i + "/boundingRectLeft", reports[i].boundingRectLeft);
-				contourReport.putNumber("contour" + i + "/boundingRectBottom", reports[i].boundingRectBottom);
-				contourReport.putNumber("contour" + i + "/boundingRectRight", reports[i].boundingRectRight);
-				contourReport.putNumber("contour" + i + "/boundingRectWidth", reports[i].boundingRectWidth);
-				contourReport.putNumber("contour" + i + "/center_mass_x", reports[i].center_mass_x);
-				contourReport.putNumber("contour" + i + "/center_mass_y", reports[i].center_mass_y);
-				contourReport.putNumber("contour" + i + "/imageWidth", reports[i].imageWidth);
-				contourReport.putNumber("contour" + i + "/imageHeight", reports[i].imageHeight);
-			} else {
-				contourReport.putString("contour" + i + "/Does Not Meet Constraints", "error");
-				contourReport.putNumber("contour" + i + "/area", reports[i].area);
-				contourReport.putNumber("contour" + i + "/convexHullArea", reports[i].convexHullArea);
-				contourReport.putNumber("contour" + i + "/convexHullPerimeter", reports[i].convexHullPerimeter);
-				contourReport.putNumber("contour" + i + "/center_mass_x", reports[i].center_mass_x);
-				contourReport.putNumber("contour" + i + "/center_mass_y", reports[i].center_mass_y);
+			if (reports[i].area > 200 && reports[i].convexHullPerimeter > 150 && reports[i].imageWidth > 0
+					&& /*
+						 * reports[i].imageWidth < 100 && reports[i].imageHeight
+						 * < 100 &&
+						 */ reports[i].imageHeight > 0) {
+				counter++;
+				SmartDashboard.putNumber("Looked for Data", counter);
+				contourReport.putNumber("contour" + num + "/area", reports[i].area);
+				contourReport.putNumber("contour" + num + "/percentAreaToImageArea", reports[i].percentAreaToImageArea);
+				contourReport.putNumber("contour" + num + "/convexHullArea", reports[i].convexHullArea);
+				contourReport.putNumber("contour" + num + "/convexHullPerimeter", reports[i].convexHullPerimeter);
+				contourReport.putNumber("contour" + num + "/boundingRectTop", reports[i].boundingRectTop);
+				contourReport.putNumber("contour" + num + "/boundingRectLeft", reports[i].boundingRectLeft);
+				contourReport.putNumber("contour" + num + "/boundingRectBottom", reports[i].boundingRectBottom);
+				contourReport.putNumber("contour" + num + "/boundingRectRight", reports[i].boundingRectRight);
+				contourReport.putNumber("contour" + num + "/boundingRectWidth", reports[i].boundingRectWidth);
+				contourReport.putNumber("contour" + num + "/" + cx, reports[i].center_mass_x);
+				contourReport.putNumber("contour" + num + "/" + cy, reports[i].center_mass_y);
+				contourReport.putNumber("contour" + num + "/imageWidth", reports[i].imageWidth);
+				contourReport.putNumber("contour" + num + "/imageHeight", reports[i].imageHeight);
+				num++;
 			}
 		}
 	}
