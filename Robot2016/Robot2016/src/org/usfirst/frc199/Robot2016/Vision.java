@@ -3,20 +3,12 @@ package org.usfirst.frc199.Robot2016;
 import java.util.Comparator;
 import java.util.Vector;
 
-import javax.annotation.Generated;
-
 import com.ni.vision.NIVision;
-import com.ni.vision.NIVision.CannyOptions;
 import com.ni.vision.NIVision.ColorMode;
 import com.ni.vision.NIVision.DrawMode;
-import com.ni.vision.NIVision.GetBisectingLineResult;
 import com.ni.vision.NIVision.Image;
 import com.ni.vision.NIVision.ImageType;
-import com.ni.vision.NIVision.Line;
-import com.ni.vision.NIVision.MorphologyMethod;
-import com.ni.vision.NIVision.Point;
 import com.ni.vision.NIVision.RGBValue;
-import com.ni.vision.NIVision.ShapeMode;
 
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
