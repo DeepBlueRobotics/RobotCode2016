@@ -15,39 +15,65 @@ import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.vision.USBCamera;
 
+/**
+ * 
+ * Using Microsoft Lifecam HD-3000 Camera: for more information see -
+ * http://www.andymark.com/product-p/am-3025.html
+ * 
+ * This vision class uses NIVision to filter the image and then publish the
+ * target's location onto a contour report found on the outline viewer. (See
+ * uploadToContourReport method) The class uses its own thread to releases its
+ * reliance on the main robot thread and also to create a safety net for an
+ * event of vision failure.
+ * 
+ * @author Alex Zuckut Deep Blue Robotics 2016
+ */
 public class Vision {
 
-	CameraServer server;
+	// Camera implementation
 	USBCamera camera;
 
 	// Camera Constants
 	static final int WIDTH = 320, HEIGHT = 240;
 	static final int BRIGHTNESS = 50, EXPOSURE = 50;
 
+	// The port in which the camera runs
 	int session;
 
+	// Images that the camera uses
 	Image frame;
 	Image hslimage;
 
+	// Thread for running the camera
 	Thread runCamera;
-	Thread runGrip;
 
+	// Objects used for filtering the image
 	RGBValue rgb = new RGBValue();
 	final NIVision.Range GET_BRIGHTNESS_GREEN = new NIVision.Range(225, 255);
 	final NIVision.Range GET_BRIGHTNESS_GENERAL = new NIVision.Range(235, 255);
 
+	// Lines that are drawn on the middle of the target area.
 	NIVision.Line crosshairsl;
 	NIVision.Line crosshairsr;
 
+	// Network Table to which all the data gets committed to - reports is the
+	// data.
+	private final NetworkTable contourReport = NetworkTable.getTable("CONTOURS");
+	ParticleReport[] reports;
+
+	// Constants for easy use.
 	String cx = "center_mass_x";
 	String cy = "center_mass_y";
-
 	private static int AREA_DEFAULT = 35;
-
-	private final NetworkTable contourReport = NetworkTable.getTable("CONTOURS");
-
 	boolean isEnabled = true;
 
+	/**
+	 * 
+	 * This class is merely an aid for data on all the particles that the robot
+	 * finds.
+	 * 
+	 * @author Alex Zuckut 2016 Deep Blue Robotics
+	 */
 	public class ParticleReport implements Comparator<ParticleReport>, Comparable<ParticleReport> {
 		public double percentAreaToImageArea;
 		public double area;
@@ -63,10 +89,16 @@ public class Vision {
 		public int imageWidth;
 		public int boundingRectWidth;
 
+		/**
+		 * Simple Constructor - initialized all values.
+		 */
 		public ParticleReport() {
 			implementation();
 		}
 
+		/**
+		 * Initialization
+		 */
 		private void implementation() {
 			percentAreaToImageArea = 0;
 			area = 0;
@@ -95,8 +127,10 @@ public class Vision {
 
 	};
 
-	ParticleReport[] reports;
-
+	/**
+	 * This constuctor implements the vision class which implements the camera
+	 * and then sets the size to 320x240 and finally opens the camera for use.
+	 */
 	public Vision() {
 
 		frame = NIVision.imaqCreateImage(ImageType.IMAGE_RGB, 0);
@@ -112,6 +146,17 @@ public class Vision {
 
 	}
 
+	/**
+	 * This implements the startCamera thread and then starts that thread.
+	 * 
+	 * In the thread, an image is taken from the camera and filters the camera
+	 * using a RGB filter and analyzes that filtered image and finally uploads
+	 * that data to the contour report.
+	 * 
+	 * From that data, it draws the cross hairs onto the image that is returned
+	 * to the live feed which gets uploaded back to the camera server - and then
+	 * to the feed.
+	 */
 	public void startCamera() {
 		runCamera = new Thread() {
 			public synchronized void run() {
@@ -160,6 +205,8 @@ public class Vision {
 						Thread.sleep(100);
 					}
 				} catch (Exception e) {
+					// In case of failure - camera and all vision subsets are
+					// cut.
 					SmartDashboard.putString("Image Thread failure", e.toString());
 					camera.closeCamera();
 					isEnabled = false;
@@ -170,6 +217,13 @@ public class Vision {
 		runCamera.start();
 	}
 
+	/**
+	 * This generates the cross hairs at the contour provided. The cross hairs
+	 * are just the combination of two lines.
+	 * 
+	 * @param i
+	 *            Is the blob that the cross hair is being generated around.
+	 */
 	private void generateCrossHairsAtCenterContour(int i) {
 
 		double centerx = contourReport.getNumber("contour" + i + "/" + cx, NIVision.imaqGetImageSize(frame).height / 2);
@@ -203,11 +257,24 @@ public class Vision {
 		NIVision.imaqDrawLineOnImage(frame, frame, DrawMode.DRAW_VALUE, topright, bottomleft, 0);
 	}
 
+	/**
+	 * This method applies a RGB filter to the feed of the camera and returns
+	 * that feed as an image in the variable hslimage.
+	 */
 	public void applyFilters() {
 		NIVision.imaqColorThreshold(hslimage, frame, 255, ColorMode.RGB, GET_BRIGHTNESS_GENERAL, GET_BRIGHTNESS_GREEN,
 				GET_BRIGHTNESS_GENERAL);
 	}
 
+	/**
+	 * Gets the data of each respective particle of each image and returns the
+	 * data of the binary image through a particle report.
+	 * 
+	 * @param image
+	 *            The image that the method uses to count the particles and
+	 *            returns the data. It has to be a binary image or only
+	 *            containing black and white pixels.
+	 */
 	public void updateParticalAnalysisReports(NIVision.Image image) {
 		int numParticles = NIVision.imaqCountParticles(image, 0);
 		final Vector<ParticleReport> particles = new Vector<ParticleReport>();
@@ -235,6 +302,10 @@ public class Vision {
 		particles.copyInto(this.reports);
 	}
 
+	/**
+	 * Simply writes the rgb (frame) image to the path: /home/lvuser/Image.png
+	 * 
+	 */
 	public void writingImage() {
 		try {
 			Image bi = frame;
@@ -246,6 +317,13 @@ public class Vision {
 		}
 	}
 
+	/**
+	 * Uploads the data that satisfies the constraints to the Network Table
+	 * previously specified. The data that is returns goes into the network
+	 * table into subclasses named: "contourX/DATA" where "X" is the contour
+	 * number and "DATA" is the data that is being published.
+	 * 
+	 */
 	public void uploadToContourReport() {
 		int num = 0;
 		for (int i = 0; i < reports.length; i++) {
@@ -299,7 +377,7 @@ public class Vision {
 	public double degreeToTarget() {
 		return 0;
 	}
-	
+
 	// private final static String[] GRIP_ARGS = new String[] {
 	// "/usr/local/frc/JRE/bin/java", "-jar",
 	// "/home/lvuser/grip.jar", "/home/lvuser/project.grip" };
