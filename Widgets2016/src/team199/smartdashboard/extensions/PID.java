@@ -65,15 +65,20 @@ public class PID extends StaticWidget {
                 final String prefKey = (boxNames[i]);
                 if (i>3) {
                     box.editable.setValue(false);
-                } else if(i<3){
+                } else if(i<=3){
 //                    if(prefs.containsKey(prefKey)){
 //                        boxes[i].setValue(prefs.getValue(prefKey, ""));
 //                    }
                     box.addSpecialListener(new FocusAdapter(){
                         @Override
                         public void focusLost(FocusEvent e) {
-                            sd.putString(prefKey, box.getText());
+                            try {
+                                sd.putNumber(prefKey, Double.parseDouble(box.getText()));
+                            } catch (Exception ex) {
+                                System.out.println("Incorrect input");
+                            }
                         }
+                        
                     });
                 }
             }
@@ -128,6 +133,7 @@ public class PID extends StaticWidget {
                 for(int i = 0; i < 3; i++){
                     prefs.putString(name + boxNames[i], boxes[i].getText());
                 }
+                Robot.getPreferences().putBoolean(Robot.PREF_SAVE_FIELD, true);
             }
         });
         j = new JLabel(name+"PID");
