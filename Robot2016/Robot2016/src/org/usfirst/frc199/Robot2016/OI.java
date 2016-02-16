@@ -39,7 +39,7 @@ public class OI {
         retractClimberButton = new JoystickButton(manipulator, 5);
         retractClimberButton.whenPressed(new Winch());
         extendClimberButton = new JoystickButton(manipulator, 7);
-        extendClimberButton.whenPressed(new ExtendClimber());
+        extendClimberButton.whenPressed(new ExtendClimber(0,0));
         feedShooterButton = new JoystickButton(manipulator, 6);
         feedShooterButton.whileHeld(new FeedShooter());
         runShooterButton = new JoystickButton(manipulator, 8);
@@ -86,7 +86,7 @@ public class OI {
         SmartDashboard.putData("RaiseIntake", new RaiseIntake());
         SmartDashboard.putData("IntakeManualControl", new IntakeManualControl());
         SmartDashboard.putData("ShooterManualControl", new ShooterManualControl());
-        SmartDashboard.putData("ExtendClimber", new ExtendClimber());
+        SmartDashboard.putData("ExtendClimber", new ExtendClimber(0,0));
         SmartDashboard.putData("RetractClimber", new Winch());
         SmartDashboard.putData("UpdateDashboard", new UpdateDashboard());
         SmartDashboard.putData("StartCompressor", new StartCompressor());
