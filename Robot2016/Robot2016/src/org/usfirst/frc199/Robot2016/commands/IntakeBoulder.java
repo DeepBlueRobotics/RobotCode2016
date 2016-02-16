@@ -21,9 +21,8 @@ public class IntakeBoulder extends Command {
 
 	// Called repeatedly when this Command is scheduled to run
 	protected void execute() {
-		Robot.intake.setRoller(Preferences.getInstance().getDouble("IntakeRollerSpeed", 0.7));
 		if (!Robot.intake.getBallSensor()) {
-			Robot.intake.setRoller(Preferences.getInstance().getDouble("IntakeRollerSpeed", 0.7));
+			Robot.intake.setRoller(Preferences.getInstance().getDouble("IntakeRollerSpeed", 1.0)); // Testing with 1.0 - default .7
 		} else {
 			Robot.intake.setRoller(0);
 		}
