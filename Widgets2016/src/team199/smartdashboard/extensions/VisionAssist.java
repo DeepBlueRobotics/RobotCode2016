@@ -10,6 +10,9 @@ import edu.wpi.first.smartdashboard.gui.StaticWidget;
 import edu.wpi.first.smartdashboard.properties.IPAddressProperty;
 import edu.wpi.first.smartdashboard.properties.Property;
 import edu.wpi.first.smartdashboard.properties.StringProperty;
+import edu.wpi.first.wpilibj.networktables.NetworkTable;
+import edu.wpi.first.wpilibj.tables.ITable;
+import edu.wpi.first.wpilibj.tables.ITableListener;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -32,11 +35,11 @@ import javax.imageio.stream.ImageInputStream;
 
 /**
  *
- * @author Adam
+ * @author Joshua
  */
 public class VisionAssist extends StaticWidget {
 
-    public static final String NAME = "Simple Camera Viewer Test";
+    public static final String NAME = "Vision Assist";
     
 
     private static final int[] START_BYTES = new int[]{0xFF, 0xD8};
@@ -48,45 +51,10 @@ public class VisionAssist extends StaticWidget {
     private int lastFPS = 0;
     private int fpsCounter = 0;
     
-    public class listener implements MouseListener{
-        int x, y;
-        
-        public listener(){
-            x = 0;
-            y = 0;
-        }
-        
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            x = e.getX();
-            y = e.getY();
-        }
-        @Override
-        public void mousePressed(MouseEvent e) {
-            
-        }
-        @Override
-        public void mouseReleased(MouseEvent e) {
-            
-        }
-        @Override
-        public void mouseEntered(MouseEvent e) {
-            
-        }
-        @Override
-        public void mouseExited(MouseEvent e) {
-            
-        }
-        
-        public int getX(){
-            return x;
-        }
-        
-        public int getY(){
-            return y;
-        }
-        
-    }
+    private NetworkTable sd = NetworkTable.getTable("SmartDashboard/Contour");
+    private int crossX = (int)sd.getNumber("xDisplay", 0);
+    private int crossY = (int)sd.getNumber("yDisplay", 0);
+    public final StringProperty click = new StringProperty(this, "Click", "Default");
     
     public class BGThread extends Thread {
 
@@ -175,13 +143,34 @@ public class VisionAssist extends StaticWidget {
     private BufferedImage imageToDraw;
     private BGThread bgThread = new BGThread();
     private final int team = DashboardPrefs.getInstance().team.getValue();
-    public final IPAddressProperty ipProperty = new IPAddressProperty(this, "Camera IP Address", new int[]{10, (DashboardPrefs.getInstance().team.getValue() / 100), (DashboardPrefs.getInstance().team.getValue() % 100), 11});
-    private listener listener = new listener();
+    public final IPAddressProperty ipProperty = new IPAddressProperty(
+            this, "Camera IP Address", new int[]{10, (DashboardPrefs.getInstance().team.getValue() / 100), 
+                (DashboardPrefs.getInstance().team.getValue() % 100), 11});
 
     @Override
     public void init() {
         setPreferredSize(new Dimension(128, 72));
-        this.addMouseListener(listener);
+        this.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                sd.putNumber("yDisplay", e.getY());
+                crossY = (int)sd.getNumber("yDisplay", 0);
+                System.out.println( crossX + "   " + crossY);
+                repaint();
+            }
+            @Override
+            public void mouseExited(MouseEvent e) {    
+            }
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
+        });
         ipString = ipProperty.getSaveValue();
         bgThread.start();
         revalidate();
@@ -194,7 +183,6 @@ public class VisionAssist extends StaticWidget {
             ipString = ipProperty.getSaveValue();
             ipChanged = true;
         }
-
     }
 
     @Override
@@ -206,23 +194,32 @@ public class VisionAssist extends StaticWidget {
     @Override
     protected void paintComponent(Graphics g) {
         BufferedImage drawnImage = imageToDraw;
+        crossX = getBounds().width / 2;
         if (drawnImage != null) {
             int width = getBounds().width;
             int height = getBounds().height;
             double scale = Math.min((double) width / (double) drawnImage.getWidth(), (double) height / (double) drawnImage.getHeight());
+            
             g.drawImage(drawnImage, (int) (width - (scale * drawnImage.getWidth())) / 2, (int) (height - (scale * drawnImage.getHeight())) / 2,
                     (int) ((width + scale * drawnImage.getWidth()) / 2), (int) (height + scale * drawnImage.getHeight()) / 2,
                     0, 0, drawnImage.getWidth(), drawnImage.getHeight(), null);
             g.setColor(Color.PINK);
             g.drawString("FPS: "+lastFPS, 10, 10);
             g.setColor(Color.green);
-            g.fillRect(listener.getX() - 5, listener.getY() - 5, 10, 10);
+            g.setPaintMode();
+            g.drawLine(crossX, 0, crossX, getBounds().height);
+            g.drawLine(crossX - 4, crossY, crossX + 4, crossY);
+            
         } else {
             g.setColor(Color.PINK);
             g.fillRect(0, 0, getBounds().width, getBounds().height);
             g.setColor(Color.BLACK);
             g.drawString("NO CONNECTION", 10, 10);
+            g.setColor(Color.green);
+            
+            g.setPaintMode();
+            g.drawLine(crossX, 0, crossX, getBounds().height);
+            g.drawLine(crossX - 4, crossY, crossX + 4, crossY);
         }
     }
 }
-
