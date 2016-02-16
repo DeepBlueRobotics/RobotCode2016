@@ -43,7 +43,7 @@ public class Trajectory {
 		for(int i=1; i<velocities.length-1; i++) {
 			double vprev = velocities[i-1];
 			double vmax = getVmax(i);
-			double amax = getAmax(i, vprev);
+			double amax = getAmax(i, i+1, vprev);
 			if(vprev + amax < vmax) {
 				velocities[i] = vprev + amax;
 			} else {
@@ -60,7 +60,7 @@ public class Trajectory {
 		for(int i=velocities.length-2; i>0; i--) {
 			double vprev = velocities[i+1];
 			double vmax = getVmax(i);
-			double amax = getAmax(i, vprev);
+			double amax = getAmax(i, i-1, vprev);
 			if(vprev + amax < vmax) {
 				velocities[i] = Math.min(velocities[i], vprev + amax);
 			} else {
@@ -80,7 +80,7 @@ public class Trajectory {
 		// dtheta/dL (not with respect to t)
 		double w = Math.abs(path.getW(s));
 		// d^2theta/dL^2 (not with respect to t)
-		double alpha = Math.abs(path.getAlpha(s));
+		double alpha = Math.abs(path.getAlpha(s))+.000001; // Prevent division by zero
 		// velocity limit due to tradeoff between linear and angular velocity
 		double v1 = vmax/(1.0+w*vmax/wmax);
 		// velocity limit due to maximum angular acceleration
@@ -91,30 +91,34 @@ public class Trajectory {
 	
 	/**
 	 * Gets the maximum acceleration allowed at a given point and velocity
-	 * @param i - the point being evaluated
+	 * @param i1 - the point being evaluated
+	 * @param i2 - the next point on the path
 	 * @param v - the current velocity
 	 * @return the maximum allowed acceleration (accurate to 3 decimal places)
 	 */
-	private double getAmax(int i, double v) {
+	private double getAmax(int i1, int i2, double v) {
 		// old point on the spline function
-		double s0 = 1.0*(i-1)/velocities.length;
+		double s0 = 1.0*(i1)/velocities.length;
 		// new point on the spline function
-		double s1 = 1.0*i/velocities.length;
+		double s1 = 1.0*(i2)/velocities.length;
 		// change in arc length between the two points
-		double l = (s1-s0)*v;
+		double l = Math.abs(s1-s0)*v;
 		// initial dw/dL
 		double w0 = Math.abs(path.getW(s0));
 		// final dw/dL
 		double w1 = Math.abs(path.getW(s1));
 		// acceleration limit due to tradeoff between linear and angular acceleration
-		for(double a = amax; a>0; a-=.001) {
+		double a = amax/2;
+		for(int j=2; j<=Math.log(1000)/Math.log(2)+1; j++) {
 			double sqrt = Math.sqrt(v*v+2*a*l);
-			double alpha = (w1*a*sqrt-w0*a*v)/(-v+sqrt);
+			double alpha = Math.abs((w1*a*sqrt-w0*a*v)/(-v+sqrt));
 			if(a<amax-amax*alpha/alphamax) {
-				return a;
+				a+=amax/Math.pow(2, j);
+			} else {
+				a-=amax/Math.pow(2, j);
 			}
 		}
-		return 0.0;
+		return a;
 	}
 	
 	/**
@@ -142,6 +146,6 @@ public class Trajectory {
 	 * @return the index of the current point
 	 */
 	public int getCurrentIndex(double distance) {
-		return (int)(path.getS(distance)/velocities.length);
+		return (int)(path.getS(distance)*velocities.length);
 	}
 }

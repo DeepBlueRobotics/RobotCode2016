@@ -1,6 +1,3 @@
-// TODO: allow going backwards
-// TODO: unit tests
-// TODO: binary search for amax and conversion between L and s (more efficient)
 package motionprofiler;
 
 /**
@@ -10,7 +7,9 @@ package motionprofiler;
 public class Path {
 	
 	// Constants that define the path
-	private final double Ax, Bx, Cx, Dx, Ay, By, Cy, Dy; 
+	private final double Ax, Bx, Cx, Dx, Ay, By, Cy, Dy;
+	// Used to boost efficiency in taking a numerical integral multiple times
+	private double lastL = 0, lastS = 0;
 	
 	/**
 	 * Generates a path that satisfies the given constraints
@@ -26,7 +25,7 @@ public class Path {
 		double dx = x1-x0;
 		double dy = y1-y0;
 		double vx0 = Math.sin(Math.toRadians(angle0))*k*dx;
-		double vy0 = Math.cos(Math.toRadians(angle0))*k*dy;
+		double vy0 = Math.cos(Math.toRadians(angle0))*k*dy; // Sam was here.
 		double vx1 = Math.sin(Math.toRadians(angle1))*k*dx;
 		double vy1 = Math.cos(Math.toRadians(angle1))*k*dy;
 		Ax = vx1+vx0-2*dx;
@@ -90,7 +89,7 @@ public class Path {
 	 * @return angle (degrees clockwise from <0, 1>)
 	 */
 	public double getTheta(double s) {
-		return 90.0-Math.toRadians(Math.atan(getVy(s)/Math.max(getVx(s), 0.0000001)));
+		return 90-Math.toDegrees(Math.atan2(getVy(s), getVx(s)));
 	}
 	
 	/**
@@ -120,7 +119,7 @@ public class Path {
 	}
 
 	/**
-	 * Gets arc length from zero to a given point on the path (accurate to 0.1% of total length)
+	 * Gets arc length from zero to a given point on the path
 	 * @param s - the point on the path from 0 to 1
 	 * @return length of path from 0 to s
 	 */
@@ -134,16 +133,24 @@ public class Path {
 	}
 
 	/**
-	 * Gets the s value for a given arc length (accurate to 0.1% of total length)
+	 * Gets the s value for a given arc length
+	 * Stores previous value to improve efficiency
 	 * @param L - arc length
 	 * @return the point on the spline
 	 */
 	public double getS(double L) {
-		double l = 0;
-		double ds = .000001;
-		for(double i = 0; i<1.0; i+=ds) {
-			if(l >= L) return i;
-			l+=getV(i)*ds;
+		if(L<lastL) {
+			lastL = 0;
+			lastS = 0;
+		}
+		double l = lastL, ds = .00001;
+		for(double s=lastS; s<1.0; s+=ds) {
+			if(l >= L) {
+				lastS = s;
+				lastL = l;
+				return s;
+			}
+			l+=getV(s)*ds;
 		}
 		return 1.0;
 	}
