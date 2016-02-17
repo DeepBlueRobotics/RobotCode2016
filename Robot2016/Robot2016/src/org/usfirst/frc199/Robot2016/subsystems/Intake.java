@@ -1,8 +1,8 @@
 package org.usfirst.frc199.Robot2016.subsystems;
 
 import org.usfirst.frc199.Robot2016.DashboardSubsystem;
-import org.usfirst.frc199.Robot2016.PID;
 import org.usfirst.frc199.Robot2016.RobotMap;
+import org.usfirst.frc199.Robot2016.motioncontrol.PID;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
