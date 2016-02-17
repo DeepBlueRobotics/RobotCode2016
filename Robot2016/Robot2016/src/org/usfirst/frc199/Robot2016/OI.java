@@ -16,7 +16,6 @@ public class OI {
     public Joystick leftJoystick;
     public JoystickButton shootLowButton;
     public JoystickButton alignDistanceButton;
-    public JoystickButton shiftLowButton;
     public Joystick rightJoystick;
     public JoystickButton runShooterButton;
     public JoystickButton feedShooterButton;
@@ -50,9 +49,7 @@ public class OI {
         intakeDownButton.whileHeld(new LowerIntake());
         
         rightJoystick = new Joystick(1);
-        
-        shiftLowButton = new JoystickButton(rightJoystick, 3);
-        shiftLowButton.whileHeld(new ShiftLow());
+
         alignDistanceButton = new JoystickButton(rightJoystick, 2);
         alignDistanceButton.whileHeld(new AutoAlignDistance());
         shootLowButton = new JoystickButton(rightJoystick, 1);
@@ -67,9 +64,9 @@ public class OI {
         
         
 
-        SmartDashboard.putData("PID/Test DriveDistance PID", new TestPID(TestPID.System.DRIVEDISTANCE));
-		SmartDashboard.putData("PID/Test DriveSlide PID", new TestPID(TestPID.System.DRIVEANGLE));
-		SmartDashboard.putData("PID/Test DriveAngle PID", new TestPID(TestPID.System.SHOOTER));
+        SmartDashboard.putData("PID/TestDriveDistancePID", new TestPID(TestPID.System.DRIVEDISTANCE));
+		SmartDashboard.putData("PID/TestDriveSlidePID", new TestPID(TestPID.System.DRIVEANGLE));
+		SmartDashboard.putData("PID/TestDriveAnglePID", new TestPID(TestPID.System.SHOOTER));
         // SmartDashboard Buttons
         SmartDashboard.putData("AutoMode", new AutoMode(4, 2));
         SmartDashboard.putData("AutoDelay", new AutoDelay(0));
@@ -90,7 +87,6 @@ public class OI {
         SmartDashboard.putData("RetractClimber", new Winch());
         SmartDashboard.putData("UpdateDashboard", new UpdateDashboard());
         SmartDashboard.putData("StartCompressor", new StartCompressor());
-        SmartDashboard.putData("ShiftLow", new ShiftLow());
     }
 
     public Joystick getLeftJoystick() {

@@ -5,15 +5,13 @@ import org.usfirst.frc199.Robot2016.Robot;
 import org.usfirst.frc199.Robot2016.RobotMap;
 import org.usfirst.frc199.Robot2016.commands.TeleopDriveMode;
 import org.usfirst.frc199.Robot2016.motioncontrol.PID;
+import org.usfirst.frc199.Robot2016.motioncontrol.Trajectory;
 
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.SpeedController;
-import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 /**
@@ -30,11 +28,11 @@ public class Drivetrain extends Subsystem implements DashboardSubsystem {
     private final Encoder leftEncoder = RobotMap.drivetrainLeftEncoder;
     private final Encoder rightEncoder = RobotMap.drivetrainRightEncoder;
     private final AnalogInput ultrasonic = RobotMap.drivetrainUltrasonic;
-    private final Compressor compressor = RobotMap.drivetrainCompressor;
     
-    private final DoubleSolenoid shifter = RobotMap.drivetrainShifter;
     private PID distancePID = new PID("DriveDistance");
 	private PID anglePID = new PID("DriveAngle");
+	private PID velocityPID = new PID("DriveVelocity");
+	private PID angularvelocityPID = new PID("DriveAngularVelocity");
 
     public void initDefaultCommand() {
         setDefaultCommand(new TeleopDriveMode());
@@ -175,16 +173,16 @@ public class Drivetrain extends Subsystem implements DashboardSubsystem {
 	public boolean reachedDistance() {
 		return distancePID.reachedTarget();
 	}
+
+	public void startTrajectory(Trajectory t) {
+		
+	}
 	
-	public void shiftLow() {
-		if (shifter.get() == DoubleSolenoid.Value.kReverse) {
-			shifter.set(DoubleSolenoid.Value.kForward);
-		}
+	public void followTrajectory(Trajectory t) {
+		
 	}
 
-	public void shiftHigh() {
-		if (shifter.get() == DoubleSolenoid.Value.kForward) {
-			shifter.set(DoubleSolenoid.Value.kReverse);
-		}
+	public boolean completedTrajectory(Trajectory t) {
+		return false;
 	}
 }

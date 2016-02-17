@@ -1,5 +1,7 @@
 package org.usfirst.frc199.Robot2016.motioncontrol;
 
+import org.usfirst.frc199.Robot2016.Robot;
+
 /**
  * Generates velocity values for a set of points along a path.
  */
@@ -29,6 +31,26 @@ public class Trajectory {
 		this.amax = amax;
 		this.wmax = wmax;
 		this.alphamax = alphamax;
+		velocities = new double[points];
+		velocities[0] = v0;
+		velocities[points-1] = v1;
+		computeForwardTrajectory();
+		computeReverseTrajectory();
+	}
+	
+	/**
+	 * Generates a trajectory that follows a given path under default constraints
+	 * @param path - the path to follow
+	 * @param v0 - the initial velocity
+	 * @param v1 - the final velocity
+	 * @param points - the number of points to sample along the trajectory
+	 */
+	public Trajectory(Path path, double v0, double v1, int points) {
+		this.path = path;
+		this.vmax = Robot.getPref("MaxVelocity", .01);
+		this.amax = Robot.getPref("MaxAcceleration", .01);
+		this.wmax = Robot.getPref("MaxAngularVelocity", .01);
+		this.alphamax = Robot.getPref("MaxAngularAcceleration", .01);
 		velocities = new double[points];
 		velocities[0] = v0;
 		velocities[points-1] = v1;

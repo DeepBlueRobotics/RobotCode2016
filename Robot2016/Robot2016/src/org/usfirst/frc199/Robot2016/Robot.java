@@ -1,6 +1,7 @@
 package org.usfirst.frc199.Robot2016;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -103,4 +104,17 @@ public class Robot extends IterativeRobot {
     public void testPeriodic() {
         LiveWindow.run();
     }
+    
+    /**
+	 * Gets a preference or creates one if it does not yet exist
+	 * @param key - The name of the preference
+	 * @param defaultValue - Backup value if the preference is not found
+	 * @return The value of the preference
+	 */
+	public static double getPref(String key, double defaultValue) {
+		if(!Preferences.getInstance().containsKey(key)) {
+			Preferences.getInstance().putDouble(key, defaultValue);
+		}
+		return Preferences.getInstance().getDouble(key, defaultValue);
+	}
 }

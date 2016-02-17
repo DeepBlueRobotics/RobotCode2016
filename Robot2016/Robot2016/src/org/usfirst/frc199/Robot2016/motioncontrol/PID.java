@@ -3,7 +3,6 @@ package org.usfirst.frc199.Robot2016.motioncontrol;
 import org.usfirst.frc199.Robot2016.DashboardSubsystem;
 import org.usfirst.frc199.Robot2016.Robot;
 
-import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Timer;
 
 /**
@@ -39,11 +38,6 @@ public class PID implements DashboardSubsystem {
 		this.name = name;
 		Robot.subsystems.add(this);
 		intervalTimer.start();
-		checkPref("kP");
-		checkPref("kI");
-		checkPref("kD");
-		checkPref("ErrorTolerance");
-		checkPref("RateTolerance");
 		display("kP", getPref("kP"));
 		display("kI", getPref("kI"));
 		display("kD", getPref("kD"));
@@ -117,17 +111,7 @@ public class PID implements DashboardSubsystem {
 	 * @return The value of the preference
 	 */
 	private double getPref(String key) {
-		return Preferences.getInstance().getDouble(name + key, 0.0);
-	}
-	
-	/**
-	 * Creates a preference if it does not yet exist
-	 * @param key - The name of the preference
-	 */
-	private void checkPref(String key) {
-		if(!Preferences.getInstance().containsKey(name + key)) {
-			Preferences.getInstance().putDouble(name + key, 0.0);
-		}
+		return Robot.getPref(name + key, 0.0);
 	}
 	
 	@Override

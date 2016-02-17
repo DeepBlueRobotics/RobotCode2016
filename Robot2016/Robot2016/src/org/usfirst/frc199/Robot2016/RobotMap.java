@@ -2,20 +2,15 @@ package org.usfirst.frc199.Robot2016;
 
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.RobotDrive;
-import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.Talon;
-import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.wpilibj.livewindow.LiveWindowSendable;
 
 /**
  * The RobotMap is a mapping from the ports sensors and actuators are wired into
@@ -31,8 +26,6 @@ public class RobotMap {
     public static Encoder drivetrainLeftEncoder;
     public static Encoder drivetrainRightEncoder;
     public static AnalogInput drivetrainUltrasonic;
-    public static Compressor drivetrainCompressor;
-    public static DoubleSolenoid drivetrainShifter;
     public static SpeedController shooterFlywheelMotor;
     public static Encoder shooterFlywheelEncoder;
     public static SpeedController intakeRollerMotor;
@@ -40,7 +33,6 @@ public class RobotMap {
     public static DigitalInput intakeUpperLimit;
     public static DigitalInput intakeLowerLimit;
     public static Encoder intakePivotEncoder;
-//    public static SpeedController intakeBeltMotor;
     public static DigitalInput intakeBallSensor;
     public static SpeedController climberExtendMotor;
     public static SpeedController climberWinchMotor;
@@ -73,13 +65,7 @@ public class RobotMap {
         drivetrainRightEncoder.setPIDSourceType(PIDSourceType.kRate);
         drivetrainUltrasonic = new AnalogInput(1);
         LiveWindow.addSensor("Drivetrain", "Ultrasonic", drivetrainUltrasonic);
-        //Any extra code needed for the ultrasonic?
-        
-        drivetrainCompressor = new Compressor(0);
-        
-        
-        drivetrainShifter = new DoubleSolenoid(0, 0, 1);
-        LiveWindow.addActuator("Drivetrain", "Shifter", drivetrainShifter);
+        //Any extra code needed for the ultrasonic?        
         
         shooterFlywheelMotor = new Talon(4);
         LiveWindow.addActuator("Shooter", "FlywheelMotor", (Talon) shooterFlywheelMotor);
