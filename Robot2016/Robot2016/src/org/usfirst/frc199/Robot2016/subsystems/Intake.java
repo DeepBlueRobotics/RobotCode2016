@@ -38,7 +38,7 @@ public class Intake extends Subsystem implements DashboardSubsystem {
 	}
 
 	public void setRoller(double speed) {
-		rollerMotor.set(speed);
+		rollerMotor.set(-speed);
 	}
 
 
@@ -105,7 +105,7 @@ public class Intake extends Subsystem implements DashboardSubsystem {
 	
 	
 	public boolean getBallSensor() {
-		return ballSensor.get();
+		return !ballSensor.get();
 	}
 	
 	public int getPosition() {

@@ -132,18 +132,20 @@ public class Vision {
 	 * and then sets the size to 320x240 and finally opens the camera for use.
 	 */
 	public Vision() {
+		try {
+			frame = NIVision.imaqCreateImage(ImageType.IMAGE_RGB, 0);
+			hslimage = NIVision.imaqCreateImage(ImageType.IMAGE_U8, 0);
 
-		frame = NIVision.imaqCreateImage(ImageType.IMAGE_RGB, 0);
-		hslimage = NIVision.imaqCreateImage(ImageType.IMAGE_U8, 0);
+			reports = null;
+			SmartDashboard.putNumber("Is in hsl", 0);
 
-		reports = null;
-		SmartDashboard.putNumber("Is in hsl", 0);
+			camera = new USBCamera("cam0");
+			camera.setSize(WIDTH, HEIGHT);
 
-		camera = new USBCamera("cam0");
-		camera.setSize(WIDTH, HEIGHT);
-
-		camera.openCamera();
-
+			camera.openCamera();
+		} catch (Exception e) {
+			System.out.println("error");
+		}
 	}
 
 	/**
@@ -214,7 +216,11 @@ public class Vision {
 			}
 
 		};
-		runCamera.start();
+		try {
+			runCamera.start();
+		} catch (Exception e) {
+			System.out.println("error");
+		}
 	}
 
 	/**

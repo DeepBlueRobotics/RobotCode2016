@@ -36,13 +36,13 @@ public class OI {
         manualShooterButton.whileHeld(new ShooterManualControl());
         manualIntakeButton = new JoystickButton(manipulator, 9);
         manualIntakeButton.whileHeld(new IntakeManualControl());
-        retractClimberButton = new JoystickButton(manipulator, 5);
+        retractClimberButton = new JoystickButton(manipulator, 8);
         retractClimberButton.whenPressed(new Winch());
         extendClimberButton = new JoystickButton(manipulator, 7);
         extendClimberButton.whenPressed(new ExtendClimber(0,0));
         feedShooterButton = new JoystickButton(manipulator, 6);
         feedShooterButton.whileHeld(new FeedShooter());
-        runShooterButton = new JoystickButton(manipulator, 8);
+        runShooterButton = new JoystickButton(manipulator, 5);
         runShooterButton.whileHeld(new RunShooter());
         intakeUpButton = new JoystickButton(manipulator, 4);
         intakeUpButton.whileHeld(new RaiseIntake());
