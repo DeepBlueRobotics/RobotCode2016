@@ -220,7 +220,7 @@ public class CameraFeedAndTarget extends StaticWidget implements Runnable {
                 g.setColor(Color.green);
                 g.setPaintMode();
                 g.drawLine(imageWidth/2, 0, imageWidth/2, imageHeight);
-                g.drawLine(imageWidth - 4, crossY, imageWidth/2 + 4, crossY);
+                g.drawLine(imageWidth/2 - 4, crossY, imageWidth/2 + 4, crossY);
             }
 
             /* If there's some problem getting the image, show the error on the screen */

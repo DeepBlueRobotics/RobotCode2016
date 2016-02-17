@@ -116,8 +116,8 @@ public class PID extends StaticWidget {
         testPID.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(sd.containsSubTable("Test "+name+"PID")) {
-                    ITable t2 = sd.getSubTable("Test "+name+"PID");
+                if(sd.containsSubTable("Test"+name+"PID")) {
+                    ITable t2 = sd.getSubTable("Test"+name+"PID");
                     t2.putBoolean("running", !t2.getBoolean("running"));
                     if(t2.getBoolean("running")){
                         testPID.setText("Cancel PID");
