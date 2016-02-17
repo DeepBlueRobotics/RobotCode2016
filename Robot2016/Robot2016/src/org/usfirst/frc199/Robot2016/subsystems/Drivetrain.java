@@ -1,10 +1,10 @@
 package org.usfirst.frc199.Robot2016.subsystems;
 
 import org.usfirst.frc199.Robot2016.DashboardSubsystem;
-import org.usfirst.frc199.Robot2016.PID;
 import org.usfirst.frc199.Robot2016.Robot;
 import org.usfirst.frc199.Robot2016.RobotMap;
 import org.usfirst.frc199.Robot2016.commands.TeleopDriveMode;
+import org.usfirst.frc199.Robot2016.motioncontrol.PID;
 
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.AnalogInput;

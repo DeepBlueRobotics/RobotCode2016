@@ -1,4 +1,7 @@
-package org.usfirst.frc199.Robot2016;
+package org.usfirst.frc199.Robot2016.motioncontrol;
+
+import org.usfirst.frc199.Robot2016.DashboardSubsystem;
+import org.usfirst.frc199.Robot2016.Robot;
 
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Timer;
