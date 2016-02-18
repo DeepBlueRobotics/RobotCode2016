@@ -68,7 +68,7 @@ public class TestPID extends Command {
 		if (system == System.SHOOTER) {
 			Robot.shooter.runShooter(0.0);
 		} else {
-			Robot.drivetrain.tankInput(0, 0);
+			Robot.drivetrain.tankDrive(0, 0);
 		}
 	}
 

@@ -25,7 +25,7 @@ public class AutoAlignDistance extends Command {
     // Called just before this Command runs the first time
     protected void initialize() {
     	targetAcquired = false; 
-    	Robot.drivetrain.setAutoTarget(distance, 0);
+    	Robot.drivetrain.setRangefinderTarget(distance);
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -40,7 +40,7 @@ public class AutoAlignDistance extends Command {
 
     // Called once after isFinished returns true
     protected void end() {
-    	Robot.drivetrain.arcadeInput(0, 0);
+    	Robot.drivetrain.arcadeDrive(0, 0);
     }
 
     // Called when another command which requires one or more of the same

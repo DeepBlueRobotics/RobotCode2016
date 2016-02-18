@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.command.Command;
 public class FollowTrajectory extends Command {
 	
 	private final Trajectory t;
+	private boolean finished;
 
 	/**
 	 * Travels to the given coordinates assuming zero initial/final velocity
@@ -47,23 +48,33 @@ public class FollowTrajectory extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
+    	finished = false;
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
+    	int i = t.getCurrentIndex(Robot.drivetrain.getEncoderDistance());
+    	double kA = Robot.getPref("kA", 0);
+    	double kAlpha = Robot.getPref("kAlpha", 0);
+    	double v = t.getV(i)*(1-kA+kA*t.getV(i+1));
+    	double w = t.getW(i)*(1-kAlpha+kAlpha*t.getW(i+1));
+    	Robot.drivetrain.followTrajectory(v, w);
+    	finished = i>=1;
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return false;
+        return finished;
     }
 
     // Called once after isFinished returns true
     protected void end() {
+    	Robot.drivetrain.arcadeDrive(0, 0);
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
+    	end();
     }
 }

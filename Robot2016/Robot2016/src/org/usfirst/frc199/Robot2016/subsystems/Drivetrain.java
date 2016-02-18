@@ -5,7 +5,6 @@ import org.usfirst.frc199.Robot2016.Robot;
 import org.usfirst.frc199.Robot2016.RobotMap;
 import org.usfirst.frc199.Robot2016.commands.TeleopDriveMode;
 import org.usfirst.frc199.Robot2016.motioncontrol.PID;
-import org.usfirst.frc199.Robot2016.motioncontrol.Trajectory;
 
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.AnalogInput;
@@ -32,22 +31,36 @@ public class Drivetrain extends Subsystem implements DashboardSubsystem {
     private PID distancePID = new PID("DriveDistance");
 	private PID anglePID = new PID("DriveAngle");
 	private PID velocityPID = new PID("DriveVelocity");
-	private PID angularvelocityPID = new PID("DriveAngularVelocity");
+	private PID angularVelocityPID = new PID("DriveAngularVelocity");
 
     public void initDefaultCommand() {
         setDefaultCommand(new TeleopDriveMode());
     }
     
-    public void arcadeInput(double speed, double turn) {
+    /**
+     * Standard arcade drive
+     * @param speed - linear velocity output
+     * @param turn - angular velocity output
+     */
+    public void arcadeDrive(double speed, double turn) {
     	robotDrive.arcadeDrive(speed, turn);
     }
     
-    public void tankInput(double left, double right) {
+    /**
+     * Standard tank drive
+     * @param left - left side of drivetrain output
+     * @param right - right side of drivetrain output
+     */
+    public void tankDrive(double left, double right) {
     	robotDrive.tankDrive(left, right);
     }
     
-    public void drive() {
-    	boolean arcadedrive = true;
+    /**
+     * Runs drive code based on driver inputs
+     */
+    public void teleopDrive() {
+    	// Arcade drive = 0, tank drive = 1
+    	boolean arcadedrive = Robot.getPref("DriveMode", 0) == 0;
     	if(arcadedrive){
 			double x = -Robot.oi.getRightJoystick().getX();
 			double y = -Robot.oi.getLeftJoystick().getY();
@@ -59,110 +72,119 @@ public class Drivetrain extends Subsystem implements DashboardSubsystem {
 		}
     }
     
-    public double getRangefinderDistance(){
+    /**
+     * Gets distance recorded by encoders
+     * @return - distance in inches
+     */
+    public double getEncoderDistance() {
+    	return (leftEncoder.getDistance() + rightEncoder.getDistance()) / 2;
+    }
+    
+    /**
+     * Gets angle recorded by gyro
+     * @return - angle clockwise of straight in degrees
+     */
+    public double getGyroAngle() {
+    	return gyro.getAngle();
+    }
+    
+    /**
+     * Gets linear velocity recorded by encoders
+     * @return - velocity in inches/second
+     */
+    public double getEncoderRate() {
+    	return (leftEncoder.getRate() + rightEncoder.getRate()) / 2;
+    }
+    
+    /**
+     * Gets angular velocity recorded by gyro
+     * @return - angular velocity in degrees/second
+     */
+    public double getGyroRate() {
+    	return gyro.getRate();
+    }
+    
+    /**
+     * Gets distance recorded by rangefinder
+     * @return distance in inches
+     */
+    public double getRangefinderDistance() {
     	return ultrasonic.getAverageVoltage();		//put in formula for conversion
     }
-    
-    //Requires PID
-    public void updateRangefinder() {
-		distancePID.update(getRangefinderDistance());
-		anglePID.update(gyro.getAngle());
-		arcadeInput(distancePID.getOutput(),0);
-	}
-    
-    public void setAutoAlignAngleTarget(){
-    	anglePID.setTarget(Robot.vision.degreeToTarget());
-    }
-    
-    public void updateAutoAlignPID(double angle){
-    	anglePID.update(angle);
-    	arcadeInput(0, anglePID.getOutput());
-    }
-    
 
 	/**
 	 * Sets the target for the auto PID
-	 * 
-	 * @param targetDistance - Forward/back
-	 * @param targetAngle
-	 *            - Clockwise/counterclockwise
+	 * @param targetDistance - The target distance in inches
+	 * @param targetAngle - The target angle in degrees clockwise
 	 */
 	public void setAutoTarget(double targetDistance, double targetAngle) {
-		distancePID.update((leftEncoder.getDistance() + rightEncoder.getDistance()) / 2);
-		anglePID.update(gyro.getAngle());
-		distancePID.setRelativeLocation(0);
-		anglePID.setRelativeLocation(0);
-		distancePID.setTarget(targetDistance);
-		anglePID.setTarget(targetAngle);
+		setDistanceTarget(targetDistance);
+		setAngleTarget(targetAngle);
 	}
 
 	/**
-	 * Updates the drive PID
+	 * Sets the distance PID target
+	 * @param targetDistance - The target distance in inches
 	 */
-	public void updateAuto() {
-		distancePID.update((leftEncoder.getDistance() + rightEncoder.getDistance()) / 2);
-		anglePID.update(gyro.getAngle());
+	public void setDistanceTarget(double targetDistance) {
+		distancePID.update(getEncoderDistance());
+		distancePID.setRelativeLocation(0);
+		distancePID.setTarget(targetDistance);
 	}
-	
+
+	/**
+	 * Sets the angle PID target
+	 * @param targetAngle - The target angle in degrees clockwise
+	 */
+	public void setAngleTarget(double targetAngle) {
+		anglePID.update(getGyroAngle());
+		anglePID.setRelativeLocation(0);
+		anglePID.setTarget(targetAngle);
+	}
+    
+	/**
+	 * Updates the drive PID
+	 * @param newDistance - new distance value in inches
+	 * @param newAngle - new angle value in degrees clockwise
+	 */
 	public void updateAuto(double newDistance, double newAngle) {
 		distancePID.update(newDistance);
 		anglePID.update(newAngle);
-		arcadeInput(distancePID.getOutput(), anglePID.getOutput());
+		arcadeDrive(distancePID.getOutput(), anglePID.getOutput());
 	}
 
+	/**
+	 * Updates the drive PID using the encoders and gyro
+	 */
+	public void updateAuto() {
+		updateAuto(getEncoderDistance(), getGyroAngle());
+	}
+
+	/**
+	 * Updates only the distance PID (may not drive straight)
+	 * @return the distance PID output
+	 */
+	public void updateDistance() {
+		distancePID.update(getEncoderDistance());
+		arcadeDrive(distancePID.getOutput(), 0);
+	}
+
+	/**
+	 * Updates only the angle PID
+	 * @return the angle PID output
+	 */
+	public void updateAngle() {
+		anglePID.update(getGyroAngle());
+		arcadeDrive(0, anglePID.getOutput());
+	}
+	
 	/**
 	 * Determines if robot has reached the target position
 	 * 
 	 * @return Whether both PID loops have reached their target
 	 */
 	public boolean autoReachedTarget() {
-		return distancePID.reachedTarget() && anglePID.reachedTarget();
-	}
-	public void setAngleTarget(double targetAngle) {
-		anglePID.update(gyro.getAngle());
-		anglePID.setRelativeLocation(0);
-		anglePID.setTarget(targetAngle);
-	}
-
-	/**
-	 * Updates only the angle PID
-	 * 
-	 * @return The angle PID output
-	 */
-	public double updateAngle() {
-		anglePID.update(gyro.getAngle());
-		return anglePID.getOutput();
-	}
-
-	/**
-	 * Determines if the angle PID has reached the target
-	 * 
-	 * @return Whether angle target has been reached
-	 */
-	public boolean reachedAngle() {
-		return anglePID.reachedTarget();
-	}
-
-	/**
-	 * Sets the distance PID target
-	 * 
-	 * @param targetDistance - The target distance in inches
-	 */
-	public void setDistanceTarget(double targetDistance) {
-		distancePID.update((leftEncoder.getDistance() + rightEncoder.getDistance()) / 2);
-		distancePID.setRelativeLocation(0);
-		distancePID.setTarget(targetDistance);
-	}
-
-	/**
-	 * Updates only the distance PID
-	 * 
-	 * @return The distance PID output
-	 */
-	public double updateDistance() {
-		distancePID.update((leftEncoder.getDistance() + rightEncoder
-				.getDistance()) / 2);
-		return distancePID.getOutput();
+		return distanceReachedTarget() && angleReachedTarget();
 	}
 
 	/**
@@ -170,19 +192,54 @@ public class Drivetrain extends Subsystem implements DashboardSubsystem {
 	 * 
 	 * @return Whether distance target has been reached
 	 */
-	public boolean reachedDistance() {
+	public boolean distanceReachedTarget() {
 		return distancePID.reachedTarget();
 	}
-
-	public void startTrajectory(Trajectory t) {
-		
+    
+	/**
+	 * Determines if the angle PID has reached the target
+	 * 
+	 * @return Whether angle target has been reached
+	 */
+	public boolean angleReachedTarget() {
+		return anglePID.reachedTarget();
 	}
 	
-	public void followTrajectory(Trajectory t) {
-		
+	/**
+	 * Sets the target distance for the rangefinder PID
+	 * @param targetDistance - distance from goal in inches
+	 */
+	public void setRangefinderTarget(double targetDistance) {
+		distancePID.update(0);
+		distancePID.setRelativeLocation(0);
+		distancePID.setTarget(targetDistance);
+		setAngleTarget(0);
 	}
-
-	public boolean completedTrajectory(Trajectory t) {
-		return false;
+	
+    /**
+     * Updates the PID using rangefinder as input
+     */
+    public void updateRangefinder() {
+		updateAuto(getRangefinderDistance(), getGyroAngle());
+	}
+    
+    /**
+     * Sets angle target using the camera
+     */
+    public void setAutoAlignAngleTarget() {
+    	setAngleTarget(Robot.vision.degreeToTarget());
+    }
+    
+    /**
+     * Uses PID to reach target velocity
+     * @param v - linear velocity in inches/second
+     * @param w - angular velocity in degrees/second
+     */
+	public void followTrajectory(double v, double w) {
+		velocityPID.setTarget(v);
+		angularVelocityPID.setTarget(w);
+		velocityPID.update(getEncoderRate());
+		angularVelocityPID.update(getGyroRate());
+		arcadeDrive(velocityPID.getOutput(), angularVelocityPID.getOutput());
 	}
 }

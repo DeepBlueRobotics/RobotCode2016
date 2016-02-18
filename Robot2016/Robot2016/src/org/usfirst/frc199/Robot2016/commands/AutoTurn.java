@@ -17,21 +17,21 @@ public class AutoTurn extends Command {
 
     // Called just before this Command runs the first time
 	protected void initialize() {
-		Robot.drivetrain.setAutoTarget(0, angle);
+		Robot.drivetrain.setAngleTarget(angle);
 	}
 
 	protected void execute() {
-		Robot.drivetrain.updateAuto();
+		Robot.drivetrain.updateAngle();
 	}
 
 	// Make this return true when this Command no longer needs to run execute()
 	protected boolean isFinished() {
-		return Robot.drivetrain.reachedAngle();
+		return Robot.drivetrain.angleReachedTarget();
 	}
 
 	// Called once after isFinished returns true
 	protected void end() {
-		Robot.drivetrain.arcadeInput(0, 0);
+		Robot.drivetrain.arcadeDrive(0, 0);
 	}
 
 	// Called when another command which requires one or more of the same
