@@ -1,9 +1,10 @@
 package org.usfirst.frc199.Robot2016;
 
 import org.usfirst.frc199.Robot2016.commands.*;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -11,10 +12,10 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
  */
 public class OI {
     
-    public JoystickButton intakeButton;
+    public JoystickButton intakeButton2;
     public JoystickButton alignAngleButton;
     public Joystick leftJoystick;
-    public JoystickButton shootLowButton;
+    public JoystickButton shootLowButton2;
     public JoystickButton alignDistanceButton;
     public Joystick rightJoystick;
     public JoystickButton runShooterButton;
@@ -25,6 +26,8 @@ public class OI {
     public JoystickButton manualShooterButton;
     public JoystickButton intakeUpButton;
     public JoystickButton intakeDownButton;
+    public JoystickButton shootLowButton;
+    public JoystickButton intakeButton;
     public Joystick manipulator;
 
     public OI() {
@@ -35,13 +38,19 @@ public class OI {
         manualShooterButton.whileHeld(new ShooterManualControl());
         manualIntakeButton = new JoystickButton(manipulator, 9);
         manualIntakeButton.whileHeld(new IntakeManualControl());
-        retractClimberButton = new JoystickButton(manipulator, 8);
-        retractClimberButton.whenPressed(new Winch());
-        extendClimberButton = new JoystickButton(manipulator, 7);
-        extendClimberButton.whenPressed(new ExtendClimber(0,0));
+        
+//        retractClimberButton = new JoystickButton(manipulator, 5);
+//        retractClimberButton.whenPressed(new Winch());
+//        extendClimberButton = new JoystickButton(manipulator, 7);
+//        extendClimberButton.whenPressed(new ExtendClimber(0,0));
+        
+        intakeButton = new JoystickButton(manipulator, 5);
+        intakeButton.whenPressed(new IntakeBoulder());
+        shootLowButton = new JoystickButton(manipulator, 7);
+        shootLowButton.whenPressed(new ShootLow());
         feedShooterButton = new JoystickButton(manipulator, 6);
         feedShooterButton.whileHeld(new FeedShooter());
-        runShooterButton = new JoystickButton(manipulator, 5);
+        runShooterButton = new JoystickButton(manipulator, 8);
         runShooterButton.whileHeld(new RunShooter());
         intakeUpButton = new JoystickButton(manipulator, 4);
         intakeUpButton.whileHeld(new RaiseIntake());
@@ -52,15 +61,15 @@ public class OI {
 
         alignDistanceButton = new JoystickButton(rightJoystick, 2);
         alignDistanceButton.whileHeld(new AutoAlignDistance());
-        shootLowButton = new JoystickButton(rightJoystick, 1);
-        shootLowButton.whileHeld(new ShootLow());
+        shootLowButton2 = new JoystickButton(rightJoystick, 1);
+        shootLowButton2.whileHeld(new ShootLow());
         
         leftJoystick = new Joystick(0);
         
         alignAngleButton = new JoystickButton(leftJoystick, 2);
         alignAngleButton.whileHeld(new AutoAlignAngle());
-        intakeButton = new JoystickButton(leftJoystick, 1);
-        intakeButton.whileHeld(new IntakeBoulder());
+        intakeButton2 = new JoystickButton(leftJoystick, 1);
+        intakeButton2.whileHeld(new IntakeBoulder());
         
         
 
@@ -86,7 +95,6 @@ public class OI {
         SmartDashboard.putData("ExtendClimber", new ExtendClimber(0,0));
         SmartDashboard.putData("RetractClimber", new Winch());
         SmartDashboard.putData("UpdateDashboard", new UpdateDashboard());
-        SmartDashboard.putData("StartCompressor", new StartCompressor());
     }
 
     public Joystick getLeftJoystick() {
@@ -101,4 +109,3 @@ public class OI {
         return manipulator;
     }
 }
-

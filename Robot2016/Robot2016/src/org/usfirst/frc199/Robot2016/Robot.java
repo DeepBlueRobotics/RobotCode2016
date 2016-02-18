@@ -87,7 +87,6 @@ public class Robot extends IterativeRobot {
     public void teleopInit() {
         Scheduler.getInstance().removeAll();
         vision.writingImage();
-        new StartCompressor().start();
         new UpdateDashboard().start();
     }
 
