@@ -18,87 +18,93 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
  * floating around.
  */
 public class RobotMap {
-    public static SpeedController drivetrainLeftMotor;
-    public static SpeedController drivetrainRightMotor;
-    public static RobotDrive drivetrainRobotDrive;
-    public static AnalogGyro drivetrainGyro;
-    public static Encoder drivetrainLeftEncoder;
-    public static Encoder drivetrainRightEncoder;
-    public static AnalogInput drivetrainUltrasonic;
-    public static SpeedController shooterFlywheelMotor;
-    public static Encoder shooterFlywheelEncoder;
-    public static SpeedController intakeRollerMotor;
-    public static SpeedController intakePivotMotor;
-    public static DigitalInput intakeUpperLimit;
-    public static DigitalInput intakeLowerLimit;
-    public static Encoder intakePivotEncoder;
-    public static DigitalInput intakeBallSensor;
-    public static SpeedController climberExtendMotor;
-    public static SpeedController climberWinchMotor;
-    public static DigitalInput climberExtensionLimit;
+	public static SpeedController drivetrainLeftMotor;
+	public static SpeedController drivetrainRightMotor;
+	public static RobotDrive drivetrainRobotDrive;
+	public static AnalogGyro drivetrainGyro;
+	public static Encoder drivetrainLeftEncoder;
+	public static Encoder drivetrainRightEncoder;
+	public static AnalogInput drivetrainUltrasonic;
+	public static SpeedController shooterFlywheelMotor;
+	public static Encoder shooterFlywheelEncoder;
+	public static SpeedController intakeRollerMotor;
+	public static SpeedController intakePivotMotor;
+	public static DigitalInput intakeUpperLimit;
+	public static DigitalInput intakeLowerLimit;
+	public static Encoder intakePivotEncoder;
+	public static DigitalInput intakeBallSensor;
+	public static SpeedController climberExtendMotor;
+	public static SpeedController climberWinchMotor;
+	public static DigitalInput climberExtensionLimit;
 
-    public static void init() {
-        drivetrainLeftMotor = new Talon(0);
-        LiveWindow.addActuator("Drivetrain", "LeftMotor", (Talon) drivetrainLeftMotor);
-        
-        drivetrainRightMotor = new Talon(1);
-        LiveWindow.addActuator("Drivetrain", "RightMotor", (Talon) drivetrainRightMotor);
-        
-        drivetrainRobotDrive = new RobotDrive(drivetrainLeftMotor, drivetrainRightMotor);
-        
-        drivetrainRobotDrive.setSafetyEnabled(true);
-        drivetrainRobotDrive.setExpiration(0.1);
-        drivetrainRobotDrive.setSensitivity(0.5);
-        drivetrainRobotDrive.setMaxOutput(1.0);
+	public static void init() {
+		drivetrainLeftMotor = new Talon(0);
+		LiveWindow.addActuator("Drivetrain", "LeftMotor", (Talon) drivetrainLeftMotor);
 
-        drivetrainGyro = new AnalogGyro(0);
-        LiveWindow.addSensor("Drivetrain", "Gyro", drivetrainGyro);
-        drivetrainGyro.setSensitivity(0.007);
-        drivetrainLeftEncoder = new Encoder(0, 1, false, EncodingType.k4X);
-        LiveWindow.addSensor("Drivetrain", "LeftEncoder", drivetrainLeftEncoder);
-        drivetrainLeftEncoder.setDistancePerPulse(Robot.getPref("DrivetrainLeftEncoderRatio", 1.0));
-        drivetrainLeftEncoder.setPIDSourceType(PIDSourceType.kRate);
-        drivetrainRightEncoder = new Encoder(2, 3, false, EncodingType.k4X);
-        LiveWindow.addSensor("Drivetrain", "RightEncoder", drivetrainRightEncoder);
-        drivetrainRightEncoder.setDistancePerPulse(Robot.getPref("DrivetrainRightEncoderRatio", 1.0));
-        drivetrainRightEncoder.setPIDSourceType(PIDSourceType.kRate);
-        drivetrainUltrasonic = new AnalogInput(1);
-        LiveWindow.addSensor("Drivetrain", "Ultrasonic", drivetrainUltrasonic);
-        
-        shooterFlywheelMotor = new Talon(4);
-        LiveWindow.addActuator("Shooter", "FlywheelMotor", (Talon) shooterFlywheelMotor);
-        
-        shooterFlywheelEncoder = new Encoder(4, 5, false, EncodingType.k4X);
-        LiveWindow.addSensor("Shooter", "FlywheelEncoder", shooterFlywheelEncoder);
-        shooterFlywheelEncoder.setDistancePerPulse(Robot.getPref("ShooterEncoderRatio", 1.0));
-        shooterFlywheelEncoder.setPIDSourceType(PIDSourceType.kRate);
-        intakeRollerMotor = new Talon(3);
-        LiveWindow.addActuator("Intake", "RollerMotor", (Talon) intakeRollerMotor);
-        
-        intakePivotMotor = new Talon(2);
-        LiveWindow.addActuator("Intake", "PivotMotor", (Talon) intakePivotMotor);
-        
-        intakeUpperLimit = new DigitalInput(8);
-        LiveWindow.addSensor("Intake", "UpperLimit", intakeUpperLimit);
-        
-        intakeLowerLimit = new DigitalInput(9);
-        LiveWindow.addSensor("Intake", "LowerLimit", intakeLowerLimit);
-        
-        intakePivotEncoder = new Encoder(6, 7, false, EncodingType.k4X);
-        LiveWindow.addSensor("Intake", "PivotEncoder", intakePivotEncoder);
-        intakePivotEncoder.setDistancePerPulse(Robot.getPref("IntakeEncoderRatio", 1));
-        
-        intakeBallSensor = new DigitalInput(10);
-        LiveWindow.addSensor("Intake", "BallSensor", intakeBallSensor);
-        
-        climberExtendMotor = new Talon(7);
-        LiveWindow.addActuator("Climber", "ExtendMotor", (Talon) climberExtendMotor);
-        
-        climberWinchMotor = new Talon(6);
-        LiveWindow.addActuator("Climber", "WinchMotor", (Talon) climberWinchMotor);
-        
-        climberExtensionLimit = new DigitalInput(11);
-        LiveWindow.addSensor("Climber", "ExtensionLimit", climberExtensionLimit);
-        
-    }
+		drivetrainRightMotor = new Talon(1);
+		LiveWindow.addActuator("Drivetrain", "RightMotor", (Talon) drivetrainRightMotor);
+
+		drivetrainRobotDrive = new RobotDrive(drivetrainLeftMotor, drivetrainRightMotor);
+
+		drivetrainRobotDrive.setSafetyEnabled(true);
+		drivetrainRobotDrive.setExpiration(0.1);
+		drivetrainRobotDrive.setSensitivity(0.5);
+		drivetrainRobotDrive.setMaxOutput(1.0);
+
+		drivetrainGyro = new AnalogGyro(0);
+		LiveWindow.addSensor("Drivetrain", "Gyro", drivetrainGyro);
+		drivetrainGyro.setSensitivity(0.007);
+		drivetrainLeftEncoder = new Encoder(0, 1, false, EncodingType.k4X);
+		LiveWindow.addSensor("Drivetrain", "LeftEncoder", drivetrainLeftEncoder);
+		drivetrainLeftEncoder.setDistancePerPulse(.074);
+		drivetrainLeftEncoder.setPIDSourceType(PIDSourceType.kRate);
+		drivetrainRightEncoder = new Encoder(2, 3, false, EncodingType.k4X);
+		LiveWindow.addSensor("Drivetrain", "RightEncoder", drivetrainRightEncoder);
+		drivetrainRightEncoder.setDistancePerPulse(.074);
+		drivetrainLeftEncoder.setDistancePerPulse(Robot.getPref("DrivetrainLeftEncoderRatio", 1.0));
+		drivetrainLeftEncoder.setPIDSourceType(PIDSourceType.kRate);
+		drivetrainRightEncoder = new Encoder(2, 3, false, EncodingType.k4X);
+		LiveWindow.addSensor("Drivetrain", "RightEncoder", drivetrainRightEncoder);
+		drivetrainRightEncoder.setDistancePerPulse(Robot.getPref("DrivetrainRightEncoderRatio", 1.0));
+		drivetrainRightEncoder.setPIDSourceType(PIDSourceType.kRate);
+		drivetrainUltrasonic = new AnalogInput(1);
+		LiveWindow.addSensor("Drivetrain", "Ultrasonic", drivetrainUltrasonic);
+
+		shooterFlywheelMotor = new Talon(4);
+		LiveWindow.addActuator("Shooter", "FlywheelMotor", (Talon) shooterFlywheelMotor);
+
+		shooterFlywheelEncoder = new Encoder(4, 5, false, EncodingType.k4X);
+		LiveWindow.addSensor("Shooter", "FlywheelEncoder", shooterFlywheelEncoder);
+		shooterFlywheelEncoder.setDistancePerPulse(.001068);
+		shooterFlywheelEncoder.setDistancePerPulse(Robot.getPref("ShooterEncoderRatio", 1.0));
+		shooterFlywheelEncoder.setPIDSourceType(PIDSourceType.kRate);
+		intakeRollerMotor = new Talon(3);
+		LiveWindow.addActuator("Intake", "RollerMotor", (Talon) intakeRollerMotor);
+
+		intakePivotMotor = new Talon(2);
+		LiveWindow.addActuator("Intake", "PivotMotor", (Talon) intakePivotMotor);
+
+		intakeUpperLimit = new DigitalInput(8);
+		LiveWindow.addSensor("Intake", "UpperLimit", intakeUpperLimit);
+
+		intakeLowerLimit = new DigitalInput(9);
+		LiveWindow.addSensor("Intake", "LowerLimit", intakeLowerLimit);
+
+		intakePivotEncoder = new Encoder(6, 7, false, EncodingType.k4X);
+		LiveWindow.addSensor("Intake", "PivotEncoder", intakePivotEncoder);
+		intakePivotEncoder.setDistancePerPulse(Robot.getPref("IntakeEncoderRatio", 1));
+
+		intakeBallSensor = new DigitalInput(10);
+		LiveWindow.addSensor("Intake", "BallSensor", intakeBallSensor);
+
+		climberExtendMotor = new Talon(7);
+		LiveWindow.addActuator("Climber", "ExtendMotor", (Talon) climberExtendMotor);
+
+		climberWinchMotor = new Talon(6);
+		LiveWindow.addActuator("Climber", "WinchMotor", (Talon) climberWinchMotor);
+
+		climberExtensionLimit = new DigitalInput(11);
+		LiveWindow.addSensor("Climber", "ExtensionLimit", climberExtensionLimit);
+
+	}
 }
