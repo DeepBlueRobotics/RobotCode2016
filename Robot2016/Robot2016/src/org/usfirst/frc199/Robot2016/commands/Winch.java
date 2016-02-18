@@ -18,15 +18,12 @@ public class Winch extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	Robot.climber.setWinchMotor(.05); 
+    	Robot.climber.setWinchMotor(Robot.oi.getManipulator().getY()); 
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-	    /* No encoder right now, so act as if there was one. 
-	      Also 8 is a random value, change the value after testing.
-	     */
-    	return Robot.climber.getEncoder() < 8;
+    	return false;
     }
 
     // Called once after isFinished returns true

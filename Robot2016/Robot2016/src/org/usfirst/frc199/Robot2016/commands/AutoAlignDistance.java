@@ -1,6 +1,5 @@
 package org.usfirst.frc199.Robot2016.commands;
 
-import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Command;
 import org.usfirst.frc199.Robot2016.Robot;
 
@@ -35,7 +34,7 @@ public class AutoAlignDistance extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return Math.abs(Robot.drivetrain.getRangefinderDistance()-distance) < Preferences.getInstance().getDouble("DriveDistanceErrorTolerance", 0);
+        return Math.abs(Robot.drivetrain.getRangefinderDistance()-distance) < Robot.getPref("DriveDistanceErrorTolerance", 0);
     }
 
     // Called once after isFinished returns true

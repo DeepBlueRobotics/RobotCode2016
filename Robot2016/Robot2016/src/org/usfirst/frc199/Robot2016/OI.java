@@ -40,7 +40,7 @@ public class OI {
         manualIntakeButton.whileHeld(new IntakeManualControl());
         
 //        retractClimberButton = new JoystickButton(manipulator, 5);
-//        retractClimberButton.whenPressed(new Winch());
+//        retractClimberButton.whileHeld(new Winch());
 //        extendClimberButton = new JoystickButton(manipulator, 7);
 //        extendClimberButton.whenPressed(new ExtendClimber(0,0));
         
@@ -69,14 +69,15 @@ public class OI {
         alignAngleButton = new JoystickButton(leftJoystick, 2);
         alignAngleButton.whileHeld(new AutoAlignAngle());
         intakeButton2 = new JoystickButton(leftJoystick, 1);
-        intakeButton2.whileHeld(new IntakeBoulder());
-        
-        
+        intakeButton2.whileHeld(new IntakeBoulder());        
 
-        SmartDashboard.putData("PID/TestDriveDistancePID", new TestPID(TestPID.System.DRIVEDISTANCE));
-		SmartDashboard.putData("PID/TestDriveSlidePID", new TestPID(TestPID.System.DRIVEANGLE));
-		SmartDashboard.putData("PID/TestDriveAnglePID", new TestPID(TestPID.System.SHOOTER));
-        // SmartDashboard Buttons
+        // Test PID Commands
+        SmartDashboard.putData("PID/DriveDistance/TestDriveDistancePID", new TestPID(TestPID.System.DRIVEDISTANCE));
+		SmartDashboard.putData("PID/DriveAngle/TestDriveAnglePID", new TestPID(TestPID.System.DRIVEANGLE));
+		SmartDashboard.putData("PID/Shooter/TestShooterPID", new TestPID(TestPID.System.SHOOTER));
+		SmartDashboard.putData("PID/Intake/TestIntakePID", new TestPID(TestPID.System.INTAKE));
+        
+		// SmartDashboard Buttons
         SmartDashboard.putData("AutoMode", new AutoMode(4, 2));
         SmartDashboard.putData("AutoDelay", new AutoDelay(0));
         SmartDashboard.putData("AutoDrive", new AutoDrive(0));
@@ -92,7 +93,7 @@ public class OI {
         SmartDashboard.putData("RaiseIntake", new RaiseIntake());
         SmartDashboard.putData("IntakeManualControl", new IntakeManualControl());
         SmartDashboard.putData("ShooterManualControl", new ShooterManualControl());
-        SmartDashboard.putData("ExtendClimber", new ExtendClimber(0,0));
+        SmartDashboard.putData("ExtendClimber", new ExtendClimber());
         SmartDashboard.putData("RetractClimber", new Winch());
         SmartDashboard.putData("UpdateDashboard", new UpdateDashboard());
     }

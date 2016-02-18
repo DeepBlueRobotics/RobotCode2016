@@ -1,12 +1,12 @@
 package org.usfirst.frc199.Robot2016.subsystems;
 
 import org.usfirst.frc199.Robot2016.DashboardSubsystem;
+import org.usfirst.frc199.Robot2016.Robot;
 import org.usfirst.frc199.Robot2016.RobotMap;
 import org.usfirst.frc199.Robot2016.motioncontrol.PID;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
@@ -19,13 +19,12 @@ public class Intake extends Subsystem implements DashboardSubsystem {
 	private final SpeedController pivotMotor = RobotMap.intakePivotMotor;
 	private final DigitalInput upperLimit = RobotMap.intakeUpperLimit;
 	private final DigitalInput lowerLimit = RobotMap.intakeLowerLimit;
-//	private final SpeedController beltMotor = RobotMap.intakeBeltMotor;
 	private final DigitalInput ballSensor = RobotMap.intakeBallSensor;
 	private final Encoder pivotEncoder = RobotMap.intakePivotEncoder;
 	
 	private PID pivotPID = new PID("IntakePivot");
-	private double midLowAngle = Preferences.getInstance().getDouble("MidLowAngle", 0);	//Measure angle between mid and low positions
-	private double midHighAngle = Preferences.getInstance().getDouble("MidHighAngle", 0); 	//Measure angle between mid and high positions
+	private double midLowAngle = Robot.getPref("MidLowAngle", 0);	//Measure angle between mid and low positions
+	private double midHighAngle = Robot.getPref("MidHighAngle", 0); 	//Measure angle between mid and high positions
 	private double totalAngle = midLowAngle + midHighAngle;
 
 	// Put methods for controlling this subsystem
@@ -120,5 +119,13 @@ public class Intake extends Subsystem implements DashboardSubsystem {
 			System.out.println("Multiple limit switches activated on intake.");
 		}
 		return pos;
+	}
+	
+	@Override
+	public void displayData() {
+		display("Encoder", pivotEncoder.getDistance());
+		display("BallSensor", getBallSensor());
+		display("UpperLimit", upperLimit.get());
+		display("LowerLimit", lowerLimit.get());
 	}
 }

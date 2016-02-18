@@ -1,6 +1,5 @@
 package org.usfirst.frc199.Robot2016.commands;
 
-import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Command;
 import org.usfirst.frc199.Robot2016.Robot;
 
@@ -22,7 +21,7 @@ public class IntakeBoulder extends Command {
 	// Called repeatedly when this Command is scheduled to run
 	protected void execute() {
 		if (!Robot.intake.getBallSensor()) {
-			Robot.intake.setRoller(Preferences.getInstance().getDouble("IntakeRollerSpeed", 1.0)); // Testing with 1.0 - default .7
+			Robot.intake.setRoller(Robot.getPref("IntakeSpeed", 1.0));
 		} else {
 			Robot.intake.setRoller(0);
 		}

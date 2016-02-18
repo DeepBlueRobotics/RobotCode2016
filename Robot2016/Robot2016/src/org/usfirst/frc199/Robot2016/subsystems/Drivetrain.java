@@ -10,18 +10,14 @@ import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotDrive;
-import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Moves the robot around the field.
  */
 public class Drivetrain extends Subsystem implements DashboardSubsystem {
 	
-	public static final int AngleOfRangeFinders = 10; // in degrees
-
-    private final SpeedController leftMotor = RobotMap.drivetrainLeftMotor;
-    private final SpeedController rightMotor = RobotMap.drivetrainRightMotor;
     private final RobotDrive robotDrive = RobotMap.drivetrainRobotDrive;
     private final AnalogGyro gyro = RobotMap.drivetrainGyro;
     private final Encoder leftEncoder = RobotMap.drivetrainLeftEncoder;
@@ -77,6 +73,9 @@ public class Drivetrain extends Subsystem implements DashboardSubsystem {
      * @return - distance in inches
      */
     public double getEncoderDistance() {
+    	SmartDashboard.putNumber("LeftEncoderDistance", leftEncoder.getDistance());
+    	SmartDashboard.putNumber("RightEncoderDistance", rightEncoder.getDistance());
+    	
     	return (leftEncoder.getDistance() + rightEncoder.getDistance()) / 2;
     }
     
@@ -180,7 +179,6 @@ public class Drivetrain extends Subsystem implements DashboardSubsystem {
 	
 	/**
 	 * Determines if robot has reached the target position
-	 * 
 	 * @return Whether both PID loops have reached their target
 	 */
 	public boolean autoReachedTarget() {
@@ -189,7 +187,6 @@ public class Drivetrain extends Subsystem implements DashboardSubsystem {
 
 	/**
 	 * Determines if the distance PID has reached the target
-	 * 
 	 * @return Whether distance target has been reached
 	 */
 	public boolean distanceReachedTarget() {
@@ -198,7 +195,6 @@ public class Drivetrain extends Subsystem implements DashboardSubsystem {
     
 	/**
 	 * Determines if the angle PID has reached the target
-	 * 
 	 * @return Whether angle target has been reached
 	 */
 	public boolean angleReachedTarget() {
@@ -241,5 +237,17 @@ public class Drivetrain extends Subsystem implements DashboardSubsystem {
 		velocityPID.update(getEncoderRate());
 		angularVelocityPID.update(getGyroRate());
 		arcadeDrive(velocityPID.getOutput(), angularVelocityPID.getOutput());
+	}
+	
+	@Override
+	public void displayData() {
+		display("EncoderDistance", getEncoderDistance());
+		display("EncoderRate", getEncoderRate());
+		display("GyroAngle", getGyroAngle());
+		display("GyroRate", getGyroRate());
+		display("RangeFinderDistance", getRangefinderDistance());
+		// Regular SmartDashboard values for graphing
+		SmartDashboard.putNumber("DrivetrainEncoderDistance", getEncoderDistance());
+		SmartDashboard.putNumber("DrivetrainGyroAngle", getGyroAngle());
 	}
 }

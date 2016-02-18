@@ -16,7 +16,7 @@ public class TestPID extends Command {
 
 	// The various PID loops of the robot
 	public enum System {
-		DRIVEDISTANCE, DRIVEANGLE, SHOOTER;
+		DRIVEDISTANCE, DRIVEANGLE, SHOOTER, INTAKE;
 	}
 
 	/**
@@ -24,51 +24,61 @@ public class TestPID extends Command {
 	 */
 	public TestPID(System system) {
 		this.system = system;
-		if (system == System.SHOOTER) {
-			requires(Robot.shooter);
-		} else {
-			requires(Robot.drivetrain);
+		switch(system) {
+			case SHOOTER: requires(Robot.shooter); break;
+			case INTAKE: requires(Robot.intake); break;
+			default: requires(Robot.drivetrain);
 		}
 	}
 
 	// Called just before this Command runs the first time
 	protected void initialize() {
-		if (system == System.DRIVEDISTANCE) {
-			target = SmartDashboard.getNumber("PID/DriveDistance TestTarget");
-			Robot.drivetrain.setAutoTarget(target, 0);
-		} else if (system == System.DRIVEANGLE) {
-			target = SmartDashboard.getNumber("PID/DriveAngle TestTarget");
-			Robot.drivetrain.setAutoTarget(0, target);
-		} else if (system == System.SHOOTER) {
-			target = SmartDashboard.getNumber("PID/Shooter TestTarget");
-			Robot.shooter.setTargetSpeed(target);
+		switch(system) {
+			case DRIVEDISTANCE:
+				target = SmartDashboard.getNumber("PID/DriveDistance/TestTarget");
+				Robot.drivetrain.setAutoTarget(target, 0);
+				break;
+			case DRIVEANGLE:
+				target = SmartDashboard.getNumber("PID/DriveAngle/TestTarget");
+				Robot.drivetrain.setAngleTarget(target);
+				break;
+			case SHOOTER:
+				target = SmartDashboard.getNumber("PID/Shooter/TestTarget");
+				Robot.shooter.setTargetSpeed(target);
+				break;
+			case INTAKE:
+				target = SmartDashboard.getNumber("PID/Intake/TestTarget");
+				// Intake doesn't have a method for this
+				break;
 		}
 	}
 
 	// Called repeatedly when this Command is scheduled to run
 	protected void execute() {
-		if (system == System.SHOOTER) {
-			Robot.shooter.updateSpeed();
-		} else {
-			Robot.drivetrain.updateAuto();
+		switch(system) {
+			case SHOOTER: Robot.shooter.updateSpeed(); break;
+			case INTAKE: Robot.intake.updateAngle(); break;
+			case DRIVEDISTANCE: Robot.drivetrain.updateAuto(); break;
+			case DRIVEANGLE: Robot.drivetrain.updateAngle();
 		}
 	}
 
 	// Make this return true when this Command no longer needs to run execute()
 	protected boolean isFinished() {
-		if (system == System.SHOOTER) {
-			return false;
-		} else {
-			return Robot.drivetrain.autoReachedTarget();
+		switch(system) {
+			case SHOOTER: return false;
+			case INTAKE: return false; // Intake doesn't have a method for this
+			case DRIVEDISTANCE: return Robot.drivetrain.autoReachedTarget();
+			default: return Robot.drivetrain.angleReachedTarget();
 		}
 	}
 
 	// Called once after isFinished returns true
 	protected void end() {
-		if (system == System.SHOOTER) {
-			Robot.shooter.runShooter(0.0);
-		} else {
-			Robot.drivetrain.tankDrive(0, 0);
+		switch(system) {
+			case SHOOTER: Robot.shooter.runShooter(0.0); break;
+			case INTAKE: Robot.intake.pivot(0.0); break;
+			default: Robot.drivetrain.tankDrive(0, 0);
 		}
 	}
 

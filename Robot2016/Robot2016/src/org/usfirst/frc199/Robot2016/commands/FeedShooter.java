@@ -1,6 +1,5 @@
 package org.usfirst.frc199.Robot2016.commands;
 
-import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Command;
 import org.usfirst.frc199.Robot2016.Robot;
 
@@ -19,7 +18,7 @@ public class FeedShooter extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	Robot.intake.setRoller(Preferences.getInstance().getDouble("IntakeRollerSpeed", 0.7));
+    	Robot.intake.setRoller(Robot.getPref("IntakeSpeed", 1.0));
     }
 
     // Make this return true when this Command no longer needs to run execute()

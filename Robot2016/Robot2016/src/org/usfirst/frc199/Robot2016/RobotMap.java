@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDSourceType;
-import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.Talon;
@@ -57,22 +56,21 @@ public class RobotMap {
         drivetrainGyro.setSensitivity(0.007);
         drivetrainLeftEncoder = new Encoder(0, 1, false, EncodingType.k4X);
         LiveWindow.addSensor("Drivetrain", "LeftEncoder", drivetrainLeftEncoder);
-        drivetrainLeftEncoder.setDistancePerPulse(1.0);
+        drivetrainLeftEncoder.setDistancePerPulse(Robot.getPref("DrivetrainLeftEncoderRatio", 1.0));
         drivetrainLeftEncoder.setPIDSourceType(PIDSourceType.kRate);
         drivetrainRightEncoder = new Encoder(2, 3, false, EncodingType.k4X);
         LiveWindow.addSensor("Drivetrain", "RightEncoder", drivetrainRightEncoder);
-        drivetrainRightEncoder.setDistancePerPulse(1.0);
+        drivetrainRightEncoder.setDistancePerPulse(Robot.getPref("DrivetrainRightEncoderRatio", 1.0));
         drivetrainRightEncoder.setPIDSourceType(PIDSourceType.kRate);
         drivetrainUltrasonic = new AnalogInput(1);
         LiveWindow.addSensor("Drivetrain", "Ultrasonic", drivetrainUltrasonic);
-        //Any extra code needed for the ultrasonic?        
         
         shooterFlywheelMotor = new Talon(4);
         LiveWindow.addActuator("Shooter", "FlywheelMotor", (Talon) shooterFlywheelMotor);
         
         shooterFlywheelEncoder = new Encoder(4, 5, false, EncodingType.k4X);
         LiveWindow.addSensor("Shooter", "FlywheelEncoder", shooterFlywheelEncoder);
-        shooterFlywheelEncoder.setDistancePerPulse(1.0);
+        shooterFlywheelEncoder.setDistancePerPulse(Robot.getPref("ShooterEncoderRatio", 1.0));
         shooterFlywheelEncoder.setPIDSourceType(PIDSourceType.kRate);
         intakeRollerMotor = new Talon(3);
         LiveWindow.addActuator("Intake", "RollerMotor", (Talon) intakeRollerMotor);
@@ -88,10 +86,7 @@ public class RobotMap {
         
         intakePivotEncoder = new Encoder(6, 7, false, EncodingType.k4X);
         LiveWindow.addSensor("Intake", "PivotEncoder", intakePivotEncoder);
-        intakePivotEncoder.setDistancePerPulse(Preferences.getInstance().getDouble("IntakeEncoderRatio", 1));
-        
-//        intakeBeltMotor = new Talon(3);
-//        LiveWindow.addActuator("Intake", "BeltMotor", (Talon) intakeBeltMotor);
+        intakePivotEncoder.setDistancePerPulse(Robot.getPref("IntakeEncoderRatio", 1));
         
         intakeBallSensor = new DigitalInput(10);
         LiveWindow.addSensor("Intake", "BallSensor", intakeBallSensor);

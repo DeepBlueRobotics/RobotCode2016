@@ -1,6 +1,5 @@
 package org.usfirst.frc199.Robot2016.commands;
 
-import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Command;
 import org.usfirst.frc199.Robot2016.Robot;
 
@@ -16,7 +15,7 @@ public class RunShooter extends Command {
     // Called just before this Command runs the first time
     protected void initialize() {
     	// Target speed to be set in inches per second
-    	Robot.shooter.setTargetSpeed(Preferences.getInstance().getDouble("ShooterSpeed", 1.0));
+    	Robot.shooter.setTargetSpeed(Robot.getPref("ShooterSpeed", 1.0));
     }
 
     // Called repeatedly when this Command is scheduled to run

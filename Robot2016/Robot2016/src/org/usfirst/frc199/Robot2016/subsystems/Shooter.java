@@ -55,4 +55,10 @@ public class Shooter extends Subsystem implements DashboardSubsystem {
     	shooterPID.update(currentSpeed());
     	return shooterPID.getOutput();
     }
+    
+    @Override
+    public void displayData() {
+    	display("Encoder", flywheelEncoder.getDistance());
+    	display("Speed", currentSpeed());
+    }
 }
