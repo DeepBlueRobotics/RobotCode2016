@@ -35,11 +35,11 @@ public class Intake extends Subsystem implements DashboardSubsystem {
 	}
 	
 	public boolean getUpperLimit() {
-		return upperLimit.get();
+		return !upperLimit.get();
 	}
 	
 	public boolean getLowerLimit() {
-		return lowerLimit.get();
+		return !lowerLimit.get();
 	}
 
 	/**
@@ -49,7 +49,7 @@ public class Intake extends Subsystem implements DashboardSubsystem {
 	 */
 	public void pivot(double speed) {
 		if(speed>0&&!getUpperLimit()||speed<0&&!getLowerLimit()) {
-			pivotMotor.set(speed);
+			pivotMotor.set(-speed);
 		} else {
 			pivotMotor.set(0);
 		}
