@@ -19,7 +19,6 @@ public class IntakeManualControl extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	
     	Robot.intake.pivot(Robot.oi.manipulator.getY());
     	Robot.intake.setRoller(Robot.oi.manipulator.getThrottle());
     }
@@ -32,6 +31,7 @@ public class IntakeManualControl extends Command {
     // Called once after isFinished returns true
     protected void end() {
     	Robot.intake.pivot(0);
+    	Robot.intake.setRoller(0);
     }
 
     // Called when another command which requires one or more of the same

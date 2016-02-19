@@ -77,9 +77,6 @@ public class Drivetrain extends Subsystem implements DashboardSubsystem {
      * @return - distance in inches
      */
     public double getEncoderDistance() {
-    	SmartDashboard.putNumber("LeftEncoderDistance", leftEncoder.getDistance());
-    	SmartDashboard.putNumber("RightEncoderDistance", rightEncoder.getDistance());
-    	
     	return (leftEncoder.getDistance() + rightEncoder.getDistance()) / 2;
     }
     
@@ -278,11 +275,12 @@ public class Drivetrain extends Subsystem implements DashboardSubsystem {
 	
 	@Override
 	public void displayData() {
-		display("EncoderDistance", getEncoderDistance());
+		display("LeftEncoder", leftEncoder.getDistance());
+    	display("RightEncoder", rightEncoder.getDistance());
 		display("EncoderRate", getEncoderRate());
 		display("GyroAngle", getGyroAngle());
 		display("GyroRate", getGyroRate());
-		display("RangeFinderDistance", getRangefinderDistance());
+		display("RangeFinder", getRangefinderDistance());
 		// Regular SmartDashboard values for graphing
 		SmartDashboard.putNumber("DrivetrainEncoderDistance", getEncoderDistance());
 		SmartDashboard.putNumber("DrivetrainGyroAngle", getGyroAngle());
