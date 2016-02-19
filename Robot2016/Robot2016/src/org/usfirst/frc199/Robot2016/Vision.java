@@ -8,6 +8,8 @@ import com.ni.vision.NIVision.ColorMode;
 import com.ni.vision.NIVision.DrawMode;
 import com.ni.vision.NIVision.Image;
 import com.ni.vision.NIVision.ImageType;
+import com.ni.vision.NIVision.MeasurementType;
+import com.ni.vision.NIVision.MeasurementValue;
 import com.ni.vision.NIVision.RGBValue;
 
 import edu.wpi.first.wpilibj.CameraServer;
@@ -88,6 +90,7 @@ public class Vision {
 		public int imageHeight;
 		public int imageWidth;
 		public int boundingRectWidth;
+		public int first_x;
 
 		/**
 		 * Simple Constructor - initialized all values.
@@ -113,6 +116,7 @@ public class Vision {
 			center_mass_y = 0;
 			imageHeight = 0;
 			imageWidth = 0;
+			first_x = Vision.WIDTH / 2;
 		}
 
 		@Override
@@ -298,6 +302,10 @@ public class Vision {
 						NIVision.MeasurementType.MT_CENTER_OF_MASS_X);
 				par.center_mass_y = (int) NIVision.imaqMeasureParticle(image, particleIndex, 0,
 						NIVision.MeasurementType.MT_CENTER_OF_MASS_Y);
+				par.first_x = (int) NIVision.imaqMeasureParticle(image, particleIndex, 0,
+						NIVision.MeasurementType.MT_FIRST_PIXEL_X);
+				par.boundingRectWidth = (int) (NIVision.imaqMeasureParticle(image, particleIndex, 0,
+						MeasurementType.MT_BOUNDING_RECT_WIDTH));
 				par.imageHeight = NIVision.imaqGetImageSize(image).height;
 				par.imageWidth = NIVision.imaqGetImageSize(image).width;
 				particles.add(par);
@@ -347,6 +355,7 @@ public class Vision {
 				contourReport.putNumber("contour" + num + "/boundingRectWidth", reports[i].boundingRectWidth);
 				contourReport.putNumber("contour" + num + "/" + cx, reports[i].center_mass_x);
 				contourReport.putNumber("contour" + num + "/" + cy, reports[i].center_mass_y);
+				contourReport.putNumber("contour" + num + "/first_x", reports[i].first_x);
 				contourReport.putNumber("contour" + num + "/imageWidth", reports[i].imageWidth);
 				contourReport.putNumber("contour" + num + "/imageHeight", reports[i].imageHeight);
 				num++;
@@ -381,7 +390,15 @@ public class Vision {
 	 * @return degrees
 	 */
 	public double degreeToTarget() {
-		return 0;
+		// How to calculate the degree to the target (Center of the image)
+		// First calculate the pixel difference from the x value to the center x
+		// value.
+		int pixelsOff = Math
+				.abs(Vision.WIDTH / 2 - ((int) (contourReport.getNumber("contour0/first_x", Vision.WIDTH / 2))
+						+ ((int) (contourReport.getNumber("contour0/boundingRectWidth", 0)) / 2)));
+		// To find the angle to turn, the answer is the arctan of pixelsOff/rangeFinder
+		double rangefindervalue = 1;
+		return Math.toDegrees(Math.atan((double)pixelsOff/rangefindervalue));
 	}
 
 	// private final static String[] GRIP_ARGS = new String[] {
