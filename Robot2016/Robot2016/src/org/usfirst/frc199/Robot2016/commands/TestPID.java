@@ -54,9 +54,11 @@ public class TestPID extends Command {
 				break;
 			case DRIVEVELOCITY:
 				target = SmartDashboard.getNumber("PID/DriveVelocity/TestTarget");
+				Robot.drivetrain.setVelocityTarget(target, 0);
 				break;
 			case DRIVEANGULARVELOCITY:
 				target = SmartDashboard.getNumber("PID/DriveAngularVelocity/TestTarget");
+				Robot.drivetrain.setVelocityTarget(0, target);
 				break;
 		}
 	}
@@ -68,8 +70,8 @@ public class TestPID extends Command {
 			case INTAKE: Robot.intake.updateAngle(); break;
 			case DRIVEDISTANCE: Robot.drivetrain.updateAuto(); break;
 			case DRIVEANGLE: Robot.drivetrain.updateAngle(); break;
-			case DRIVEVELOCITY:	break;
-			case DRIVEANGULARVELOCITY: break;
+			case DRIVEVELOCITY: Robot.drivetrain.updateVelocity(); break;
+			case DRIVEANGULARVELOCITY: Robot.drivetrain.updateVelocity(); break;
 		}
 	}
 

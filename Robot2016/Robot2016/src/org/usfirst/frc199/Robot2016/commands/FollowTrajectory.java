@@ -55,9 +55,11 @@ public class FollowTrajectory extends Command {
     protected void execute() {
     	int i = t.getCurrentIndex(Robot.drivetrain.getEncoderDistance());
     	double v = t.getV(i);
+    	double v1 = t.getV(i+1);
     	double w = t.getW(i);
-    	double a = (t.getV(i+1)-v)/t.getDisplacement(i);
-    	double alpha = (t.getW(i+1)-w)/t.getDisplacement(i);
+    	double w1 = t.getW(i+1);
+    	double a = (v1-v)*(v+v1)/2/t.getDisplacement(i);
+    	double alpha = (w1-w)*(w+w1)/2/t.getDisplacement(i);
     	Robot.drivetrain.followTrajectory(v, w, a, alpha);
     	finished = i>=1;
     }

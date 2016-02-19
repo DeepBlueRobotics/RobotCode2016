@@ -35,9 +35,9 @@ public class OI {
         manipulator = new Joystick(2);
         
         manualShooterButton = new JoystickButton(manipulator, 10);
-        manualShooterButton.whileHeld(new ShooterManualControl());
+        manualShooterButton.toggleWhenPressed(new ShooterManualControl());
         manualIntakeButton = new JoystickButton(manipulator, 9);
-        manualIntakeButton.whileHeld(new IntakeManualControl());
+        manualIntakeButton.toggleWhenPressed(new IntakeManualControl());
         
 //        retractClimberButton = new JoystickButton(manipulator, 5);
 //        retractClimberButton.whileHeld(new Winch());
@@ -74,6 +74,8 @@ public class OI {
         // Test PID Commands
         SmartDashboard.putData("PID/DriveDistance/TestDriveDistancePID", new TestPID(TestPID.System.DRIVEDISTANCE));
 		SmartDashboard.putData("PID/DriveAngle/TestDriveAnglePID", new TestPID(TestPID.System.DRIVEANGLE));
+		SmartDashboard.putData("PID/DriveVelocity/TestDriveVelocityPID", new TestPID(TestPID.System.DRIVEVELOCITY));
+		SmartDashboard.putData("PID/DriveAngularVelocity/TestDriveAngularVelocityPID", new TestPID(TestPID.System.DRIVEANGULARVELOCITY));
 		SmartDashboard.putData("PID/Shooter/TestShooterPID", new TestPID(TestPID.System.SHOOTER));
 		SmartDashboard.putData("PID/Intake/TestIntakePID", new TestPID(TestPID.System.INTAKE));
         

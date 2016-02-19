@@ -95,6 +95,14 @@ public class PID implements DashboardSubsystem {
 	public double getOutput() {
 		return output;
 	}
+
+	/**
+	 * Gets the current target
+	 * @return - The current target
+	 */
+	public double getTarget() {
+		return target;
+	}
 	
 	/**
 	 * Determines if target has been reached
