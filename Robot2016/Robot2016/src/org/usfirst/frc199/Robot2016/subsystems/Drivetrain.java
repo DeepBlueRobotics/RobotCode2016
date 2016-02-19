@@ -244,8 +244,8 @@ public class Drivetrain extends Subsystem implements DashboardSubsystem {
 		angularVelocityPID.update(getGyroRate());
 		double v = velocityPID.getTarget();
 		double w = angularVelocityPID.getTarget();
-    	double kV = Robot.getPref("kV", 0);
-    	double kW = Robot.getPref("kW", 0);
+    	double kV = 1.0/Robot.getPref("MaxVelocity", .01);
+    	double kW = 1.0/Robot.getPref("MaxAngularVelocity", .01);
 		double outputV = velocityPID.getOutput() + kV*v;
 		double outputW = angularVelocityPID.getOutput() + kW*w;
 		arcadeDrive(outputV, outputW);
