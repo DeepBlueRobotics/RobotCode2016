@@ -306,6 +306,14 @@ public class Vision {
 						NIVision.MeasurementType.MT_FIRST_PIXEL_X);
 				par.boundingRectWidth = (int) (NIVision.imaqMeasureParticle(image, particleIndex, 0,
 						MeasurementType.MT_BOUNDING_RECT_WIDTH));
+				par.boundingRectTop = (int) (NIVision.imaqMeasureParticle(image, particleIndex, 0,
+						MeasurementType.MT_BOUNDING_RECT_TOP));
+				par.boundingRectBottom = (int) (NIVision.imaqMeasureParticle(image, particleIndex, 0,
+						MeasurementType.MT_BOUNDING_RECT_BOTTOM));
+				par.boundingRectLeft = (int) (NIVision.imaqMeasureParticle(image, particleIndex, 0,
+						MeasurementType.MT_BOUNDING_RECT_LEFT));
+				par.boundingRectRight = (int) (NIVision.imaqMeasureParticle(image, particleIndex, 0,
+						MeasurementType.MT_BOUNDING_RECT_RIGHT));
 				par.imageHeight = NIVision.imaqGetImageSize(image).height;
 				par.imageWidth = NIVision.imaqGetImageSize(image).width;
 				particles.add(par);
@@ -390,15 +398,11 @@ public class Vision {
 	 * @return degrees
 	 */
 	public double degreeToTarget() {
-		// How to calculate the degree to the target (Center of the image)
-		// First calculate the pixel difference from the x value to the center x
-		// value.
-		int pixelsOff = Math
+		double pixelsOff = Math
 				.abs(Vision.WIDTH / 2 - ((int) (contourReport.getNumber("contour0/first_x", Vision.WIDTH / 2))
 						+ ((int) (contourReport.getNumber("contour0/boundingRectWidth", 0)) / 2)));
-		// To find the angle to turn, the answer is the arctan of pixelsOff/rangeFinder
-		double rangefindervalue = 1;
-		return Math.toDegrees(Math.atan((double)pixelsOff/rangefindervalue));
+		double d = (Vision.WIDTH / 2) / Math.tan(Math.toRadians(34));
+		return Math.toDegrees(Math.atan(pixelsOff / d));
 	}
 
 	// private final static String[] GRIP_ARGS = new String[] {
