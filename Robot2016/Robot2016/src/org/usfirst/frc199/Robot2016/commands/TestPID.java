@@ -13,10 +13,11 @@ public class TestPID extends Command {
 
 	private final System system;
 	private double target = 0;
+	private int intakeInitialPosition;
 
 	// The various PID loops of the robot
 	public enum System {
-		DRIVEDISTANCE, DRIVEANGLE, SHOOTER, INTAKE;
+		DRIVEDISTANCE, DRIVEANGLE, SHOOTER, INTAKE, DRIVEVELOCITY, DRIVEANGULARVELOCITY;
 	}
 
 	/**
@@ -48,7 +49,14 @@ public class TestPID extends Command {
 				break;
 			case INTAKE:
 				target = SmartDashboard.getNumber("PID/Intake/TestTarget");
-				// Intake doesn't have a method for this
+				intakeInitialPosition = Robot.intake.getPosition();
+				Robot.intake.setTargetAngle(intakeInitialPosition, (int)target);
+				break;
+			case DRIVEVELOCITY:
+				target = SmartDashboard.getNumber("PID/DriveVelocity/TestTarget");
+				break;
+			case DRIVEANGULARVELOCITY:
+				target = SmartDashboard.getNumber("PID/DriveAngularVelocity/TestTarget");
 				break;
 		}
 	}
@@ -59,7 +67,9 @@ public class TestPID extends Command {
 			case SHOOTER: Robot.shooter.updateSpeed(); break;
 			case INTAKE: Robot.intake.updateAngle(); break;
 			case DRIVEDISTANCE: Robot.drivetrain.updateAuto(); break;
-			case DRIVEANGLE: Robot.drivetrain.updateAngle();
+			case DRIVEANGLE: Robot.drivetrain.updateAngle(); break;
+			case DRIVEVELOCITY:	break;
+			case DRIVEANGULARVELOCITY: break;
 		}
 	}
 
@@ -67,9 +77,12 @@ public class TestPID extends Command {
 	protected boolean isFinished() {
 		switch(system) {
 			case SHOOTER: return false;
-			case INTAKE: return false; // Intake doesn't have a method for this
+			case INTAKE: return Robot.intake.shouldStop(intakeInitialPosition);
 			case DRIVEDISTANCE: return Robot.drivetrain.autoReachedTarget();
-			default: return Robot.drivetrain.angleReachedTarget();
+			case DRIVEANGLE: return Robot.drivetrain.angleReachedTarget();
+			case DRIVEVELOCITY: return false;
+			case DRIVEANGULARVELOCITY: return false;
+			default: return false;
 		}
 	}
 

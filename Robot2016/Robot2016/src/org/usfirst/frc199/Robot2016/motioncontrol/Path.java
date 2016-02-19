@@ -57,6 +57,18 @@ public class Path {
 	}
 	
 	/**
+	 * Gets the change in position between 2 points
+	 * @param s0 - the first point
+	 * @param s1 - the second point
+	 * @return displacement between s0 and s1
+	 */
+	public double getDisplacement(double s0, double s1) {
+		double dx = getX(s1) - getX(s0);
+		double dy = getY(s1) - getY(s0);
+		return Math.sqrt(Math.pow(dx, 2)+Math.pow(dy, 2));
+	}
+	
+	/**
 	 * Gets x velocity value at a point on the path
 	 * @param s - the point on the path from 0 to 1
 	 * @return dx/ds(s)

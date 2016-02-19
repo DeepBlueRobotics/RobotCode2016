@@ -230,13 +230,21 @@ public class Drivetrain extends Subsystem implements DashboardSubsystem {
      * Uses PID to reach target velocity
      * @param v - linear velocity in inches/second
      * @param w - angular velocity in degrees/second
+     * @param v2 - linear velocity in inches/second at next point
+     * @param w2 - angular velocity in degrees/second at next point
      */
-	public void followTrajectory(double v, double w) {
+	public void followTrajectory(double v, double w, double a, double alpha) {
 		velocityPID.setTarget(v);
 		angularVelocityPID.setTarget(w);
 		velocityPID.update(getEncoderRate());
 		angularVelocityPID.update(getGyroRate());
-		arcadeDrive(velocityPID.getOutput(), angularVelocityPID.getOutput());
+    	double kV = Robot.getPref("kV", 0);
+    	double kW = Robot.getPref("kW", 0);
+    	double kA = Robot.getPref("kA", 0);
+    	double kAlpha = Robot.getPref("kAlpha", 0);
+		double outputV = velocityPID.getOutput() + kV*v + kA*a;
+		double outputW = angularVelocityPID.getOutput() + kW*w + kAlpha*alpha;
+		arcadeDrive(outputV, outputW);
 	}
 	
 	@Override

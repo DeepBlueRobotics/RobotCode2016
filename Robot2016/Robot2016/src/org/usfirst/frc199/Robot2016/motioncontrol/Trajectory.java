@@ -102,7 +102,7 @@ public class Trajectory {
 		// dtheta/dL (not with respect to t)
 		double w = Math.abs(path.getW(s));
 		// d^2theta/dL^2 (not with respect to t)
-		double alpha = Math.abs(path.getAlpha(s))+.000001; // Prevent division by zero
+		double alpha = Math.abs(path.getAlpha(s))+.00001; // Prevent division by zero
 		// velocity limit due to tradeoff between linear and angular velocity
 		double v1 = vmax/(1.0+w*vmax/wmax);
 		// velocity limit due to maximum angular acceleration
@@ -113,18 +113,18 @@ public class Trajectory {
 	
 	/**
 	 * Gets the maximum acceleration allowed at a given point and velocity
-	 * @param i1 - the point being evaluated
-	 * @param i2 - the next point on the path
+	 * @param i0 - the point being evaluated
+	 * @param i1 - the next point on the path
 	 * @param v - the current velocity
 	 * @return the maximum allowed acceleration (accurate to 3 decimal places)
 	 */
-	private double getAmax(int i1, int i2, double v) {
+	private double getAmax(int i0, int i1, double v) {
 		// old point on the spline function
-		double s0 = 1.0*(i1)/velocities.length;
+		double s0 = 1.0*(i0)/velocities.length;
 		// new point on the spline function
-		double s1 = 1.0*(i2)/velocities.length;
+		double s1 = 1.0*(i1)/velocities.length;
 		// change in arc length between the two points
-		double l = Math.abs(s1-s0)*v;
+		double l = path.getDisplacement(i0, i1)+.00001; // Prevent division by zero
 		// initial dw/dL
 		double w0 = Math.abs(path.getW(s0));
 		// final dw/dL
@@ -160,6 +160,17 @@ public class Trajectory {
 	public double getW(int i) {
 		double s = 1.0*i/velocities.length;
 		return path.getW(s)*velocities[i];
+	}
+	
+	/**
+	 * Gets change in distance between two consecutive points
+	 * @param i - the first of the two points
+	 * @return the displacement from i to i+1
+	 */
+	public double getDisplacement(int i) {
+		double s0 = 1.0*(i)/velocities.length;
+		double s1 = 1.0*(i+1)/velocities.length;
+		return path.getDisplacement(s0, s1);
 	}
 	
 	/**

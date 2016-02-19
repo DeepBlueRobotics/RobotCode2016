@@ -54,11 +54,11 @@ public class FollowTrajectory extends Command {
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
     	int i = t.getCurrentIndex(Robot.drivetrain.getEncoderDistance());
-    	double kA = Robot.getPref("kA", 0);
-    	double kAlpha = Robot.getPref("kAlpha", 0);
-    	double v = t.getV(i)*(1-kA+kA*t.getV(i+1));
-    	double w = t.getW(i)*(1-kAlpha+kAlpha*t.getW(i+1));
-    	Robot.drivetrain.followTrajectory(v, w);
+    	double v = t.getV(i);
+    	double w = t.getW(i);
+    	double a = (t.getV(i+1)-v)/t.getDisplacement(i);
+    	double alpha = (t.getW(i+1)-w)/t.getDisplacement(i);
+    	Robot.drivetrain.followTrajectory(v, w, a, alpha);
     	finished = i>=1;
     }
 
