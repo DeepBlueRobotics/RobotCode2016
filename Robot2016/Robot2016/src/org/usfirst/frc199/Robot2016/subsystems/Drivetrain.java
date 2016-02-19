@@ -263,8 +263,8 @@ public class Drivetrain extends Subsystem implements DashboardSubsystem {
 		angularVelocityPID.setTarget(w);
 		velocityPID.update(getEncoderRate());
 		angularVelocityPID.update(getGyroRate());
-    	double kV = Robot.getPref("kV", 0);
-    	double kW = Robot.getPref("kW", 0);
+		double kV = 1.0/Robot.getPref("MaxVelocity", .01);
+    	double kW = 1.0/Robot.getPref("MaxAngularVelocity", .01);
     	double kA = Robot.getPref("kA", 0);
     	double kAlpha = Robot.getPref("kAlpha", 0);
 		double outputV = velocityPID.getOutput() + kV*v + kA*a;
