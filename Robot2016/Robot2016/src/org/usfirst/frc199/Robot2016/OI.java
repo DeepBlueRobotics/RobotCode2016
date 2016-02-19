@@ -111,4 +111,13 @@ public class OI {
     public Joystick getManipulator() {
         return manipulator;
     }
+
+    /**
+     * Scales joystick input to increase control at smaller values
+     * @param input - raw joystick input
+     * @return exponentiated joystick input
+     */
+    public double exponentiate(double input) {
+    	return Math.signum(input)*Math.pow(Math.abs(input), Robot.getPref("Exponentiation", 1.0));
+    }
 }
