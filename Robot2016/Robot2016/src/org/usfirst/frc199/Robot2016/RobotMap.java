@@ -56,16 +56,11 @@ public class RobotMap {
 		drivetrainGyro.setSensitivity(0.007);
 		drivetrainLeftEncoder = new Encoder(0, 1, false, EncodingType.k4X);
 		LiveWindow.addSensor("Drivetrain", "LeftEncoder", drivetrainLeftEncoder);
-		drivetrainLeftEncoder.setDistancePerPulse(.074);
+		drivetrainLeftEncoder.setDistancePerPulse(Robot.getPref("DrivetrainLeftEncoderRatio", .074));
 		drivetrainLeftEncoder.setPIDSourceType(PIDSourceType.kRate);
 		drivetrainRightEncoder = new Encoder(2, 3, false, EncodingType.k4X);
 		LiveWindow.addSensor("Drivetrain", "RightEncoder", drivetrainRightEncoder);
-		drivetrainRightEncoder.setDistancePerPulse(.074);
-		drivetrainLeftEncoder.setDistancePerPulse(Robot.getPref("DrivetrainLeftEncoderRatio", 1.0));
-		drivetrainLeftEncoder.setPIDSourceType(PIDSourceType.kRate);
-		drivetrainRightEncoder = new Encoder(2, 3, false, EncodingType.k4X);
-		LiveWindow.addSensor("Drivetrain", "RightEncoder", drivetrainRightEncoder);
-		drivetrainRightEncoder.setDistancePerPulse(Robot.getPref("DrivetrainRightEncoderRatio", 1.0));
+		drivetrainRightEncoder.setDistancePerPulse(Robot.getPref("DrivetrainRightEncoderRatio", .074));
 		drivetrainRightEncoder.setPIDSourceType(PIDSourceType.kRate);
 		drivetrainUltrasonic = new AnalogInput(1);
 		LiveWindow.addSensor("Drivetrain", "Ultrasonic", drivetrainUltrasonic);
@@ -75,8 +70,7 @@ public class RobotMap {
 
 		shooterFlywheelEncoder = new Encoder(4, 5, false, EncodingType.k4X);
 		LiveWindow.addSensor("Shooter", "FlywheelEncoder", shooterFlywheelEncoder);
-		shooterFlywheelEncoder.setDistancePerPulse(.001068);
-		shooterFlywheelEncoder.setDistancePerPulse(Robot.getPref("ShooterEncoderRatio", 1.0));
+		shooterFlywheelEncoder.setDistancePerPulse(Robot.getPref("ShooterEncoderRatio", .001068));
 		shooterFlywheelEncoder.setPIDSourceType(PIDSourceType.kRate);
 		intakeRollerMotor = new Talon(3);
 		LiveWindow.addActuator("Intake", "RollerMotor", (Talon) intakeRollerMotor);
@@ -105,6 +99,5 @@ public class RobotMap {
 
 		climberExtensionLimit = new DigitalInput(11);
 		LiveWindow.addSensor("Climber", "ExtensionLimit", climberExtensionLimit);
-
 	}
 }
