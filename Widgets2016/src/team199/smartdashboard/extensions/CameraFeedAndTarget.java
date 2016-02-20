@@ -53,19 +53,30 @@ public class CameraFeedAndTarget extends StaticWidget implements Runnable {
     
     private NetworkTable sd = NetworkTable.getTable("SmartDashboard/Contour");
     private int crossY = (int)sd.getNumber("yDisplay", 0);
+    private int crossX = (int)sd.getNumber("xDisplay", 0);
+    private double theta = sd.getNumber("thetaTurn", 0.0);
+    private double d = 0.0;
+    private int w = 0;
 
 
     /** {@inheritDoc} */
     @Override
     public void init() {
         setPreferredSize(new Dimension(320, 240));
+        w = this.getWidth();
+        d = w / ( 2 * Math.tan( Math.toRadians(34)));
         
         this.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 sd.putNumber("yDisplay", e.getY());
+                sd.putNumber("xDisplay", e.getX());
                 crossY = (int)sd.getNumber("yDisplay", 0);
+                crossX = (int)sd.getNumber("xDisplay", 0);
                 repaint();
+                
+                theta = Math.atan( Math.abs( w/2 - crossX) / d);
+                sd.putNumber("thetaTurn", theta);
             }
             @Override
             public void mouseExited(MouseEvent e) {    
@@ -221,6 +232,8 @@ public class CameraFeedAndTarget extends StaticWidget implements Runnable {
                 g.setPaintMode();
                 g.drawLine(imageWidth/2, 0, imageWidth/2, imageHeight);
                 g.drawLine(imageWidth/2 - 4, crossY, imageWidth/2 + 4, crossY);
+                
+                
             }
 
             /* If there's some problem getting the image, show the error on the screen */
