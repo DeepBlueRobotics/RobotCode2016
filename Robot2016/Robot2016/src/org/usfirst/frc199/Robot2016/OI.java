@@ -28,8 +28,9 @@ public class OI {
     public JoystickButton intakeDownButton;
     public JoystickButton shootLowButton;
     public JoystickButton intakeButton;
+    public JoystickButton reverseCameraButton;
     public Joystick manipulator;
-
+    
     public OI() {
 
         manipulator = new Joystick(2);
@@ -70,7 +71,10 @@ public class OI {
         alignAngleButton.whileHeld(new AutoAlignAngle());
         intakeButton2 = new JoystickButton(leftJoystick, 1);
         intakeButton2.whileHeld(new IntakeBoulder());        
-
+        
+        reverseCameraButton = new JoystickButton(rightJoystick, 3);
+        reverseCameraButton.whenPressed(new ReverseCamera());
+        
         // Test PID Commands
         SmartDashboard.putData("PID/DriveDistance/TestDriveDistancePID", new TestPID(TestPID.System.DRIVEDISTANCE));
 		SmartDashboard.putData("PID/DriveAngle/TestDriveAnglePID", new TestPID(TestPID.System.DRIVEANGLE));
