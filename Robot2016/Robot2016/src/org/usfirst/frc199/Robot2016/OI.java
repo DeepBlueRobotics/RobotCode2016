@@ -3,6 +3,7 @@ package org.usfirst.frc199.Robot2016;
 import org.usfirst.frc199.Robot2016.commands.*;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.buttons.InternalButton;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -30,6 +31,10 @@ public class OI {
     public JoystickButton intakeButton;
     public JoystickButton reverseCameraButton;
     public Joystick manipulator;
+    InternalButton upButton;
+    InternalButton downButton;
+    InternalButton leftButton;
+    InternalButton rightButton;
     
     public OI() {
 
@@ -103,7 +108,34 @@ public class OI {
         SmartDashboard.putData("RetractClimber", new Winch());
         SmartDashboard.putData("UpdateDashboard", new UpdateDashboard());
     }
+        SmartDashboard.putData("StartCompressor", new StartCompressor());
+        SmartDashboard.putData("ShiftLow", new ShiftLow());
+        upButton = new InternalButton();
+        rightButton = new InternalButton();
+        downButton = new InternalButton();
+        leftButton = new InternalButton();
 
+        upButton.whenPressed(new RunShooter());
+        rightButton.whenPressed(new RunShooter());
+        downButton.whenPressed(new RunShooter());
+        leftButton.whenPressed(new RunShooter());
+
+    }
+    
+    private int getDPad(Joystick stick) {
+        if(stick.getPOV() < 0) {
+            return -1;
+        } else {
+            return stick.getPOV() / 45;
+        }
+    }
+    public void updateDPad() {
+        int value = getDPad(manipulator);
+        upButton.setPressed(value == 0);
+        rightButton.setPressed(value == 2);
+        downButton.setPressed(value == 4);
+        leftButton.setPressed(value == 6);
+    }
     public Joystick getLeftJoystick() {
         return leftJoystick;
     }

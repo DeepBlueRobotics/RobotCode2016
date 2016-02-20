@@ -1,6 +1,7 @@
 package org.usfirst.frc199.Robot2016.subsystems;
 
 import org.usfirst.frc199.Robot2016.DashboardSubsystem;
+import org.usfirst.frc199.Robot2016.Robot;
 import org.usfirst.frc199.Robot2016.RobotMap;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -38,5 +39,10 @@ public class Climber extends Subsystem implements DashboardSubsystem {
 	@Override
 	public void displayData() {
 		display("Limit", extensionLimit.get());
+		if (RobotMap.climberExtensionLimit.get() == true) {
+			extendMotor.set(0);
+		} else {
+			extendMotor.set(speed);
+		}
 	}
 }
