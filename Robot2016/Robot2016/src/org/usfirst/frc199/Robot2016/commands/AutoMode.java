@@ -57,21 +57,18 @@ public class AutoMode extends CommandGroup {
 
 		switch (position) {
 		case 2:
-			addSequential(new AutoDrive(70));
-			addSequential(new AutoTurn(-30));
+			addSequential(new AutoTurn(-Math.toDegrees(Math.atan(5.5/(14 + Math.sqrt(3)/2)))));
 			addSequential(new AutoAlignAngle());
 			break;
 		case 3:
-			addSequential(new AutoDrive(60));
+			addSequential(new AutoTurn(-Math.toDegrees(Math.atan(3.5/(14 + Math.sqrt(3)/2)))));
 			addSequential(new AutoAlignAngle());
 			break;
 		case 4:
-			addSequential(new AutoDrive(60));
 			addSequential(new AutoAlignAngle());
 			break;
 		case 5:
-			addSequential(new AutoDrive(70));
-			addSequential(new AutoTurn(10));
+			addSequential(new AutoTurn(Math.toDegrees(Math.atan(1.5/(14 + Math.sqrt(3)/2)))));
 			addSequential(new AutoAlignAngle());
 			break;
 		default:
