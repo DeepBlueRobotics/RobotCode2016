@@ -67,7 +67,7 @@ public class TestPID extends Command {
 	protected void execute() {
 		switch(system) {
 			case SHOOTER: Robot.shooter.runShooter(Robot.shooter.updateSpeed()); break;
-			case INTAKE: Robot.intake.updateAngle(); break;
+			case INTAKE: Robot.intake.pivot(Robot.intake.updateAngle()); break;
 			case DRIVEDISTANCE: Robot.drivetrain.updateAuto(); break;
 			case DRIVEANGLE: Robot.drivetrain.updateAngle(); break;
 			case DRIVEVELOCITY: Robot.drivetrain.updateVelocity(); break;
