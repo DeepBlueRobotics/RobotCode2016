@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.RobotDrive;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -36,7 +37,8 @@ public class RobotMap {
 	public static SpeedController climberExtendMotor;
 	public static SpeedController climberWinchMotor;
 	public static DigitalInput climberExtensionLimit;
-
+	public static Servo cameraAxisServo;
+	
 	public static void init() {
 		drivetrainLeftMotor = new Talon(0);
 		LiveWindow.addActuator("Drivetrain", "LeftMotor", (Talon) drivetrainLeftMotor);
@@ -99,5 +101,8 @@ public class RobotMap {
 
 		climberExtensionLimit = new DigitalInput(11);
 		LiveWindow.addSensor("Climber", "ExtensionLimit", climberExtensionLimit);
+		
+		cameraAxisServo = new Servo(7);
+		LiveWindow.addSensor("Shooter", "CameraAxisServo", cameraAxisServo);
 	}
 }
