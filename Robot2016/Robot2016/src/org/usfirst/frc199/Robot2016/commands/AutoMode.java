@@ -8,44 +8,44 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class AutoMode extends CommandGroup {
 
 	/**
-	 * @param defense - 
-	 *            the defense which we are trying to pass 1 - Low bar (X) 2 -
+	 * @param defense
+	 *            - the defense which we are trying to pass 1 - Low bar (X) 2 -
 	 *            Portcullis (A) 3 - Cheval de frise (A) 4 - Moat (B) 5 -
 	 *            Ramparts (B) 6 - Drawbridge (C) 7 - Sally Port (C) 8 - Rock
 	 *            Wall (D) 9 - Rough Terrain (D)
-	 * @param position - 
-	 *            can be 1, 2, 3, 4, 5
+	 * @param position
+	 *            - can be 1, 2, 3, 4, 5
 	 */
 	public AutoMode(int defense, int position) {
 
-		addSequential(new AutoDrive(30));
+		// If we are positioned on the field, we would need to drive a set
+		// amount of distance
+		int length_of_robot = 41;
+		addSequential(new AutoDrive(74 - length_of_robot));
 
 		switch (defense) {
 		case 2: // portcullis
-			addSequential(new AutoDrive(20)); // 20 inches
-			addSequential(new RaiseIntake());
-			addSequential(new AutoDrive(30));
-			break;
+			return;
 		case 3: // cheval de frise
-			addSequential(new AutoDrive(20)); // 20 inches
+			addSequential(new AutoDrive(12));
 			addSequential(new LowerIntake());
-			addSequential(new AutoDrive(30));
+			addSequential(new AutoDrive(24 + 12 + length_of_robot));
 			break;
 		case 4: // moat
-			addSequential(new AutoDrive(50)); // 50 inches
+			addSequential(new AutoDrive(12 + 24 + 12 + length_of_robot));
 			break;
 		case 5: // ramparts
-			addSequential(new AutoDrive(50)); // 50 inches
+			addSequential(new AutoDrive(12 + 24 + 12 + length_of_robot));
 			break;
 		case 6: // drawbridge
 			return;
 		case 7: // sally port
 			return;
 		case 8: // rock wall
-			addSequential(new AutoDrive(50)); // 50 inches
+			addSequential(new AutoDrive(12 + 24 + 12 + length_of_robot));
 			break;
 		case 9: // rough terrain
-			addSequential(new AutoDrive(50)); // 50 inches
+			addSequential(new AutoDrive(12 + 24 + 12 + length_of_robot));
 			break;
 		default:
 			System.out.println("Wrong Defense");
@@ -54,30 +54,30 @@ public class AutoMode extends CommandGroup {
 
 		switch (position) {
 		case 2:
-			addSequential(new AutoDrive(70)); // 70 inches
-			addSequential(new AutoTurn(-30)); // -40 degrees (towards the right)
-			addSequential(new AutoAlignAngle()); // Of Course, assuming that the camera can see the target in its current position
+			addSequential(new AutoTurn(-Math.toDegrees(Math.atan(5.5 / (14 + Math.sqrt(3) / 2)))));
+			addSequential(new AutoAlignAngle());
 			break;
 		case 3:
-			addSequential(new AutoDrive(60)); // 60 inches
-			addSequential(new AutoAlignAngle()); // Of Course, assuming that the camera can see the target in its current position
+			addSequential(new AutoTurn(-Math.toDegrees(Math.atan(3.5 / (14 + Math.sqrt(3) / 2)))));
+			addSequential(new AutoAlignAngle());
 			break;
 		case 4:
-			addSequential(new AutoDrive(60)); // 60 inches
-			addSequential(new AutoAlignAngle()); // Of Course, assuming that the camera can see the target in its current position
+			addSequential(new AutoAlignAngle());
 			break;
 		case 5:
-			addSequential(new AutoDrive(70)); // 70 inches
-			addSequential(new AutoTurn(10)); // 10 degrees (towards the left)
-			addSequential(new AutoAlignAngle()); // Of Course, assuming that the camera can see the target in its current position
+			addSequential(new AutoTurn(Math.toDegrees(Math.atan(1.5 / (14 + Math.sqrt(3) / 2)))));
+			addSequential(new AutoAlignAngle());
 			break;
+		case 6: // spy box
+			return;
 		default:
 			System.out.println("Wrong position");
-			break;
+			return;
 		}
-		
+
 		addParallel(new RunShooter());
 		addSequential(new AutoDelay(2.0));
 		addSequential(new FeedShooter());
+
 	}
 }
