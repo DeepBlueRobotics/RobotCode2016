@@ -3,6 +3,7 @@ package org.usfirst.frc199.Robot2016;
 import org.usfirst.frc199.Robot2016.commands.*;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.buttons.InternalButton;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -107,9 +108,6 @@ public class OI {
         SmartDashboard.putData("ExtendClimber", new ExtendClimber());
         SmartDashboard.putData("RetractClimber", new Winch());
         SmartDashboard.putData("UpdateDashboard", new UpdateDashboard());
-    }
-        SmartDashboard.putData("StartCompressor", new StartCompressor());
-        SmartDashboard.putData("ShiftLow", new ShiftLow());
         upButton = new InternalButton();
         rightButton = new InternalButton();
         downButton = new InternalButton();

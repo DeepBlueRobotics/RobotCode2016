@@ -39,10 +39,5 @@ public class Climber extends Subsystem implements DashboardSubsystem {
 	@Override
 	public void displayData() {
 		display("Limit", extensionLimit.get());
-		if (RobotMap.climberExtensionLimit.get() == true) {
-			extendMotor.set(0);
-		} else {
-			extendMotor.set(speed);
-		}
 	}
 }
