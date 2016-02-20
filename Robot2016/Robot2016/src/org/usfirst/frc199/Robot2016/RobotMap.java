@@ -102,7 +102,7 @@ public class RobotMap {
 		climberExtensionLimit = new DigitalInput(11);
 		LiveWindow.addSensor("Climber", "ExtensionLimit", climberExtensionLimit);
 		
-		cameraAxisServo = new Servo(7);
-		LiveWindow.addSensor("Shooter", "CameraAxisServo", cameraAxisServo);
+//		cameraAxisServo = new Servo(7);
+//		LiveWindow.addSensor("Shooter", "CameraAxisServo", cameraAxisServo);
 	}
 }

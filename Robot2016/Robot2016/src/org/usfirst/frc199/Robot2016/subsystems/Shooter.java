@@ -1,6 +1,7 @@
 package org.usfirst.frc199.Robot2016.subsystems;
 
 import org.usfirst.frc199.Robot2016.DashboardSubsystem;
+import org.usfirst.frc199.Robot2016.Robot;
 import org.usfirst.frc199.Robot2016.RobotMap;
 import org.usfirst.frc199.Robot2016.motioncontrol.PID;
 
@@ -16,8 +17,8 @@ public class Shooter extends Subsystem implements DashboardSubsystem {
 
     private final SpeedController flywheelMotor = RobotMap.shooterFlywheelMotor;
     private final Encoder flywheelEncoder = RobotMap.shooterFlywheelEncoder;
-    private final Servo cameraAxisServo = RobotMap.cameraAxisServo;
-    private PID shooterPID = new PID("ShooterSpeed");
+//    private final Servo cameraAxisServo = RobotMap.cameraAxisServo;
+    private PID shooterPID = new PID("Shooter");
 
     public void initDefaultCommand() {
 
@@ -54,7 +55,7 @@ public class Shooter extends Subsystem implements DashboardSubsystem {
      * @param theta - angle in degrees
      */
     public void setCameraAngle(double theta) {
-    	cameraAxisServo.setAngle(theta);
+//    	cameraAxisServo.setAngle(theta);
     }
     
     /**
@@ -63,13 +64,13 @@ public class Shooter extends Subsystem implements DashboardSubsystem {
      */
     public double updateSpeed() {
     	shooterPID.update(currentSpeed());
-    	return shooterPID.getOutput();
+    	return shooterPID.getOutput()+shooterPID.getTarget()/Robot.getPref("ShooterMaxVelocity", .01);
     }
     
     @Override
     public void displayData() {
     	display("Encoder", flywheelEncoder.getDistance());
     	display("Speed", currentSpeed());
-    	display("CameraTiltServo", cameraAxisServo.get());
+//    	display("CameraTiltServo", cameraAxisServo.get());
     }
 }

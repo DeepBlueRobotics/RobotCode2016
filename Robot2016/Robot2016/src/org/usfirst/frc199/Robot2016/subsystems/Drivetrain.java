@@ -245,8 +245,8 @@ public class Drivetrain extends Subsystem implements DashboardSubsystem {
 		angularVelocityPID.update(getGyroRate());
 		double v = velocityPID.getTarget();
 		double w = angularVelocityPID.getTarget();
-    	double kV = 1.0/Robot.getPref("MaxVelocity", .01);
-    	double kW = 1.0/Robot.getPref("MaxAngularVelocity", .01);
+    	double kV = 1.0/Robot.getPref("DriveMaxVelocity", .01);
+    	double kW = 1.0/Robot.getPref("DriveMaxAngularVelocity", .01);
 		double outputV = velocityPID.getOutput() + kV*v;
 		double outputW = angularVelocityPID.getOutput() + kW*w;
 		arcadeDrive(outputV, outputW);
@@ -264,10 +264,10 @@ public class Drivetrain extends Subsystem implements DashboardSubsystem {
 		angularVelocityPID.setTarget(w);
 		velocityPID.update(getEncoderRate());
 		angularVelocityPID.update(getGyroRate());
-		double kV = 1.0/Robot.getPref("MaxVelocity", .01);
-    	double kW = 1.0/Robot.getPref("MaxAngularVelocity", .01);
-    	double kA = Robot.getPref("kA", 0);
-    	double kAlpha = Robot.getPref("kAlpha", 0);
+		double kV = 1.0/Robot.getPref("DriveMaxVelocity", .01);
+    	double kW = 1.0/Robot.getPref("DriveMaxAngularVelocity", .01);
+    	double kA = Robot.getPref("DrivekA", 0);
+    	double kAlpha = Robot.getPref("DrivekAlpha", 0);
 		double outputV = velocityPID.getOutput() + kV*v + kA*a;
 		double outputW = angularVelocityPID.getOutput() + kW*w + kAlpha*alpha;
 		arcadeDrive(outputV, outputW);
