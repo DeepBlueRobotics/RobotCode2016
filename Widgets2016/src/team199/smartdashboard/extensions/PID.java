@@ -147,13 +147,13 @@ public class PID extends StaticWidget {
             @Override
             public void valueChanged(ITable itable, String key, Object value, boolean bln) {
                 for(int i=0; i<boxes.length; i++){
-                    if(key.equals(name+boxNames[i])){
+                    if(key.equals(boxNames[i])){
                         boxes[i].setValue(value);
                     }
                 }
-                if(key.equals(name+"Error")){
+                if(key.equals("Error")){
                     errorPlot.setValue(value);
-                } else if(key.equals(name+"Output")){
+                } else if(key.equals("Output")){
                     outputPlot.setValue(value);
                 }
             }
@@ -165,7 +165,7 @@ public class PID extends StaticWidget {
                 for(int i=0; i<4; i++){
                     if(string.equals((name+boxNames[i]).replace(" ", "_"))){
                         boxes[i].setValue(o);
-                        sd.putNumber((name+boxNames[i]), Double.parseDouble(o+""));
+                        sd.putNumber((boxNames[i]), Double.parseDouble(o+""));
                     }
                 }
             }
