@@ -9,7 +9,7 @@ import org.usfirst.frc199.Robot2016.Robot;
 public class IntakeBoulder extends Command {
 
 	public IntakeBoulder() {
-		requires(Robot.intake);
+//		requires(Robot.intake);
 		requires(Robot.shooter);
 	}
 
@@ -21,6 +21,9 @@ public class IntakeBoulder extends Command {
 	// Called repeatedly when this Command is scheduled to run
 	protected void execute() {
 		if (!Robot.intake.getBallSensor()) {
+			if(!Robot.intake.getLowerLimit()) {
+//				Robot.intake.pivot(-.6);
+			}
 			Robot.intake.setRoller(Robot.getPref("IntakeSpeed", 1.0));
 		} else {
 			Robot.intake.setRoller(0);

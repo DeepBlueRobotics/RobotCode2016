@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Launches boulders into the high goal.
@@ -72,5 +73,6 @@ public class Shooter extends Subsystem implements DashboardSubsystem {
     	display("Encoder", flywheelEncoder.getDistance());
     	display("Speed", currentSpeed());
 //    	display("CameraTiltServo", cameraAxisServo.get());
+    	SmartDashboard.putNumber("ShooterSpeed", currentSpeed());
     }
 }

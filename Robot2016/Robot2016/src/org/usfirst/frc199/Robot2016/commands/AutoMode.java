@@ -74,7 +74,7 @@ public class AutoMode extends CommandGroup {
 			System.out.println("Wrong position");
 			return;
 		}
-
+		addSequential(new AutoAlignDistance());
 		addParallel(new RunShooter());
 		addSequential(new AutoDelay(2.0));
 		addSequential(new FeedShooter());

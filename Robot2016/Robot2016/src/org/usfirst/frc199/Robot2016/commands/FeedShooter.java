@@ -9,7 +9,7 @@ import org.usfirst.frc199.Robot2016.Robot;
 public class FeedShooter extends Command {
 
     public FeedShooter() {
-        requires(Robot.intake);
+//        requires(Robot.intake);
     }
 
     // Called just before this Command runs the first time

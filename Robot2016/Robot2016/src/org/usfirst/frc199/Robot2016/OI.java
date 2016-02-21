@@ -52,7 +52,7 @@ public class OI {
 //        extendClimberButton.whenPressed(new ExtendClimber(0,0));
         
         intakeButton = new JoystickButton(manipulator, 5);
-        intakeButton.whenPressed(new IntakeBoulder());
+        intakeButton.whileHeld(new IntakeBoulder());
         shootLowButton = new JoystickButton(manipulator, 7);
         shootLowButton.whenPressed(new ShootLow());
         feedShooterButton = new JoystickButton(manipulator, 6);
