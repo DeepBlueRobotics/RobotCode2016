@@ -6,6 +6,7 @@ import edu.wpi.first.smartdashboard.gui.StaticWidget;
 import edu.wpi.first.smartdashboard.properties.*;
 import edu.wpi.first.smartdashboard.robot.Robot;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
+import edu.wpi.first.wpilibj.tables.ITable;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -52,6 +53,7 @@ public class CameraFeedAndTarget extends StaticWidget implements Runnable {
     private Thread thread;
     
     private NetworkTable sd = NetworkTable.getTable("SmartDashboard/Contour");
+    private NetworkTable commandAccess = NetworkTable.getTable("SmartDashboard/PID/DriveAngle");
     private int crossY = (int)sd.getNumber("yDisplay", 0);
     private int crossX = (int)sd.getNumber("xDisplay", 0);
     private double theta = sd.getNumber("thetaTurn", 0.0);
@@ -74,9 +76,14 @@ public class CameraFeedAndTarget extends StaticWidget implements Runnable {
                 crossY = (int)sd.getNumber("yDisplay", 0);
                 crossX = (int)sd.getNumber("xDisplay", 0);
                 repaint();
-                
                 theta = Math.atan( Math.abs( w/2 - crossX) / d);
                 sd.putNumber("thetaTurn", theta);
+                
+                if(commandAccess.containsSubTable("AutoTurn")) {
+                    ITable t2 = commandAccess.getSubTable("AutoTurn");
+                    t2.putBoolean("running", !t2.getBoolean("running"));
+                }
+                
             }
             @Override
             public void mouseExited(MouseEvent e) {    
@@ -231,7 +238,7 @@ public class CameraFeedAndTarget extends StaticWidget implements Runnable {
                 g.setColor(Color.green);
                 g.setPaintMode();
                 g.drawLine(imageWidth/2, 0, imageWidth/2, imageHeight);
-                g.drawLine(imageWidth/2 - 4, crossY, imageWidth/2 + 4, crossY);
+                g.drawLine(imageWidth/2 - 5, crossY, imageWidth/2 + 5, crossY);
                 
                 
             }

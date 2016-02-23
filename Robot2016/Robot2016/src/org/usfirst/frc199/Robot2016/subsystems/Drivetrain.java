@@ -109,7 +109,7 @@ public class Drivetrain extends Subsystem implements DashboardSubsystem {
      * @return distance in inches
      */
     public double getRangefinderDistance() {
-    	return ultrasonic.getAverageVoltage();		//put in formula for conversion
+    	return (ultrasonic.getAverageVoltage() + .014) / .012;	
     }
 
 	/**

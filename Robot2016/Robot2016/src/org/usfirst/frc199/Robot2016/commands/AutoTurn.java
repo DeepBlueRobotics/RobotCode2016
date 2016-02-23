@@ -1,6 +1,8 @@
 package org.usfirst.frc199.Robot2016.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import org.usfirst.frc199.Robot2016.Robot;
 
 /**
@@ -14,6 +16,10 @@ public class AutoTurn extends Command {
 		this.angle = angle;
         requires(Robot.drivetrain);
 	}
+    public AutoTurn() {
+    	this.angle = SmartDashboard.getNumber("Contour/thetaTurn");
+    	requires(Robot.drivetrain);
+    }
 
     // Called just before this Command runs the first time
 	protected void initialize() {
