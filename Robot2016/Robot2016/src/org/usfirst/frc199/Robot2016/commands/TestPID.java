@@ -66,8 +66,8 @@ public class TestPID extends Command {
 	// Called repeatedly when this Command is scheduled to run
 	protected void execute() {
 		switch(system) {
-			case SHOOTER: Robot.shooter.updateSpeed(); break;
-			case INTAKE: Robot.intake.updateAngle(); break;
+			case SHOOTER: Robot.shooter.runShooter(Robot.shooter.updateSpeed()); break;
+			case INTAKE: Robot.intake.pivot(Robot.intake.updateAngle()); break;
 			case DRIVEDISTANCE: Robot.drivetrain.updateAuto(); break;
 			case DRIVEANGLE: Robot.drivetrain.updateAngle(); break;
 			case DRIVEVELOCITY: Robot.drivetrain.updateVelocity(); break;

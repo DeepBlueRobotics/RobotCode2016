@@ -53,6 +53,7 @@ public class Robot extends IterativeRobot {
     			s.display("~TYPE~", "SubSystem");
     		}
     	}
+        SmartDashboard.putData(Scheduler.getInstance());
     }
 
     /**

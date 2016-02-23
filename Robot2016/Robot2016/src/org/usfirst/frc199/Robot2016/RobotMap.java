@@ -80,10 +80,10 @@ public class RobotMap {
 		intakePivotMotor = new Talon(2);
 		LiveWindow.addActuator("Intake", "PivotMotor", (Talon) intakePivotMotor);
 
-		intakeUpperLimit = new DigitalInput(8);
+		intakeUpperLimit = new DigitalInput(9);
 		LiveWindow.addSensor("Intake", "UpperLimit", intakeUpperLimit);
 
-		intakeLowerLimit = new DigitalInput(9);
+		intakeLowerLimit = new DigitalInput(8);
 		LiveWindow.addSensor("Intake", "LowerLimit", intakeLowerLimit);
 
 		intakePivotEncoder = new Encoder(6, 7, false, EncodingType.k4X);
@@ -102,7 +102,7 @@ public class RobotMap {
 		climberExtensionLimit = new DigitalInput(11);
 		LiveWindow.addSensor("Climber", "ExtensionLimit", climberExtensionLimit);
 		
-		cameraAxisServo = new Servo(7);
-		LiveWindow.addSensor("Shooter", "CameraAxisServo", cameraAxisServo);
+//		cameraAxisServo = new Servo(7);
+//		LiveWindow.addSensor("Shooter", "CameraAxisServo", cameraAxisServo);
 	}
 }

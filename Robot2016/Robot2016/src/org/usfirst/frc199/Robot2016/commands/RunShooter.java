@@ -1,6 +1,5 @@
 package org.usfirst.frc199.Robot2016.commands;
 
-import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Command;
 import org.usfirst.frc199.Robot2016.Robot;
 
@@ -8,27 +7,43 @@ import org.usfirst.frc199.Robot2016.Robot;
  * Runs the shooter fly wheel at the speed for a high goal.
  */
 public class RunShooter extends Command {
-	private double speed;
-	private boolean flag;
+	
+	private final double speed;
+	private final int setting;
+	
     public RunShooter() {
-    	requires(Robot.shooter);
-    	flag = false;
-    	this.speed = 0;
+    	this(0, 1.0);
     }
-    public RunShooter(double speed1) {
+    
+    /**
+     * Runs the shooter at a given speed
+     * @param speed - The speed to run the shooter
+     */
+    public RunShooter(double speed) {
     	requires(Robot.shooter);
-    	flag = true;
-    	this.speed = speed1;
+    	this.speed = speed;
+    	this.setting = -1;
+    }
+    
+    /**
+     * Runs the shooter at a specific speed from preferences
+     * @param setting - the shooter speed setting to use
+     * @param backup - speed to use if preference not found
+     */
+    public RunShooter(int setting, double backup) {
+    	requires(Robot.shooter);
+    	this.setting = setting;
+    	this.speed = backup;
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	// Target speed to be set in inches per second
-    	Robot.shooter.setTargetSpeed(Robot.getPref("ShooterSpeed", 1.0));
-    	if (flag) {
-    		Robot.shooter.setTargetSpeed(this.speed);
+    	if (setting<0) {
+    		Robot.shooter.setTargetSpeed(speed);
+    	} else if(setting==0) {
+    		Robot.shooter.setTargetSpeed(Robot.getPref("ShooterSpeed", speed));
     	} else {
-    		Robot.shooter.setTargetSpeed(Preferences.getInstance().getDouble("ShooterSpeed", 1.0));
+    		Robot.shooter.setTargetSpeed(Robot.getPref("ShooterSpeed"+setting, speed));
     	}
     }
 
@@ -45,7 +60,6 @@ public class RunShooter extends Command {
     // Called once after isFinished returns true
     protected void end() {
     	Robot.shooter.runShooter(0);
-    
     }
 
     // Called when another command which requires one or more of the same

@@ -22,7 +22,7 @@ public class Intake extends Subsystem implements DashboardSubsystem {
 	private final DigitalInput ballSensor = RobotMap.intakeBallSensor;
 	private final Encoder pivotEncoder = RobotMap.intakePivotEncoder;
 	
-	private PID pivotPID = new PID("IntakePivot");
+	private PID pivotPID = new PID("Intake");
 	private double midLowAngle = Robot.getPref("MidLowAngle", 0); // Measure angle between mid and low positions
 	private double midHighAngle = Robot.getPref("MidHighAngle", 0); // Measure angle between mid and high positions
 	private double totalAngle = midLowAngle + midHighAngle;

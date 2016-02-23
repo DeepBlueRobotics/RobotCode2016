@@ -146,6 +146,7 @@ public class PID extends StaticWidget {
         sd.addTableListener(new ITableListener(){
             @Override
             public void valueChanged(ITable itable, String key, Object value, boolean bln) {
+                System.out.println(key);
                 for(int i=0; i<boxes.length; i++){
                     if(key.equals(boxNames[i])){
                         boxes[i].setValue(value);
