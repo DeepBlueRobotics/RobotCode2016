@@ -6,6 +6,7 @@ import org.usfirst.frc199.Robot2016.RobotMap;
 import org.usfirst.frc199.Robot2016.motioncontrol.PID;
 
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Servo;
@@ -33,7 +34,10 @@ public class Shooter extends Subsystem implements DashboardSubsystem {
      * @param speed - the desired motor output
      */
     public void runShooter(double speed) {
-    	flywheelMotor.set(speed);
+    	double cap = Robot.getPref("ShooterCap", .85);
+    	if(speed>cap) speed = cap;
+    	if(speed<-cap) speed = -cap;
+    	flywheelMotor.set(-speed);
     }
     
     /**
@@ -74,7 +78,7 @@ public class Shooter extends Subsystem implements DashboardSubsystem {
     	double spinupTime = Robot.getPref("ShooterSpinupTime", 0);
     	double setpoint = target;
     	if(t<spinupTime) {
-    		target*=t/spinupTime;
+    		setpoint*=t/spinupTime;
     	}
     	shooterPID.setTarget(setpoint);
     	shooterPID.update(currentSpeed());
@@ -89,6 +93,7 @@ public class Shooter extends Subsystem implements DashboardSubsystem {
     	
     	// Regular SmartDashboard value for graphing
     	SmartDashboard.putNumber("ShooterSpeed", currentSpeed());
+    	SmartDashboard.putNumber("ShooterCurrent", new PowerDistributionPanel().getCurrent(4));
     	
     	// Indicator that shooter has reached max speed
     	SmartDashboard.putBoolean("ReadyToShoot", currentSpeed()>=Math.min(target, Robot.getPref("ShooterMaxV", 75)));

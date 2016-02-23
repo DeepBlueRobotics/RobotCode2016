@@ -17,7 +17,7 @@ public class AutoTurn extends Command {
         requires(Robot.drivetrain);
 	}
     public AutoTurn() {
-    	this.angle = SmartDashboard.getNumber("Contour/thetaTurn");
+    	this.angle = SmartDashboard.getNumber("Contour/thetaTurn", 0);
     	requires(Robot.drivetrain);
     }
 
