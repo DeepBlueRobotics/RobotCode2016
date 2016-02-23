@@ -5,15 +5,23 @@ import org.usfirst.frc199.Robot2016.motioncontrol.Path;
 import org.usfirst.frc199.Robot2016.motioncontrol.Trajectory;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Follows a motion profile.
  */
 public class FollowTrajectory extends Command {
 	
-	private final Trajectory t;
+	private Trajectory t;
 	private boolean finished;
 
+	/**
+	 * Follows a trajectory specified through SmartDashboard
+	 */
+	public FollowTrajectory() {
+		t = null;
+	}
+	
 	/**
 	 * Travels to the given coordinates assuming zero initial/final velocity
 	 * @param dx - Target horizontal displacement
@@ -21,9 +29,7 @@ public class FollowTrajectory extends Command {
 	 * @param dtheta - Target angle displacement
 	 */
     public FollowTrajectory(double dx, double dy, double dtheta) {
-        requires(Robot.drivetrain);
-        Path p = new Path(0, 0, dx, dy, 0, dtheta, 2);
-        t = new Trajectory(p, 0, 0, (int)(1000*Math.sqrt(dx*dx+dy*dy)));
+        this(new Path(0, 0, dx, dy, 0, dtheta, 2));
     }
     
     /**
@@ -49,6 +55,19 @@ public class FollowTrajectory extends Command {
     // Called just before this Command runs the first time
     protected void initialize() {
     	finished = false;
+    	if(t.equals(null)) {
+    		double dx = SmartDashboard.getNumber("MotionProfile/dX");
+    		double dy = SmartDashboard.getNumber("MotionProfile/dY");
+    		double dTheta = SmartDashboard.getNumber("MotionProfile/dTheta");
+    		double maxV = SmartDashboard.getNumber("MotionProfile/MaxV");
+    		double maxA = SmartDashboard.getNumber("MotionProfile/MaxA");
+    		double maxW = SmartDashboard.getNumber("MotionProfile/MaxW");
+    		double maxAlpha = SmartDashboard.getNumber("MotionProfile/MaxAlpha");
+    		Path p = new Path(0, 0, dx, dy, 0, dTheta, 2);
+    		double x2 = p.getX(1);
+            double y2 = p.getY(1);
+    		t = new Trajectory(p, 0, 0, maxV, maxA, maxW, maxAlpha, (int)(1000*Math.sqrt(x2*x2+y2*y2)));
+    	}
     }
 
     // Called repeatedly when this Command is scheduled to run

@@ -71,6 +71,7 @@ public class MotionProfile extends StaticWidget {
         initPathPanel();
         initGraphPanel();
         initNumberPanel();
+        readPrefs();
     }
 
     @Override
@@ -246,6 +247,18 @@ public class MotionProfile extends StaticWidget {
             graph.add(graphs[i]);
         }
         graphs[chooser.getSelectedIndex()].setVisible(true);
+    }
+    
+    /**
+     * Pulls initial preference values to SmartDashboard
+     */
+    public void readPrefs() {
+        table.putNumber("kA", prefs.getNumber("DrivekA", 0.0));
+        table.putNumber("kAlpha", prefs.getNumber("DrivekAlpha", 0.0));
+        table.putNumber("MaxV", prefs.getNumber("DriveMaxV", 0.0));
+        table.putNumber("MaxA", prefs.getNumber("DriveMaxA", 0.0));
+        table.putNumber("MaxW", prefs.getNumber("DriveMaxW", 0.0));
+        table.putNumber("MaxAlpha", prefs.getNumber("DriveMaxAlpha", 0.0));
     }
     
     /**

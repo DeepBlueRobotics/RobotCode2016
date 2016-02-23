@@ -3,7 +3,6 @@ package org.usfirst.frc199.Robot2016;
 import org.usfirst.frc199.Robot2016.commands.*;
 
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.buttons.InternalButton;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -32,10 +31,10 @@ public class OI {
     public JoystickButton intakeButton;
     public JoystickButton reverseCameraButton;
     public Joystick manipulator;
-    InternalButton upButton;
-    InternalButton downButton;
-    InternalButton leftButton;
-    InternalButton rightButton;
+    public InternalButton upButton;
+    public InternalButton downButton;
+    public InternalButton leftButton;
+    public InternalButton rightButton;
     
     public OI() {
 
@@ -81,6 +80,16 @@ public class OI {
         reverseCameraButton = new JoystickButton(rightJoystick, 3);
         reverseCameraButton.whenPressed(new ReverseCamera());
         
+        upButton = new InternalButton();
+        rightButton = new InternalButton();
+        downButton = new InternalButton();
+        leftButton = new InternalButton();
+
+        upButton.whenPressed(new RunShooter(1));
+        rightButton.whenPressed(new RunShooter(2));
+        downButton.whenPressed(new RunShooter(3));
+        leftButton.whenPressed(new RunShooter(4));
+        
         // Test PID Commands
         SmartDashboard.putData("PID/DriveDistance/TestDriveDistancePID", new TestPID(TestPID.System.DRIVEDISTANCE));
 		SmartDashboard.putData("PID/DriveAngle/TestDriveAnglePID", new TestPID(TestPID.System.DRIVEANGLE));
@@ -88,36 +97,28 @@ public class OI {
 		SmartDashboard.putData("PID/DriveAngularVelocity/TestDriveAngularVelocityPID", new TestPID(TestPID.System.DRIVEANGULARVELOCITY));
 		SmartDashboard.putData("PID/Shooter/TestShooterPID", new TestPID(TestPID.System.SHOOTER));
 		SmartDashboard.putData("PID/Intake/TestIntakePID", new TestPID(TestPID.System.INTAKE));
+		SmartDashboard.putData("MotionProfile/TestMotionProfiling", new FollowTrajectory());
+		SmartDashboard.putData("PID/DriveAngle/AutoTurn", new AutoTurn());
         
 		// SmartDashboard Buttons
-        SmartDashboard.putData("AutoMode", new AutoMode(4, 2));
-        SmartDashboard.putData("AutoDelay", new AutoDelay(0));
-        SmartDashboard.putData("AutoDrive", new AutoDrive(0));
-        SmartDashboard.putData("AutoTurn", new AutoTurn(0));
-        SmartDashboard.putData("AutoAlignDistance", new AutoAlignDistance());
-        SmartDashboard.putData("AutoAlignAngle", new AutoAlignAngle());
-        SmartDashboard.putData("TeleopDriveMode", new TeleopDriveMode());
-        SmartDashboard.putData("IntakeBoulder", new IntakeBoulder());
-        SmartDashboard.putData("ShootLow", new ShootLow());
-        SmartDashboard.putData("RunShooter", new RunShooter());
-        SmartDashboard.putData("FeedShooter", new FeedShooter());
-        SmartDashboard.putData("LowerIntake", new LowerIntake());
-        SmartDashboard.putData("RaiseIntake", new RaiseIntake());
-        SmartDashboard.putData("IntakeManualControl", new IntakeManualControl());
-        SmartDashboard.putData("ShooterManualControl", new ShooterManualControl());
-        SmartDashboard.putData("ExtendClimber", new ExtendClimber());
-        SmartDashboard.putData("RetractClimber", new Winch());
-        SmartDashboard.putData("UpdateDashboard", new UpdateDashboard());
-        upButton = new InternalButton();
-        rightButton = new InternalButton();
-        downButton = new InternalButton();
-        leftButton = new InternalButton();
-
-        upButton.whenPressed(new RunShooter());
-        rightButton.whenPressed(new RunShooter());
-        downButton.whenPressed(new RunShooter());
-        leftButton.whenPressed(new RunShooter());
-
+//        SmartDashboard.putData("AutoMode", new AutoMode(4, 2));
+//        SmartDashboard.putData("AutoDelay", new AutoDelay(0));
+//        SmartDashboard.putData("AutoDrive", new AutoDrive(0));
+//        SmartDashboard.putData("AutoTurn", new AutoTurn(0));
+//        SmartDashboard.putData("AutoAlignDistance", new AutoAlignDistance());
+//        SmartDashboard.putData("AutoAlignAngle", new AutoAlignAngle());
+//        SmartDashboard.putData("TeleopDriveMode", new TeleopDriveMode());
+//        SmartDashboard.putData("IntakeBoulder", new IntakeBoulder());
+//        SmartDashboard.putData("ShootLow", new ShootLow());
+//        SmartDashboard.putData("RunShooter", new RunShooter());
+//        SmartDashboard.putData("FeedShooter", new FeedShooter());
+//        SmartDashboard.putData("LowerIntake", new LowerIntake());
+//        SmartDashboard.putData("RaiseIntake", new RaiseIntake());
+//        SmartDashboard.putData("IntakeManualControl", new IntakeManualControl());
+//        SmartDashboard.putData("ShooterManualControl", new ShooterManualControl());
+//        SmartDashboard.putData("ExtendClimber", new ExtendClimber());
+//        SmartDashboard.putData("RetractClimber", new Winch());
+//        SmartDashboard.putData("UpdateDashboard", new UpdateDashboard());
     }
     
     private int getDPad(Joystick stick) {
@@ -127,6 +128,7 @@ public class OI {
             return stick.getPOV() / 45;
         }
     }
+    
     public void updateDPad() {
         int value = getDPad(manipulator);
         upButton.setPressed(value == 0);
@@ -134,6 +136,7 @@ public class OI {
         downButton.setPressed(value == 4);
         leftButton.setPressed(value == 6);
     }
+    
     public Joystick getLeftJoystick() {
         return leftJoystick;
     }

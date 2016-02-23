@@ -10,7 +10,6 @@ public class IntakeBoulder extends Command {
 
 	public IntakeBoulder() {
 //		requires(Robot.intake);
-		requires(Robot.shooter);
 	}
 
 	// Called just before this Command runs the first time

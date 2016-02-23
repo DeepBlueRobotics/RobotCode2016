@@ -7,6 +7,7 @@ import org.usfirst.frc199.Robot2016.motioncontrol.PID;
 
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SpeedController;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -20,6 +21,8 @@ public class Shooter extends Subsystem implements DashboardSubsystem {
     private final Encoder flywheelEncoder = RobotMap.shooterFlywheelEncoder;
 //    private final Servo cameraAxisServo = RobotMap.cameraAxisServo;
     private PID shooterPID = new PID("Shooter");
+    private Timer timer = new Timer();
+    private double target = 0;
 
     public void initDefaultCommand() {
 
@@ -47,8 +50,11 @@ public class Shooter extends Subsystem implements DashboardSubsystem {
      */
     public void setTargetSpeed(double speed) {
     	flywheelEncoder.reset();
+    	shooterPID.setTarget(0);
     	shooterPID.update(currentSpeed());
-    	shooterPID.setTarget(speed);
+    	target = speed;
+    	timer.reset();
+    	timer.start();
     }
     
     /**
@@ -64,8 +70,15 @@ public class Shooter extends Subsystem implements DashboardSubsystem {
      * @return the speed output
      */
     public double updateSpeed() {
+    	double t = timer.get();
+    	double spinupTime = Robot.getPref("ShooterSpinupTime", 0);
+    	double setpoint = target;
+    	if(t<spinupTime) {
+    		target*=t/spinupTime;
+    	}
+    	shooterPID.setTarget(setpoint);
     	shooterPID.update(currentSpeed());
-    	return shooterPID.getOutput()+shooterPID.getTarget()/Robot.getPref("ShooterMaxVelocity", .01);
+    	return shooterPID.getOutput()+setpoint/Robot.getPref("ShooterMaxV", 75);
     }
     
     @Override
@@ -73,6 +86,11 @@ public class Shooter extends Subsystem implements DashboardSubsystem {
     	display("Encoder", flywheelEncoder.getDistance());
     	display("Speed", currentSpeed());
 //    	display("CameraTiltServo", cameraAxisServo.get());
+    	
+    	// Regular SmartDashboard value for graphing
     	SmartDashboard.putNumber("ShooterSpeed", currentSpeed());
+    	
+    	// Indicator that shooter has reached max speed
+    	SmartDashboard.putBoolean("ReadyToShoot", currentSpeed()>=Math.min(target, Robot.getPref("ShooterMaxV", 75)));
     }
 }

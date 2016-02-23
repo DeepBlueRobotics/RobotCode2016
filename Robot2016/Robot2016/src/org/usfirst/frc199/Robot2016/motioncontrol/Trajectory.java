@@ -47,10 +47,10 @@ public class Trajectory {
 	 */
 	public Trajectory(Path path, double v0, double v1, int points) {
 		this.path = path;
-		this.vmax = Robot.getPref("DriveMaxVelocity", .01);
-		this.amax = Robot.getPref("DriveMaxAcceleration", .01);
-		this.wmax = Robot.getPref("DriveMaxAngularVelocity", .01);
-		this.alphamax = Robot.getPref("DriveMaxAngularAcceleration", .01);
+		this.vmax = Robot.getPref("DriveMaxV", .01);
+		this.amax = Robot.getPref("DriveMaxA", .01);
+		this.wmax = Robot.getPref("DriveMaxW", .01);
+		this.alphamax = Robot.getPref("DriveMaxAlpha", .01);
 		velocities = new double[points];
 		velocities[0] = v0;
 		velocities[points-1] = v1;
