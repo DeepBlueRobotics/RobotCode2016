@@ -6,16 +6,13 @@ import org.usfirst.frc199.Robot2016.RobotMap;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 
-/**
- * Allows an operator to toggle whether the camera is aimed forward or backward.
- */
-public class ReverseCamera extends Command {
+public class ForwardCamera extends Command {
 
 	Timer timer = new Timer();
 	
     // Called just before this Command runs the first time
     protected void initialize() {
-    	RobotMap.cameraAxisServo.set(1);
+    	RobotMap.cameraAxisServo.set(-1);
     	timer.reset();
     	timer.start();
     }
@@ -23,7 +20,7 @@ public class ReverseCamera extends Command {
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
     	if(timer.get() < Robot.getPref("CameraFliptime", 1)){
-    		RobotMap.cameraAxisServo.set(1);
+    		RobotMap.cameraAxisServo.set(-1);
     	}else{
     		RobotMap.cameraAxisServo.set(0);
     	}
@@ -44,4 +41,5 @@ public class ReverseCamera extends Command {
     protected void interrupted() {
     	end();
     }
+	
 }

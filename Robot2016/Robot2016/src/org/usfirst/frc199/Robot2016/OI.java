@@ -30,6 +30,7 @@ public class OI {
     public JoystickButton shootLowButton;
     public JoystickButton intakeButton;
     public JoystickButton reverseCameraButton;
+    public JoystickButton forwardCameraButton;
     public Joystick manipulator;
     public InternalButton upButton;
     public InternalButton downButton;
@@ -79,6 +80,8 @@ public class OI {
         
         reverseCameraButton = new JoystickButton(rightJoystick, 3);
         reverseCameraButton.whenPressed(new ReverseCamera());
+        forwardCameraButton = new JoystickButton(leftJoystick, 3);
+        forwardCameraButton.whenPressed(new ForwardCamera());
         
         upButton = new InternalButton();
         rightButton = new InternalButton();

@@ -37,7 +37,7 @@ public class RobotMap {
 	public static SpeedController climberExtendMotor;
 	public static SpeedController climberWinchMotor;
 	public static DigitalInput climberExtensionLimit;
-	public static Servo cameraAxisServo;
+	public static Talon cameraAxisServo;
 	
 	public static void init() {
 		drivetrainLeftMotor = new Talon(0);
@@ -102,7 +102,7 @@ public class RobotMap {
 		climberExtensionLimit = new DigitalInput(11);
 		LiveWindow.addSensor("Climber", "ExtensionLimit", climberExtensionLimit);
 		
-//		cameraAxisServo = new Servo(7);
-//		LiveWindow.addSensor("Shooter", "CameraAxisServo", cameraAxisServo);
+		cameraAxisServo = new Talon(8);
+		LiveWindow.addActuator("Shooter", "CameraAxisServo", (Talon)cameraAxisServo);
 	}
 }
