@@ -4,6 +4,7 @@ import org.usfirst.frc199.Robot2016.DashboardSubsystem;
 import org.usfirst.frc199.Robot2016.Robot;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Creates a PID loop and automatically generates new
@@ -72,10 +73,13 @@ public class PID implements DashboardSubsystem {
 			rate = (error - lastError)/interval;
 			output += kI*totalError + kD*rate;
 		} else {
+			reset = false;
 			totalError = 0;
 			rate = 0;
 		}
 		lastError = error;
+		SmartDashboard.putNumber(name + "Error", error);
+		SmartDashboard.putNumber(name + "Output", output);
 	}
 	
 	/**

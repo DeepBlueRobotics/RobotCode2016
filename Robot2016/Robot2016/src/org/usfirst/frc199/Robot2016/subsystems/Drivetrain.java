@@ -39,7 +39,7 @@ public class Drivetrain extends Subsystem implements DashboardSubsystem {
      * @param turn - angular velocity output
      */
     public void arcadeDrive(double speed, double turn) {
-    	robotDrive.arcadeDrive(speed, turn);
+    	robotDrive.arcadeDrive(speed, -turn);
     }
     
     /**
@@ -58,7 +58,7 @@ public class Drivetrain extends Subsystem implements DashboardSubsystem {
     	// Arcade drive = 0, tank drive = 1
     	boolean arcadedrive = Robot.getPref("DriveMode", 0) == 0;
     	if(arcadedrive){
-			double x = -Robot.oi.getRightJoystick().getX();
+			double x = Robot.oi.getRightJoystick().getX();
 			double y = -Robot.oi.getLeftJoystick().getY();
 			x = Robot.oi.exponentiate(x);
 			y = Robot.oi.exponentiate(y);
