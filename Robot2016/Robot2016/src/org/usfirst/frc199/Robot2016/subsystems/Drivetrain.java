@@ -77,7 +77,7 @@ public class Drivetrain extends Subsystem implements DashboardSubsystem {
      * @return - distance in inches
      */
     public double getEncoderDistance() {
-    	return (leftEncoder.getDistance() + rightEncoder.getDistance()) / 2;
+    	return (-leftEncoder.getDistance() + rightEncoder.getDistance()) / 2;
     }
     
     /**
