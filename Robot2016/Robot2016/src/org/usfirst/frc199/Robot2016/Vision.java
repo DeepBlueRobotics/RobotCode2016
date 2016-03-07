@@ -142,7 +142,7 @@ public class Vision {
 
 			reports = null;
 			SmartDashboard.putNumber("Is in hsl", 0);
-			SmartDashboard.putBoolean("Needs flip?", false);
+			SmartDashboard.putBoolean("Needs flip?", true);
 
 			camera = new USBCamera("cam0");
 			camera.setSize(WIDTH, HEIGHT);
@@ -407,8 +407,17 @@ public class Vision {
 		return Math.toDegrees(Math.atan(pixelsOff / d));
 	}
 
+	/**
+	 * Functionality for flipping the image. Requires a image and returns that
+	 * image flipped.
+	 * 
+	 * @param image
+	 *            An NIVision.Image
+	 * @return The same NIVision image being flipped over the horizontal axis to
+	 *         flip the camera which was mounted in the opposite direction.
+	 */
 	public NIVision.Image flipImage(NIVision.Image image) {
-		NIVision.imaqFlip(image, image, FlipAxis.CENTER_AXIS);
+		NIVision.imaqFlip(image, image, FlipAxis.HORIZONTAL_AXIS);
 		return image;
 	}
 
