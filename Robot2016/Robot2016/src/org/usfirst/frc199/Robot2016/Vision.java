@@ -6,6 +6,7 @@ import java.util.Vector;
 import com.ni.vision.NIVision;
 import com.ni.vision.NIVision.ColorMode;
 import com.ni.vision.NIVision.DrawMode;
+import com.ni.vision.NIVision.FlipAxis;
 import com.ni.vision.NIVision.Image;
 import com.ni.vision.NIVision.ImageType;
 import com.ni.vision.NIVision.MeasurementType;
@@ -141,6 +142,7 @@ public class Vision {
 
 			reports = null;
 			SmartDashboard.putNumber("Is in hsl", 0);
+			SmartDashboard.putBoolean("Needs flip?", false);
 
 			camera = new USBCamera("cam0");
 			camera.setSize(WIDTH, HEIGHT);
@@ -203,10 +205,11 @@ public class Vision {
 						// methods at the bottom to work with angles to
 						// return boolean about the images.
 						double x = SmartDashboard.getNumber("Is in hsl", 0);
+						boolean flip = SmartDashboard.getBoolean("Needs flip?");
 						if (x == 0)
-							CameraServer.getInstance().setImage(frame);
+							CameraServer.getInstance().setImage(flip ? flipImage(frame) : frame);
 						else
-							CameraServer.getInstance().setImage(hslimage);
+							CameraServer.getInstance().setImage(flip ? flipImage(hslimage) : frame);
 						Thread.sleep(100);
 					}
 				} catch (Exception e) {
@@ -402,6 +405,11 @@ public class Vision {
 						+ ((int) (contourReport.getNumber("contour0/boundingRectWidth", 0)) / 2)));
 		double d = (Vision.WIDTH / 2) / Math.tan(Math.toRadians(34));
 		return Math.toDegrees(Math.atan(pixelsOff / d));
+	}
+
+	public NIVision.Image flipImage(NIVision.Image image) {
+		NIVision.imaqFlip(image, image, FlipAxis.CENTER_AXIS);
+		return image;
 	}
 
 	// private final static String[] GRIP_ARGS = new String[] {
