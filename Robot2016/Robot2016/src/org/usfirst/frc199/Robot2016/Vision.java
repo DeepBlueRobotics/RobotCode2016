@@ -437,7 +437,7 @@ public class Vision {
 	// }
 	//
 	// public void closeGripProcess() {
-	// process.destroyForcibly();
+	// process.destroyForcibly(); // Best method ever.
 	// }
 	//
 
