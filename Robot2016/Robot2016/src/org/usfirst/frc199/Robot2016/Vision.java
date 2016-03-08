@@ -100,7 +100,7 @@ public class Vision {
 		}
 
 		/**
-		 * Initialization
+		 * Initialization of a particle.
 		 */
 		private void implementation() {
 			percentAreaToImageArea = 0;
@@ -233,8 +233,7 @@ public class Vision {
 	 * This generates the cross hairs at the contour provided. The cross hairs
 	 * are just the combination of two lines.
 	 * 
-	 * @param i
-	 *            Is the blob that the cross hair is being generated around.
+	 * @param i Is the blob that the cross hair is being generated around.
 	 */
 	private void generateCrossHairsAtCenterContour(int i) {
 
@@ -328,7 +327,6 @@ public class Vision {
 
 	/**
 	 * Simply writes the rgb (frame) image to the path: /home/lvuser/Image.png
-	 * 
 	 */
 	public void writingImage() {
 		try {
@@ -411,8 +409,7 @@ public class Vision {
 	 * Functionality for flipping the image. Requires a image and returns that
 	 * image flipped.
 	 * 
-	 * @param image
-	 *            An NIVision.Image
+	 * @param image An NIVision.Image
 	 * @return The same NIVision image being flipped over the horizontal axis to
 	 *         flip the camera which was mounted in the opposite direction.
 	 */

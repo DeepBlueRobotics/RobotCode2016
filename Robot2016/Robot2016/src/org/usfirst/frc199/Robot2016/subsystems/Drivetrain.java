@@ -29,6 +29,9 @@ public class Drivetrain extends Subsystem implements DashboardSubsystem {
 	private PID velocityPID = new PID("DriveVelocity");
 	private PID angularVelocityPID = new PID("DriveAngularVelocity");
 
+	/**
+	 * Inital command at drivetrain.
+	 */
     public void initDefaultCommand() {
         setDefaultCommand(new TeleopDriveMode());
     }

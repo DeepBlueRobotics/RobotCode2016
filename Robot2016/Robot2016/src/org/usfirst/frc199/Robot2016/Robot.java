@@ -70,7 +70,6 @@ public class Robot extends IterativeRobot {
 
     public void autonomousInit() {
     	Scheduler.getInstance().removeAll();
-    	vision.writingImage();
     	int defense = (int)SmartDashboard.getNumber("Auto/Defense", 0.0);
     	int position = (int)SmartDashboard.getNumber("Auto/Position", 0.0);
     	autonomousCommand = new AutoMode(defense, position);
@@ -87,7 +86,6 @@ public class Robot extends IterativeRobot {
 
     public void teleopInit() {
         Scheduler.getInstance().removeAll();
-        vision.writingImage();
         new UpdateDashboard().start();
     }
 
