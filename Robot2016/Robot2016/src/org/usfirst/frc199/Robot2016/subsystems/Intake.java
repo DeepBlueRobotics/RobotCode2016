@@ -7,8 +7,10 @@ import org.usfirst.frc199.Robot2016.motioncontrol.PID;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Brings boulders into the robot.
@@ -175,5 +177,6 @@ public class Intake extends Subsystem implements DashboardSubsystem {
 		display("BallSensor", getBallSensor());
 		display("UpperLimit", getUpperLimit());
 		display("LowerLimit", getLowerLimit());
+    	SmartDashboard.putNumber("IntakeCurrent", new PowerDistributionPanel().getCurrent(7));
 	}
 }

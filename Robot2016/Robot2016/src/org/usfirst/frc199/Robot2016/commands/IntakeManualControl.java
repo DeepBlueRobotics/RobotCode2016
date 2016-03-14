@@ -22,8 +22,10 @@ public class IntakeManualControl extends Command {
     	double speed = Robot.oi.manipulator.getY();
     	if(Math.abs(speed)<.2) {
     		Robot.intake.pivot(0);
-    	} else {
+    	} else if(speed<0) { // up
     		Robot.intake.pivot((Math.signum(speed)*.8+speed*.2)*.6);
+    	} else { // down
+    		Robot.intake.pivot(speed*.6);
     	}
     	Robot.intake.setRoller(Robot.oi.manipulator.getThrottle());
     }

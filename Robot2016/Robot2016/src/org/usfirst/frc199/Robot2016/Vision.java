@@ -215,7 +215,7 @@ public class Vision {
 				} catch (Exception e) {
 					// In case of failure - camera and all vision subsets are
 					// cut.
-					SmartDashboard.putString("Image Thread failure", e.toString());
+					SmartDashboard.putString("Image Thread failure", e.toString()+e.getStackTrace());
 					camera.closeCamera();
 					isEnabled = false;
 				}
@@ -402,7 +402,7 @@ public class Vision {
 				.abs(Vision.WIDTH / 2 - ((int) (contourReport.getNumber("contour0/first_x", Vision.WIDTH / 2))
 						+ ((int) (contourReport.getNumber("contour0/boundingRectWidth", 0)) / 2)));
 		double d = (Vision.WIDTH / 2) / Math.tan(Math.toRadians(34));
-		return Math.toDegrees(Math.atan(pixelsOff / d));
+		return -Math.toDegrees(Math.atan(pixelsOff / d));
 	}
 
 	/**
