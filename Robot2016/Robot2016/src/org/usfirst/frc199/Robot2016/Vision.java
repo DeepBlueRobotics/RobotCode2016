@@ -273,7 +273,7 @@ public class Vision {
 	 * that feed as an image in the variable hslimage.
 	 */
 	public void applyFilters() {
-		NIVision.imaqColorThreshold(hslimage, frame, 255, ColorMode.RGB, GET_BRIGHTNESS_GENERAL, GET_BRIGHTNESS_GREEN,
+		NIVision.imaqColorThreshold(hslimage, frame, 255, ColorMode.RGB, GET_BRIGHTNESS_GENERAL, GET_BRIGHTNESS_GENERAL,
 				GET_BRIGHTNESS_GENERAL);
 	}
 
