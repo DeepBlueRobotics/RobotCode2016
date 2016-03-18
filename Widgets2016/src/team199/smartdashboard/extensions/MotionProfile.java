@@ -1,3 +1,4 @@
+// TODO: show progress during test command
 package team199.smartdashboard.extensions;
 
 import edu.wpi.first.smartdashboard.gui.StaticWidget;
@@ -16,12 +17,16 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import java.util.ArrayList;
+import javax.swing.Timer;
 
 /**
  * A widget to facilitate tuning of motion profiling code
@@ -37,18 +42,22 @@ public class MotionProfile extends StaticWidget {
     // Table used for saving preferences
     private ITable prefs;
     // Panels used for controlling widget layout
-    private JPanel pathPanel, graphPanel, numberPanel, graph;
+    private JPanel graphPanel, numberPanel, graph;
+    private PathPanel pathPanel;
     // Number boxes for displaying data
     private Box dx, dy, dtheta, vmax, amax, kA, wmax, alphamax, kAlpha;
     // Buttons for drawing a path, starting a test command, and saving prefs
     private JButton trace, start, save;
     // Combo box for selecting which graph to view
     private JComboBox chooser;
+    // Current specified path to follow
+    private Path path = new Path(0,0,0,0,0,0,0);
     // Graphs for displaying data
     private final LinePlot[] graphs = new LinePlot[6];
     // Names of the graphs
     private final String[] graphNames = {"Distance", "Velocity", "Acceleration",
         "Angle", "Angular Velocity", "Angular Acceleration"};
+    private final double TIMESTEP = 0.01, SCALE = 2; // Pixels per inch
     
     @Override
     public void init() {
@@ -84,20 +93,17 @@ public class MotionProfile extends StaticWidget {
      * trajectory along the path in real time
      */
     private void initPathPanel() {
-        pathPanel = new JPanel() {
-            @Override
-            public void paint(Graphics g) {
-                g.setColor(Color.WHITE);
-                g.fillRect(0, 0, getWidth(), getHeight());
-                // TODO: Not yet implemented
-            }
-            @Override
-            public Dimension getPreferredSize() {
-                // Panel is 300x300 pixels
-                return new Dimension(300, 300);
-            }
-        };
+        pathPanel = new PathPanel();
         pathPanel.setBackground(deepblue);
+        pathPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent me) {
+                int x = me.getX();
+                int y = me.getY();
+                dx.setText((x-pathPanel.getWidth()/2)/SCALE+"");
+                dy.setText((pathPanel.getHeight()/2-y)/SCALE+"");
+            }
+        });
         add(pathPanel);
     }
     
@@ -150,7 +156,12 @@ public class MotionProfile extends StaticWidget {
      * for drawing a path, starting a test command, and saving preferences
      */
     private void initNumberPanel() {
-        numberPanel = new JPanel();
+        numberPanel = new JPanel() {
+            @Override
+            public Dimension getPreferredSize() {
+                return new Dimension(600, 50);
+            }
+        };
         numberPanel.setBackground(deepblue);
         numberPanel.setLayout(new GridLayout(2,6));
         // Initialize components
@@ -183,18 +194,15 @@ public class MotionProfile extends StaticWidget {
         trace.addActionListener((ActionEvent e) -> {trace();});
         start.addActionListener((ActionEvent e) -> {start();});
         save.addActionListener((ActionEvent e) -> {save();});
-        // The container panel ensures that the size is correct
-        JPanel container = new JPanel();
-        container.setLayout(new BorderLayout());
-        container.add(numberPanel, BorderLayout.CENTER);
-        add(container);
+        add(numberPanel);
     }
     
     /**
      * Draws a trajectory on the path panel
      */
     public void trace() {
-        // TODO: Not yet implemented
+        path = getPath();
+        pathPanel.simulate();
     }
     
     /**
@@ -255,10 +263,26 @@ public class MotionProfile extends StaticWidget {
     public void readPrefs() {
         table.putNumber("kA", prefs.getNumber("DrivekA", 0.0));
         table.putNumber("kAlpha", prefs.getNumber("DrivekAlpha", 0.0));
-        table.putNumber("MaxV", prefs.getNumber("DriveMaxV", 0.0));
-        table.putNumber("MaxA", prefs.getNumber("DriveMaxA", 0.0));
-        table.putNumber("MaxW", prefs.getNumber("DriveMaxW", 0.0));
-        table.putNumber("MaxAlpha", prefs.getNumber("DriveMaxAlpha", 0.0));
+        table.putNumber("MaxV", prefs.getNumber("DriveMaxV", 144));
+        table.putNumber("MaxA", prefs.getNumber("DriveMaxA", 144));
+        table.putNumber("MaxW", prefs.getNumber("DriveMaxW", 360));
+        table.putNumber("MaxAlpha", prefs.getNumber("DriveMaxAlpha", 360));
+    }
+    
+    /**
+     * Determines the specified path based on user inputs
+     * @return The specified path
+     */
+    public Path getPath() {
+        double deltaX = 0, deltaY = 0, deltaTheta = 0;
+        try {
+            deltaX = Double.parseDouble(dx.getText());
+            deltaY = Double.parseDouble(dy.getText());
+            deltaTheta = Double.parseDouble(dtheta.getText());
+        } catch(Exception e) {
+            // Bad input defaults to zero
+        }
+        return new Path(0, 0, deltaX, deltaY, 0, deltaTheta, 2);
     }
     
     /**
@@ -299,8 +323,13 @@ public class MotionProfile extends StaticWidget {
                 if (key.equals(name)) get();
             });
         }
+        
         public String getText() {
             return field.getText();
+        }
+        
+        public void setText(String text) {
+            field.setText(text);
         }
         
         /**
@@ -331,6 +360,86 @@ public class MotionProfile extends StaticWidget {
             } catch (Exception e) {
                 // Ignore bad input
             }
+        }
+    }
+
+    /**
+     * A panel displaying progress along a trajectory
+     */
+    private class PathPanel extends JPanel {
+        
+        Trajectory trajectory;
+        Timer tim;
+        ArrayList<Double> xarray = new ArrayList<>();
+        ArrayList<Double> yarray = new ArrayList<>();
+        double l, theta, x, y;
+        
+        @Override
+        public void paint(Graphics g) {
+            g.setColor(Color.WHITE);
+            g.fillRect(0, 0, getWidth(), getHeight());
+            g.setColor(deepblue);
+            for(double s = 0; s<=1; s+=.002) {
+                double x1 = path.getX(s)*SCALE+getWidth()/2;
+                double y1 = getHeight()/2-path.getY(s)*SCALE;
+                g.fillRect((int)x1-1, (int)y1-1, 3, 3);				
+            }
+            g.setColor(Color.RED);
+            for(int i=0; i<xarray.size(); i++) {
+                double x1 = xarray.get(i);
+                double y1 = yarray.get(i);
+                double x2 = x1*SCALE+getWidth()/2;
+                double y2 = getHeight()/2-y1*SCALE;
+                g.fillRect((int)x2-1, (int)y2-1, 3, 3);
+            }
+        }
+        
+        /**
+         * Starts a simulation of the specified trajectory
+         */
+        public void simulate() {
+            double vm = Double.parseDouble(vmax.getText());
+            double am = Double.parseDouble(amax.getText());
+            double wm = Double.parseDouble(wmax.getText());
+            double alpham = Double.parseDouble(alphamax.getText());
+            // Initial and final velocity of 1 because simulation has no acceleration term
+            trajectory = new Trajectory(path, 1, 1, vm, am, wm, alpham, 1000);
+            xarray.clear();
+            yarray.clear();
+            l = 0;
+            theta = path.getTheta(0);
+            x = path.getX(0);
+            y = path.getY(0);
+            tim = new Timer((int)(TIMESTEP*1000), (ActionEvent e) -> {
+                if (path.getS(l) < 1.0) {
+                    updateTrajectory();
+                } else {
+                    tim.stop();
+                }
+            });
+            tim.start();
+        }
+        
+        /**
+         * Finds the next point along the trajectory
+         */
+        public void updateTrajectory() {
+            int i = trajectory.getCurrentIndex(l);
+            double v = trajectory.getV(i);
+            l += v * TIMESTEP;
+            double w = trajectory.getW(i);
+            theta += w * TIMESTEP;
+            x += (v * Math.sin((Math.toRadians(theta)))) * TIMESTEP;
+            y += (v * Math.cos((Math.toRadians(theta)))) * TIMESTEP;
+            xarray.add(x);
+            yarray.add(y);
+            repaint();
+        }
+        
+        @Override
+        public Dimension getPreferredSize() {
+            // Panel is 300x300 pixels
+            return new Dimension(300, 300);
         }
     }
 }

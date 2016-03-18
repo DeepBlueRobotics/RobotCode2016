@@ -64,12 +64,12 @@ public class Trajectory {
 	private void computeForwardTrajectory() {
 		for(int i=1; i<velocities.length-1; i++) {
 			double vprev = velocities[i-1];
-			double vmax = getVmax(i);
-			double amax = getAmax(i, i+1, vprev);
-			if(vprev + amax < vmax) {
-				velocities[i] = vprev + amax;
+			double vmax1 = getVmax(i);
+			double amax1 = getAmax(i, i+1, vprev);
+			if(vprev + amax1 < vmax1) {
+				velocities[i] = vprev + amax1;
 			} else {
-				velocities[i] = vmax;
+				velocities[i] = vmax1;
 			}
 		}
 	}
@@ -81,12 +81,12 @@ public class Trajectory {
 	private void computeReverseTrajectory() {
 		for(int i=velocities.length-2; i>0; i--) {
 			double vprev = velocities[i+1];
-			double vmax = getVmax(i);
-			double amax = getAmax(i, i-1, vprev);
-			if(vprev + amax < vmax) {
-				velocities[i] = Math.min(velocities[i], vprev + amax);
+			double vmax1 = getVmax(i);
+			double amax1 = getAmax(i, i-1, vprev);
+			if(vprev + amax1 < vmax1) {
+				velocities[i] = Math.min(velocities[i], vprev + amax1);
 			} else {
-				velocities[i] = Math.min(velocities[i], vmax);
+				velocities[i] = Math.min(velocities[i], vmax1);
 			}
 		}
 	}
