@@ -1,4 +1,3 @@
-// TODO: show progress during test command
 package team199.smartdashboard.extensions;
 
 import edu.wpi.first.smartdashboard.gui.StaticWidget;
@@ -29,7 +28,45 @@ import java.util.ArrayList;
 import javax.swing.Timer;
 
 /**
- * A widget to facilitate tuning of motion profiling code
+ * A widget to facilitate tuning of motion profiling code.
+ * 
+ * This widget depends on certain network table values being used by the code. 
+ * All angles are in degrees clockwise, all distances are in inches, and all 
+ * velocities are in inches/second.
+ * 
+ * Values that code should read from network tables:
+ * SmartDashboard/MotionProfile/dX - Target change in x for test command
+ * SmartDashboard/MotionProfile/dY - Target change in y for test command
+ * SmartDashboard/MotionProfile/dTheta - Target change in theta for test command
+ * SmartDashboard/MotionProfile/kA - Linear acceleration constant
+ * SmartDashboard/MotionProfile/kAlpha - Angular acceleration constant
+ * SmartDashboard/MotionProfile/MaxV - Maximum linear velocity
+ * SmartDashboard/MotionProfile/MaxA - Maximum linear acceleration
+ * SmartDashboard/MotionProfile/MaxW - Maximum angular velocity
+ * SmartDashboard/MotionProfile/MaxAlpha - Maximum angular acceleration
+ * 
+ * Values that code should write to network tables:
+ * SmartDashboard/MotionProfile/L - current average encoder distance
+ * SmartDashboard/MotionProfile/V - current linear velocity
+ * SmartDashboard/MotionProfile/A - current linear acceleration
+ * SmartDashboard/MotionProfile/Theta - current gyro angle
+ * SmartDashboard/MotionProfile/W - current angular velocity
+ * SmartDashboard/MotionProfile/Alpha - current angular acceleration
+ * SmartDashboard/MotionProfile/Start - set to true when starting a motion profile command
+ * SmartDashboard/Drivetrain/LeftEncoder - current left encoder distance
+ * SmartDashboard/Drivetrain/RightEncoder - current right encoder distance
+ * SmartDashboard/Drivetrain/GyroAngle - current gyro angle
+ * 
+ * Commands code should put in network tables:
+ * SmartDashboard/MotionProfile/TestMotionProfiling - A command to follow the given trajectory
+ * 
+ * Preferences that code should read:
+ * DrivekA - Linear acceleration constant
+ * DrivekAlpha - Angular acceleration constant
+ * DriveMaxV - Maximum linear velocity
+ * DriveMaxA - Maximum linear acceleration
+ * DriveMaxW - Maximum angular velocity
+ * DriveMaxAlpha - Maximum angular acceleration
  */
 public class MotionProfile extends StaticWidget {
 
@@ -194,6 +231,12 @@ public class MotionProfile extends StaticWidget {
         trace.addActionListener((ActionEvent e) -> {trace();});
         start.addActionListener((ActionEvent e) -> {start();});
         save.addActionListener((ActionEvent e) -> {save();});
+        table.addTableListener((ITable t, String key, Object v, boolean b) -> {
+            if (key.equals("Start")&&v.equals("true")) {
+                start();
+                table.putBoolean("Start", false);
+            }
+        });
         add(numberPanel);
     }
     
@@ -217,6 +260,7 @@ public class MotionProfile extends StaticWidget {
                 // Start command
                 start.setText("Cancel");
                 resetGraphs();
+                pathPanel.startTracking();
             } else {
                 // Cancel command
                 start.setText("Start");
@@ -369,7 +413,7 @@ public class MotionProfile extends StaticWidget {
     private class PathPanel extends JPanel {
         
         Trajectory trajectory;
-        Timer tim;
+        Timer tim = null;
         ArrayList<Double> xarray = new ArrayList<>();
         ArrayList<Double> yarray = new ArrayList<>();
         double l, theta, x, y;
@@ -378,12 +422,14 @@ public class MotionProfile extends StaticWidget {
         public void paint(Graphics g) {
             g.setColor(Color.WHITE);
             g.fillRect(0, 0, getWidth(), getHeight());
+            // Draw path
             g.setColor(deepblue);
             for(double s = 0; s<=1; s+=.002) {
                 double x1 = path.getX(s)*SCALE+getWidth()/2;
                 double y1 = getHeight()/2-path.getY(s)*SCALE;
                 g.fillRect((int)x1-1, (int)y1-1, 3, 3);				
             }
+            // Draw trajectory
             g.setColor(Color.RED);
             for(int i=0; i<xarray.size(); i++) {
                 double x1 = xarray.get(i);
@@ -402,7 +448,7 @@ public class MotionProfile extends StaticWidget {
             double am = Double.parseDouble(amax.getText());
             double wm = Double.parseDouble(wmax.getText());
             double alpham = Double.parseDouble(alphamax.getText());
-            // Initial and final velocity of 1 because simulation has no acceleration term
+            // Initial and final velocity of 1 in/s because simulation has no acceleration term
             trajectory = new Trajectory(path, 1, 1, vm, am, wm, alpham, 1000);
             xarray.clear();
             yarray.clear();
@@ -410,9 +456,33 @@ public class MotionProfile extends StaticWidget {
             theta = path.getTheta(0);
             x = path.getX(0);
             y = path.getY(0);
+            if(tim!=null) tim.stop();
             tim = new Timer((int)(TIMESTEP*1000), (ActionEvent e) -> {
                 if (path.getS(l) < 1.0) {
                     updateTrajectory();
+                } else {
+                    tim.stop();
+                }
+            });
+            tim.start();
+        }
+        
+        /**
+         * Starts tracking the robot's actual trajectory
+         */
+        public void startTracking() {
+            xarray.clear();
+            yarray.clear();
+            // l is the distance traveled by the robot in inches
+            l = getDistance();
+            // theta is the initial gyro value in degrees
+            theta = getAngle();
+            x = path.getX(0);
+            y = path.getY(0);
+            if(tim!=null) tim.stop();
+            tim = new Timer((int)(TIMESTEP*1000), (ActionEvent e) -> {
+                if (path.getS(l) < 1.0) {
+                    trackTrajectory();
                 } else {
                     tim.stop();
                 }
@@ -436,10 +506,37 @@ public class MotionProfile extends StaticWidget {
             repaint();
         }
         
+        /**
+         * Plot the robot's current location
+         */
+        public void trackTrajectory() {
+            // Change in arc length since last time this method was called
+            double dl = getDistance()-l;
+            if(dl==0) return;
+            l +=dl;
+            // Angle in degrees relative to initial angle
+            double relativeTheta = getAngle()-theta;
+            x += dl * Math.sin((Math.toRadians(relativeTheta)));
+            y += dl * Math.cos((Math.toRadians(relativeTheta)));
+            xarray.add(x);
+            yarray.add(y);
+            repaint();
+        }
+        
         @Override
         public Dimension getPreferredSize() {
             // Panel is 300x300 pixels
             return new Dimension(300, 300);
+        }
+        
+        private double getDistance() {
+            NetworkTable driveTable = NetworkTable.getTable("SmartDashboard/Drivetrain");
+            return (driveTable.getNumber("LeftEncoder", 0)+driveTable.getNumber("RightEncoder", 0))/2;
+        }
+        
+        private double getAngle() {
+            NetworkTable driveTable = NetworkTable.getTable("SmartDashboard/Drivetrain");
+            return driveTable.getNumber("GyroAngle", 0);
         }
     }
 }

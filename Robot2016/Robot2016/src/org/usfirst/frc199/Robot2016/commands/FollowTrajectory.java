@@ -12,14 +12,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class FollowTrajectory extends Command {
 	
-	private Trajectory t;
-	private boolean finished;
+	private Trajectory t = null;
+	private boolean finished = false, readFromSD = false;
 
 	/**
 	 * Follows a trajectory specified through SmartDashboard
 	 */
 	public FollowTrajectory() {
-		t = null;
+		readFromSD = true;
 	}
 	
 	/**
@@ -55,7 +55,8 @@ public class FollowTrajectory extends Command {
     // Called just before this Command runs the first time
     protected void initialize() {
     	finished = false;
-    	if(t.equals(null)) {
+    	SmartDashboard.putBoolean("MotionProfile/Start", true);
+    	if(readFromSD) {
     		double dx = SmartDashboard.getNumber("MotionProfile/dX");
     		double dy = SmartDashboard.getNumber("MotionProfile/dY");
     		double dTheta = SmartDashboard.getNumber("MotionProfile/dTheta");
