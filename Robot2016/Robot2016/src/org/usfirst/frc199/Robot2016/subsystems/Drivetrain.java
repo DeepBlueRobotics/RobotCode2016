@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotDrive;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -28,6 +29,8 @@ public class Drivetrain extends Subsystem implements DashboardSubsystem {
 	private PID anglePID = new PID("DriveAngle");
 	private PID velocityPID = new PID("DriveVelocity");
 	private PID angularVelocityPID = new PID("DriveAngularVelocity");
+	
+	private double prevEncoderRate = 0, prevGyroRate = 0, prevTime = 0; // for motion profiling
 
 	/**
 	 * Inital command at drivetrain.
@@ -274,6 +277,15 @@ public class Drivetrain extends Subsystem implements DashboardSubsystem {
 		double outputV = velocityPID.getOutput() + kV*v + kA*a;
 		double outputW = angularVelocityPID.getOutput() + kW*w + kAlpha*alpha;
 		arcadeDrive(outputV, outputW);
+		SmartDashboard.putNumber("MotionProfile/L", getEncoderDistance());
+		SmartDashboard.putNumber("MotionProfile/V", getEncoderRate());
+		SmartDashboard.putNumber("MotionProfile/A", (getEncoderRate()-prevEncoderRate)/(Timer.getFPGATimestamp()-prevTime));
+		SmartDashboard.putNumber("MotionProfile/Theta", getGyroAngle());
+		SmartDashboard.putNumber("MotionProfile/W", getGyroRate());
+		SmartDashboard.putNumber("MotionProfile/Alpha", (getGyroRate()-prevGyroRate)/(Timer.getFPGATimestamp()-prevTime));
+		prevEncoderRate = getEncoderRate();
+		prevGyroRate = getGyroRate();
+		prevTime = Timer.getFPGATimestamp();
 	}
 	
 	@Override
