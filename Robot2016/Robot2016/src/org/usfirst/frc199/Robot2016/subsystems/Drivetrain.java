@@ -30,7 +30,8 @@ public class Drivetrain extends Subsystem implements DashboardSubsystem {
 	private PID velocityPID = new PID("DriveVelocity");
 	private PID angularVelocityPID = new PID("DriveAngularVelocity");
 	
-	private double prevEncoderRate = 0, prevGyroRate = 0, prevTime = 0; // for motion profiling
+	// Variables for motion profiling and acceleration control
+	private double prevEncoderRate = 0, prevGyroRate = 0, prevTime = 0, driveLimit = 0, turnLimit = 0;
 
 	/**
 	 * Inital command at drivetrain.
@@ -68,13 +69,13 @@ public class Drivetrain extends Subsystem implements DashboardSubsystem {
 			double y = -Robot.oi.getLeftJoystick().getY();
 			x = Robot.oi.exponentiate(x);
 			y = Robot.oi.exponentiate(y);
-			robotDrive.arcadeDrive(y, x);
+			arcadeDrive(y, x);
 		} else {
 			double left = Robot.oi.getLeftJoystick().getY();
 			double right = Robot.oi.getRightJoystick().getY();
 			left = Robot.oi.exponentiate(left);
 			right = Robot.oi.exponentiate(right);
-			robotDrive.tankDrive(left, right);
+			tankDrive(left, right);
 		}
     }
     
@@ -286,6 +287,49 @@ public class Drivetrain extends Subsystem implements DashboardSubsystem {
 		prevEncoderRate = getEncoderRate();
 		prevGyroRate = getGyroRate();
 		prevTime = Timer.getFPGATimestamp();
+	}
+
+	/**
+	 * Call before using gradual drive to reset the limits
+	 */
+	public void initGradualDrive() {
+		driveLimit = 0;
+		turnLimit = 0;
+	}
+	
+	/**
+	 * A version of arcade drive that limits the acceleration
+	 * @param speed - Forward/back
+	 * @param turn - Clockwise/counterclockwise
+	 */
+	public void gradualDrive(double speed, double turn) {
+		double dt = Timer.getFPGATimestamp()-prevTime;
+		double a = (getEncoderRate() - prevEncoderRate) / dt;
+		double alpha = (getGyroRate() - prevGyroRate) / dt;
+		prevTime = Timer.getFPGATimestamp();
+		prevEncoderRate = getEncoderRate();
+		prevGyroRate = getGyroRate();
+		if (a < Robot.getPref("DriveMaxALimit", 0)
+				&& alpha < Robot.getPref("DriveMaxAlphaLimit", 0) 
+				&& a > Robot.getPref("DriveMinALimit", 0)
+				&& alpha > Robot.getPref("DriveMinAlphaLimit", 0)) {
+			double step = Robot.getPref("LimitStep", 0);
+			if (speed > driveLimit + step) {
+				driveLimit += step;
+			} else if (speed < driveLimit - step) {
+				driveLimit -= step;
+			} else {
+				driveLimit = speed;
+			}
+			if (turn > turnLimit + step) {
+				turnLimit += step;
+			} else if (turn < turnLimit - step) {
+				turnLimit -= step;
+			} else {
+				turnLimit = turn;
+			}
+		}
+		arcadeDrive(driveLimit, turnLimit);
 	}
 	
 	@Override

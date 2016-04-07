@@ -17,6 +17,7 @@ public class OI {
     public JoystickButton alignAngleButton;
     public Joystick leftJoystick;
     public JoystickButton shootLowButton2;
+    public JoystickButton gradualDriveButton;
     public JoystickButton alignDistanceButton;
     public Joystick rightJoystick;
     public JoystickButton runShooterButton;
@@ -40,21 +41,18 @@ public class OI {
     public OI() {
 
         manipulator = new Joystick(2);
-        
         manualShooterButton = new JoystickButton(manipulator, 10);
         manualShooterButton.toggleWhenPressed(new ShooterManualControl());
         manualIntakeButton = new JoystickButton(manipulator, 9);
         manualIntakeButton.toggleWhenPressed(new IntakeManualControl());
-        
 //        retractClimberButton = new JoystickButton(manipulator, 5);
 //        retractClimberButton.whileHeld(new Winch());
 //        extendClimberButton = new JoystickButton(manipulator, 7);
 //        extendClimberButton.whenPressed(new ExtendClimber(0,0));
-        
         intakeButton = new JoystickButton(manipulator, 5);
         intakeButton.whileHeld(new IntakeBoulder());
         shootLowButton = new JoystickButton(manipulator, 7);
-        shootLowButton.whenPressed(new ShootLow());
+        shootLowButton.whileHeld(new ShootLow());
         feedShooterButton = new JoystickButton(manipulator, 6);
         feedShooterButton.whileHeld(new FeedShooter());
         runShooterButton = new JoystickButton(manipulator, 8);
@@ -65,33 +63,31 @@ public class OI {
         intakeDownButton.whileHeld(new LowerIntake());
         
         rightJoystick = new Joystick(1);
-
         alignDistanceButton = new JoystickButton(rightJoystick, 2);
         alignDistanceButton.whileHeld(new AutoAlignDistance());
-        shootLowButton2 = new JoystickButton(rightJoystick, 1);
-        shootLowButton2.whileHeld(new ShootLow());
+//        shootLowButton2 = new JoystickButton(rightJoystick, 1);
+//        shootLowButton2.whileHeld(new ShootLow());
+        gradualDriveButton = new JoystickButton(rightJoystick, 1);
+        gradualDriveButton.whileHeld(new GradualDrive());
         
         leftJoystick = new Joystick(0);
-        
         alignAngleButton = new JoystickButton(leftJoystick, 2);
         alignAngleButton.whileHeld(new AutoAlignAngle());
         intakeButton2 = new JoystickButton(leftJoystick, 1);
-        intakeButton2.whileHeld(new IntakeBoulder());        
+        intakeButton2.whileHeld(new IntakeBoulder());
         
         reverseCameraButton = new JoystickButton(rightJoystick, 3);
         reverseCameraButton.whenPressed(new ReverseCamera());
         forwardCameraButton = new JoystickButton(leftJoystick, 3);
         forwardCameraButton.whenPressed(new ForwardCamera());
-        
         upButton = new InternalButton();
         rightButton = new InternalButton();
         downButton = new InternalButton();
         leftButton = new InternalButton();
-
-        upButton.whenPressed(new RunShooter(1));
-        rightButton.whenPressed(new RunShooter(2));
-        downButton.whenPressed(new RunShooter(3));
-        leftButton.whenPressed(new RunShooter(4));
+        upButton.whileHeld(new RunShooter(1));
+        rightButton.whileHeld(new RunShooter(2));
+        downButton.whileHeld(new RunShooter(3));
+        leftButton.whileHeld(new RunShooter(4));
         
         // Test PID Commands
         SmartDashboard.putData("PID/DriveDistance/TestDriveDistancePID", new TestPID(TestPID.System.DRIVEDISTANCE));
@@ -102,26 +98,6 @@ public class OI {
 		SmartDashboard.putData("PID/Intake/TestIntakePID", new TestPID(TestPID.System.INTAKE));
 		SmartDashboard.putData("MotionProfile/TestMotionProfiling", new FollowTrajectory());
 		SmartDashboard.putData("PID/DriveAngle/AutoTurn", new AutoTurn());
-        
-		// SmartDashboard Buttons
-//        SmartDashboard.putData("AutoMode", new AutoMode(4, 2));
-//        SmartDashboard.putData("AutoDelay", new AutoDelay(0));
-//        SmartDashboard.putData("AutoDrive", new AutoDrive(0));
-//        SmartDashboard.putData("AutoTurn", new AutoTurn(0));
-//        SmartDashboard.putData("AutoAlignDistance", new AutoAlignDistance());
-//        SmartDashboard.putData("AutoAlignAngle", new AutoAlignAngle());
-//        SmartDashboard.putData("TeleopDriveMode", new TeleopDriveMode());
-//        SmartDashboard.putData("IntakeBoulder", new IntakeBoulder());
-//        SmartDashboard.putData("ShootLow", new ShootLow());
-//        SmartDashboard.putData("RunShooter", new RunShooter());
-//        SmartDashboard.putData("FeedShooter", new FeedShooter());
-//        SmartDashboard.putData("LowerIntake", new LowerIntake());
-//        SmartDashboard.putData("RaiseIntake", new RaiseIntake());
-//        SmartDashboard.putData("IntakeManualControl", new IntakeManualControl());
-//        SmartDashboard.putData("ShooterManualControl", new ShooterManualControl());
-//        SmartDashboard.putData("ExtendClimber", new ExtendClimber());
-//        SmartDashboard.putData("RetractClimber", new Winch());
-//        SmartDashboard.putData("UpdateDashboard", new UpdateDashboard());
     }
     
     private int getDPad(Joystick stick) {
