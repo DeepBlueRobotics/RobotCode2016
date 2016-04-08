@@ -72,7 +72,7 @@ public class Robot extends IterativeRobot {
     	Scheduler.getInstance().removeAll();
     	int defense = (int)SmartDashboard.getNumber("Auto/Defense", 0.0);
     	int position = (int)SmartDashboard.getNumber("Auto/Position", 0.0);
-    	autonomousCommand = new AutoMode(defense, position);
+    	autonomousCommand = new AutoMode(defense, 1	, false, false, Robot.getPref("AutoShootBool", 0)==1);
     	autonomousCommand.start();
     	new UpdateDashboard().start();
     }

@@ -80,8 +80,8 @@ public class Intake extends Subsystem implements DashboardSubsystem {
 	 *            - The speed at which the motor should run
 	 */
 	public void pivot(double speed) {
-		if (speed > 0 && !getUpperLimit() || speed < 0 && !getLowerLimit()) {
-			pivotMotor.set(-speed);
+		if (speed > 0 && !getLowerLimit() || speed < 0 && !getUpperLimit()) {
+			pivotMotor.set(speed);
 		} else {
 			pivotMotor.set(0);
 		}

@@ -205,11 +205,11 @@ public class Vision {
 						// methods at the bottom to work with angles to
 						// return boolean about the images.
 						double x = SmartDashboard.getNumber("Is in hsl", 0);
-						boolean flip = SmartDashboard.getBoolean("Needs flip?");
-						if (x == 0)
-							CameraServer.getInstance().setImage(flip ? flipImage(frame) : frame);
-						else
-							CameraServer.getInstance().setImage(flip ? flipImage(hslimage) : frame);
+//						boolean flip = SmartDashboard.getBoolean("Needs flip?");
+//						if (x == 0)
+//							CameraServer.getInstance().setImage(flip ? flipImage(frame) : frame);
+//						else
+//							CameraServer.getInstance().setImage(flip ? flipImage(hslimage) : frame);
 						Thread.sleep(100);
 					}
 				} catch (Exception e) {
@@ -415,6 +415,7 @@ public class Vision {
 	 */
 	public NIVision.Image flipImage(NIVision.Image image) {
 		NIVision.imaqFlip(image, image, FlipAxis.HORIZONTAL_AXIS);
+		NIVision.imaqFlip(image, image, FlipAxis.VERTICAL_AXIS);
 		return image;
 	}
 

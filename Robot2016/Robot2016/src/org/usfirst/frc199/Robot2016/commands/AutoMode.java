@@ -16,11 +16,12 @@ public class AutoMode extends CommandGroup {
 	 * @param position
 	 *            - can be 1, 2, 3, 4, 5
 	 */
-	public AutoMode(int defense, int position) {
+	public AutoMode(int defense, int position, boolean autoalignangle, boolean autoaligndist, boolean shoot) {
 
 		// If we are positioned on the field, we would need to drive a set
 		// amount of distance
 		int length_of_robot = 41;
+		addSequential(new CalibrateGyro());
 		addSequential(new AutoDrive(74 - length_of_robot));
 
 		switch (defense) {
@@ -51,32 +52,36 @@ public class AutoMode extends CommandGroup {
 			System.out.println("Wrong Defense");
 			return;
 		}
-
+		if(!shoot) return;
+		
 		switch (position) {
 		case 2:
-			addSequential(new AutoTurn(-Math.toDegrees(Math.atan(5.5 / (14 + Math.sqrt(3) / 2)))));
-			addSequential(new AutoAlignAngle());
+			addSequential(new AutoTurn(27.38));
+			addSequential(new AutoDrive(18));
+			if(autoalignangle) addSequential(new AutoAlignAngle());
 			break;
 		case 3:
-			addSequential(new AutoTurn(-Math.toDegrees(Math.atan(3.5 / (14 + Math.sqrt(3) / 2)))));
-			addSequential(new AutoAlignAngle());
+			addSequential(new AutoTurn(9));
+			if(autoalignangle) addSequential(new AutoAlignAngle());
 			break;
 		case 4:
-			addSequential(new AutoAlignAngle());
+			addSequential(new AutoTurn(-3));
+			if(autoalignangle) addSequential(new AutoAlignAngle());
 			break;
 		case 5:
-			addSequential(new AutoTurn(Math.toDegrees(Math.atan(1.5 / (14 + Math.sqrt(3) / 2)))));
-			addSequential(new AutoAlignAngle());
+			addSequential(new AutoTurn(-25.88));
+			addSequential(new AutoDrive(18));
+			if(autoalignangle) addSequential(new AutoAlignAngle());
 			break;
 		case 6: // spy box
-			return;
+			break;
 		default:
 			System.out.println("Wrong position");
 			return;
 		}
-		addSequential(new AutoAlignDistance());
+		if(autoaligndist) addSequential(new AutoAlignDistance());
 		addParallel(new RunShooter());
-		addSequential(new AutoDelay(2.0));
+		addSequential(new AutoDelay(3.0));
 		addSequential(new FeedShooter());
 
 	}

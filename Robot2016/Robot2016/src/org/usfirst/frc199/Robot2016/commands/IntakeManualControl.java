@@ -20,13 +20,14 @@ public class IntakeManualControl extends Command {
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
     	double speed = Robot.oi.manipulator.getY();
-    	if(Math.abs(speed)<.2) {
-    		Robot.intake.pivot(0);
-    	} else if(speed<0) { // up
-    		Robot.intake.pivot((Math.signum(speed)*.8+speed*.2)*.6);
-    	} else { // down
-    		Robot.intake.pivot(speed*.6);
-    	}
+//    	if(Math.abs(speed)<.2) {
+//    		Robot.intake.pivot(0);
+//    	} else if(speed<0) { // up
+//    		Robot.intake.pivot((Math.signum(speed)*.8+speed*.2)*.6);
+//    	} else { // down
+//    		Robot.intake.pivot(speed*.6);
+//    	}
+    	Robot.intake.pivot(speed*.5);
     	Robot.intake.setRoller(Robot.oi.manipulator.getThrottle());
     }
 

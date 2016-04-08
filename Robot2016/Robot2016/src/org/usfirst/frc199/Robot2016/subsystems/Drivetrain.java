@@ -32,7 +32,9 @@ public class Drivetrain extends Subsystem implements DashboardSubsystem {
 	
 	// Variables for motion profiling and acceleration control
 	private double prevEncoderRate = 0, prevGyroRate = 0, prevTime = 0, driveLimit = 0, turnLimit = 0;
-
+	private double gyroCalibrationInitalValue = 0, gyroDriftRate = 0;
+	private Timer gyroDriftTimer = new Timer();
+	
 	/**
 	 * Inital command at drivetrain.
 	 */
@@ -69,7 +71,7 @@ public class Drivetrain extends Subsystem implements DashboardSubsystem {
 			double y = -Robot.oi.getLeftJoystick().getY();
 			x = Robot.oi.exponentiate(x);
 			y = Robot.oi.exponentiate(y);
-			arcadeDrive(y, x);
+			arcadeDrive(y*.8, -x*.5);
 		} else {
 			double left = Robot.oi.getLeftJoystick().getY();
 			double right = Robot.oi.getRightJoystick().getY();
@@ -92,7 +94,7 @@ public class Drivetrain extends Subsystem implements DashboardSubsystem {
      * @return - angle clockwise of straight in degrees
      */
     public double getGyroAngle() {
-    	return gyro.getAngle();
+    	return gyro.getAngle()-gyroDriftRate*gyroDriftTimer.get();
     }
     
     /**
@@ -108,7 +110,17 @@ public class Drivetrain extends Subsystem implements DashboardSubsystem {
      * @return - angular velocity in degrees/second
      */
     public double getGyroRate() {
-    	return gyro.getRate();
+    	return gyro.getRate()-gyroDriftRate;
+    }
+    
+    public void startGyroCalibration() {
+    	gyroCalibrationInitalValue = getGyroAngle();
+    }
+    
+    public void finishGyroCalibration() {
+    	gyroDriftRate = (getGyroAngle() - gyroCalibrationInitalValue)/0.5;
+    	gyroDriftTimer.reset();
+    	gyroDriftTimer.start();
     }
     
     /**

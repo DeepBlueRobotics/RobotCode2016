@@ -40,46 +40,46 @@ public class OI {
     
     public OI() {
 
-        manipulator = new Joystick(2);
-        manualShooterButton = new JoystickButton(manipulator, 10);
-        manualShooterButton.toggleWhenPressed(new ShooterManualControl());
-        manualIntakeButton = new JoystickButton(manipulator, 9);
-        manualIntakeButton.toggleWhenPressed(new IntakeManualControl());
-//        retractClimberButton = new JoystickButton(manipulator, 5);
-//        retractClimberButton.whileHeld(new Winch());
-//        extendClimberButton = new JoystickButton(manipulator, 7);
-//        extendClimberButton.whenPressed(new ExtendClimber(0,0));
-        intakeButton = new JoystickButton(manipulator, 5);
-        intakeButton.whileHeld(new IntakeBoulder());
-        shootLowButton = new JoystickButton(manipulator, 7);
-        shootLowButton.whileHeld(new ShootLow());
-        feedShooterButton = new JoystickButton(manipulator, 6);
-        feedShooterButton.whileHeld(new FeedShooter());
-        runShooterButton = new JoystickButton(manipulator, 8);
-        runShooterButton.whileHeld(new RunShooter());
-        intakeUpButton = new JoystickButton(manipulator, 4);
-        intakeUpButton.whileHeld(new RaiseIntake());
-        intakeDownButton = new JoystickButton(manipulator, 2);
-        intakeDownButton.whileHeld(new LowerIntake());
-        
-        rightJoystick = new Joystick(1);
-        alignDistanceButton = new JoystickButton(rightJoystick, 2);
-        alignDistanceButton.whileHeld(new AutoAlignDistance());
-//        shootLowButton2 = new JoystickButton(rightJoystick, 1);
-//        shootLowButton2.whileHeld(new ShootLow());
-        gradualDriveButton = new JoystickButton(rightJoystick, 1);
-        gradualDriveButton.whileHeld(new GradualDrive());
-        
         leftJoystick = new Joystick(0);
-        alignAngleButton = new JoystickButton(leftJoystick, 2);
-        alignAngleButton.whileHeld(new AutoAlignAngle());
         intakeButton2 = new JoystickButton(leftJoystick, 1);
         intakeButton2.whileHeld(new IntakeBoulder());
-        
-        reverseCameraButton = new JoystickButton(rightJoystick, 3);
-        reverseCameraButton.whenPressed(new ReverseCamera());
+        alignAngleButton = new JoystickButton(leftJoystick, 2);
+        alignAngleButton.whileHeld(new AutoAlignAngle());
         forwardCameraButton = new JoystickButton(leftJoystick, 3);
         forwardCameraButton.whenPressed(new ForwardCamera());
+        
+        rightJoystick = new Joystick(1);
+        gradualDriveButton = new JoystickButton(rightJoystick, 4);
+        gradualDriveButton.whileHeld(new GradualDrive());
+        alignDistanceButton = new JoystickButton(rightJoystick, 2);
+        alignDistanceButton.whileHeld(new AutoAlignDistance());
+        reverseCameraButton = new JoystickButton(rightJoystick, 3);
+        reverseCameraButton.whenPressed(new ReverseCamera());
+        shootLowButton2 = new JoystickButton(rightJoystick, 1);
+        shootLowButton2.whileHeld(new ShootLow());
+        
+        manipulator = new Joystick(2);
+        retractClimberButton = new JoystickButton(manipulator, 1);
+        retractClimberButton.whileHeld(new Winch());
+        intakeDownButton = new JoystickButton(manipulator, 2);
+        intakeDownButton.whileHeld(new LowerIntake());
+        extendClimberButton = new JoystickButton(manipulator, 3);
+        extendClimberButton.whenPressed(new ExtendClimber());
+        intakeUpButton = new JoystickButton(manipulator, 4);
+        intakeUpButton.whileHeld(new RaiseIntake());
+        intakeButton = new JoystickButton(manipulator, 5);
+        intakeButton.whileHeld(new IntakeBoulder());
+        feedShooterButton = new JoystickButton(manipulator, 6);
+        feedShooterButton.whileHeld(new FeedShooter());
+        shootLowButton = new JoystickButton(manipulator, 7);
+        shootLowButton.whileHeld(new ShootLow());
+        runShooterButton = new JoystickButton(manipulator, 8);
+        runShooterButton.whileHeld(new RunShooter());
+        manualIntakeButton = new JoystickButton(manipulator, 9);
+        manualIntakeButton.toggleWhenPressed(new IntakeManualControl());
+        manualShooterButton = new JoystickButton(manipulator, 10);
+        manualShooterButton.toggleWhenPressed(new ShooterManualControl());
+        
         upButton = new InternalButton();
         rightButton = new InternalButton();
         downButton = new InternalButton();
@@ -98,6 +98,8 @@ public class OI {
 		SmartDashboard.putData("PID/Intake/TestIntakePID", new TestPID(TestPID.System.INTAKE));
 		SmartDashboard.putData("MotionProfile/TestMotionProfiling", new FollowTrajectory());
 		SmartDashboard.putData("PID/DriveAngle/AutoTurn", new AutoTurn());
+		// Gyro calibration button
+		SmartDashboard.putData("CalibrateGyro", new CalibrateGyro());
     }
     
     private int getDPad(Joystick stick) {
