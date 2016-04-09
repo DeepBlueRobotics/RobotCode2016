@@ -71,7 +71,7 @@ public class Drivetrain extends Subsystem implements DashboardSubsystem {
 			double y = -Robot.oi.getLeftJoystick().getY();
 			x = Robot.oi.exponentiate(x);
 			y = Robot.oi.exponentiate(y);
-			arcadeDrive(y*.8, -x*.5);
+			arcadeDrive(y, -x*.8);
 		} else {
 			double left = Robot.oi.getLeftJoystick().getY();
 			double right = Robot.oi.getRightJoystick().getY();
@@ -113,12 +113,13 @@ public class Drivetrain extends Subsystem implements DashboardSubsystem {
     	return gyro.getRate()-gyroDriftRate;
     }
     
-    public void startGyroCalibration() {
-    	gyroCalibrationInitalValue = getGyroAngle();
-    }
-    
-    public void finishGyroCalibration() {
-    	gyroDriftRate = (getGyroAngle() - gyroCalibrationInitalValue)/0.5;
+    /**
+     * Cancels out gyro drift
+     * @param theta0 - gyro initial value
+     * @param dt - change in time
+     */
+    public void calibrateGyro(double theta0, double dt) {
+    	gyroDriftRate += (getGyroAngle() - theta0)/dt;
     	gyroDriftTimer.reset();
     	gyroDriftTimer.start();
     }

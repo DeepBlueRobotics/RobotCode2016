@@ -22,56 +22,55 @@ public class AutoMode extends CommandGroup {
 		// amount of distance
 		int length_of_robot = 41;
 		addSequential(new CalibrateGyro());
-		addSequential(new AutoDrive(74 - length_of_robot));
-
-		switch (defense) {
-		case 2: // portcullis
-			return;
-		case 3: // cheval de frise
-			addSequential(new AutoDrive(12));
-			addSequential(new LowerIntake());
-			addSequential(new AutoDrive(24 + 12 + length_of_robot));
-			break;
-		case 4: // moat
-			addSequential(new AutoDrive(12 + 24 + 12 + length_of_robot));
-			break;
-		case 5: // ramparts
-			addSequential(new AutoDrive(12 + 24 + 12 + length_of_robot));
-			break;
-		case 6: // drawbridge
-			return;
-		case 7: // sally port
-			return;
-		case 8: // rock wall
-			addSequential(new AutoDrive(12 + 24 + 12 + length_of_robot));
-			break;
-		case 9: // rough terrain
-			addSequential(new AutoDrive(12 + 24 + 12 + length_of_robot));
-			break;
-		default:
-			System.out.println("Wrong Defense");
-			return;
-		}
+		addSequential(new AutoDrive(74 - length_of_robot+12 + 24 + 12 + length_of_robot), 2.5);
+//		switch (defense) {
+//		case 2: // portcullis
+//			return;
+//		case 3: // cheval de frise
+//			addSequential(new AutoDrive(74 - length_of_robot+12));
+//			addSequential(new LowerIntake());
+//			addSequential(new AutoDrive(24 + 12 + length_of_robot));
+//			break;
+//		case 4: // moat
+//			addSequential(new AutoDrive(74 - length_of_robot+12 + 24 + 12 + length_of_robot), 3);
+//			break;
+//		case 5: // ramparts
+//			addSequential(new AutoDrive(74 - length_of_robot+12 + 24 + 12 + length_of_robot), 3);
+//			break;
+//		case 6: // drawbridge
+//			return;
+//		case 7: // sally port
+//			return;
+//		case 8: // rock wall
+//			addSequential(new AutoDrive(74 - length_of_robot+12 + 24 + 12 + length_of_robot), 3);
+//			break;
+//		case 9: // rough terrain
+//			addSequential(new AutoDrive(74 - length_of_robot+12 + 24 + 12 + length_of_robot), 3);
+//			break;
+//		default:
+//			System.out.println("Wrong Defense");
+//			return;
+//		}
 		if(!shoot) return;
-		
+		addSequential(new LowerIntake());
 		switch (position) {
 		case 2:
-			addSequential(new AutoTurn(27.38));
-			addSequential(new AutoDrive(18));
-			if(autoalignangle) addSequential(new AutoAlignAngle());
+			addSequential(new AutoTurn(27.38), 3);
+			addSequential(new AutoDrive(18), 3);
+			if(autoalignangle) addSequential(new AutoAlignAngle(), 3);
 			break;
 		case 3:
-			addSequential(new AutoTurn(9));
-			if(autoalignangle) addSequential(new AutoAlignAngle());
+			addSequential(new AutoTurn(9), 3);
+			if(autoalignangle) addSequential(new AutoAlignAngle(), 3);
 			break;
 		case 4:
-			addSequential(new AutoTurn(-3));
-			if(autoalignangle) addSequential(new AutoAlignAngle());
+			addSequential(new AutoTurn(-3), 3);
+			if(autoalignangle) addSequential(new AutoAlignAngle(), 3);
 			break;
 		case 5:
-			addSequential(new AutoTurn(-25.88));
-			addSequential(new AutoDrive(18));
-			if(autoalignangle) addSequential(new AutoAlignAngle());
+			addSequential(new AutoTurn(-25.88), 3);
+			addSequential(new AutoDrive(18), 3);
+			if(autoalignangle) addSequential(new AutoAlignAngle(), 3);
 			break;
 		case 6: // spy box
 			break;
@@ -79,8 +78,9 @@ public class AutoMode extends CommandGroup {
 			System.out.println("Wrong position");
 			return;
 		}
-		if(autoaligndist) addSequential(new AutoAlignDistance());
+		if(autoaligndist) addSequential(new AutoAlignDistance(), 3);
 		addParallel(new RunShooter());
+		addSequential(new RaiseIntake());
 		addSequential(new AutoDelay(3.0));
 		addSequential(new FeedShooter());
 

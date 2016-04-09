@@ -30,17 +30,14 @@ public class AutoDrive extends Command {
 
 	// Called repeatedly when this Command is scheduled to run
 	protected void execute() {
-//		Robot.drivetrain.updateAuto();
-		while(t.get() < 3) {
-			Robot.drivetrain.arcadeDrive(1, 0);
-		}
+		Robot.drivetrain.updateAuto();
+//		Robot.drivetrain.arcadeDrive(1, 0);
 	}
 
 	// Make this return true when this Command no longer needs to run execute()
 	protected boolean isFinished() {
-		return Robot.drivetrain.autoReachedTarget() || 
-//				(t.get()>0.5 && Robot.drivetrain.getEncoderDistance() == initial)
-				t.get() > 3;
+		return Robot.drivetrain.autoReachedTarget();
+//			|| (t.get()>0.5 && Robot.drivetrain.getEncoderDistance() == initial);
 	}
 
 	// Called once after isFinished returns true

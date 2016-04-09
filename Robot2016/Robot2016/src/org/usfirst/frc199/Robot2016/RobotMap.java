@@ -34,10 +34,11 @@ public class RobotMap {
 	public static DigitalInput intakeLowerLimit;
 	public static Encoder intakePivotEncoder;
 	public static DigitalInput intakeBallSensor;
-	public static SpeedController climberExtendMotor;
+//	public static SpeedController climberExtendMotor;
 	public static SpeedController climberWinchMotor;
 	public static DigitalInput climberExtensionLimit;
 	public static Talon cameraAxisServo;
+	public static AnalogInput led1, led2, led3;
 	
 	public static void init() {
 		drivetrainLeftMotor = new Talon(0);
@@ -92,17 +93,21 @@ public class RobotMap {
 
 		intakeBallSensor = new DigitalInput(10);
 		LiveWindow.addSensor("Intake", "BallSensor", intakeBallSensor);
+//
+//		climberExtendMotor = new Talon(7);
+//		LiveWindow.addActuator("Climber", "ExtendMotor", (Talon) climberExtendMotor);
 
-		climberExtendMotor = new Talon(7);
-		LiveWindow.addActuator("Climber", "ExtendMotor", (Talon) climberExtendMotor);
-
-		climberWinchMotor = new Talon(6);
+		climberWinchMotor = new Talon(5);
 		LiveWindow.addActuator("Climber", "WinchMotor", (Talon) climberWinchMotor);
 
 		climberExtensionLimit = new DigitalInput(11);
 		LiveWindow.addSensor("Climber", "ExtensionLimit", climberExtensionLimit);
 		
-		cameraAxisServo = new Talon(8);
+		cameraAxisServo = new Talon(9);
 		LiveWindow.addActuator("Shooter", "CameraAxisServo", (Talon)cameraAxisServo);
+		
+//		led1 = new AnalogInput(6);
+//		led2 = new AnalogInput(7);
+//		led3 = new AnalogInput(8);
 	}
 }

@@ -167,14 +167,19 @@ public class Vision {
 	public void startCamera() {
 		runCamera = new Thread() {
 			public synchronized void run() {
+				String out = "";
 				try {
 					isEnabled = true;
 					camera.startCapture();
+					out += "capture";
 					while (true) {
 						camera.getImage(frame);
 
+						out+="image";
 						applyFilters();
+						out+="filters";
 						updateParticalAnalysisReports(hslimage);
+						out+="particles";
 						uploadToContourReport();
 
 						generateCrossHairsAtCenterContour(0);
@@ -204,18 +209,19 @@ public class Vision {
 						// If all that works, the next part would be to get the
 						// methods at the bottom to work with angles to
 						// return boolean about the images.
-						double x = SmartDashboard.getNumber("Is in hsl", 0);
+//						double x = SmartDashboard.getNumber("Is in hsl", 0);
 //						boolean flip = SmartDashboard.getBoolean("Needs flip?");
 //						if (x == 0)
 //							CameraServer.getInstance().setImage(flip ? flipImage(frame) : frame);
 //						else
 //							CameraServer.getInstance().setImage(flip ? flipImage(hslimage) : frame);
+						CameraServer.getInstance().setImage(frame);
 						Thread.sleep(100);
 					}
 				} catch (Exception e) {
 					// In case of failure - camera and all vision subsets are
 					// cut.
-					SmartDashboard.putString("Image Thread failure", e.toString()+e.getStackTrace());
+					SmartDashboard.putString("Image Thread failure", out);
 					camera.closeCamera();
 					isEnabled = false;
 				}

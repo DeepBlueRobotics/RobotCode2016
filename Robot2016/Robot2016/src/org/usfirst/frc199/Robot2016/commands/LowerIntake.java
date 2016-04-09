@@ -16,17 +16,18 @@ public class LowerIntake extends Command {
     // Called just before this Command runs the first time
     protected void initialize() {
     	i = Robot.intake.getPosition();
-    	Robot.intake.setTargetAngle(i, -1);
+//    	Robot.intake.setTargetAngle(i, -1);
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	Robot.intake.pivot(Robot.intake.updateAngle());
+//    	Robot.intake.pivot(Robot.intake.updateAngle());
+    	Robot.intake.pivot(-.5);
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return Robot.intake.shouldStop(i);
+        return this.timeSinceInitialized() > .5 || Robot.intake.getLowerLimit();
     }
 
     // Called once after isFinished returns true
