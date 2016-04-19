@@ -167,19 +167,14 @@ public class Vision {
 	public void startCamera() {
 		runCamera = new Thread() {
 			public synchronized void run() {
-				String out = "";
 				try {
 					isEnabled = true;
 					camera.startCapture();
-					out += "capture";
 					while (true) {
 						camera.getImage(frame);
 
-						out+="image";
 						applyFilters();
-						out+="filters";
 						updateParticalAnalysisReports(hslimage);
-						out+="particles";
 						uploadToContourReport();
 
 						generateCrossHairsAtCenterContour(0);
@@ -221,7 +216,7 @@ public class Vision {
 				} catch (Exception e) {
 					// In case of failure - camera and all vision subsets are
 					// cut.
-					SmartDashboard.putString("Image Thread failure", out);
+					SmartDashboard.putString("Image Thread failure", e.toString() + e.getStackTrace());
 					camera.closeCamera();
 					isEnabled = false;
 				}

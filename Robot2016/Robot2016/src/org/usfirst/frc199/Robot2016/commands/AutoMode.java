@@ -51,8 +51,8 @@ public class AutoMode extends CommandGroup {
 //			System.out.println("Wrong Defense");
 //			return;
 //		}
+//		addSequential(new LowerIntake());
 		if(!shoot) return;
-		addSequential(new LowerIntake());
 		switch (position) {
 		case 2:
 			addSequential(new AutoTurn(27.38), 3);

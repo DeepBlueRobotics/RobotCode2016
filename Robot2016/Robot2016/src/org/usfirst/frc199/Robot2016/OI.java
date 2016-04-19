@@ -61,12 +61,12 @@ public class OI {
         manipulator = new Joystick(2);
         retractClimberButton = new JoystickButton(manipulator, 1);
         retractClimberButton.whileHeld(new Winch());
-        intakeDownButton = new JoystickButton(manipulator, 2);
-        intakeDownButton.whileHeld(new LowerIntake());
+        intakeDownButton = new JoystickButton(manipulator, 4);
+        intakeDownButton.whenPressed(new LowerIntake());
         extendClimberButton = new JoystickButton(manipulator, 3);
         extendClimberButton.whenPressed(new ExtendClimber());
-        intakeUpButton = new JoystickButton(manipulator, 4);
-        intakeUpButton.whileHeld(new RaiseIntake());
+        intakeUpButton = new JoystickButton(manipulator, 2);
+        intakeUpButton.whenPressed(new RaiseIntake());
         intakeButton = new JoystickButton(manipulator, 5);
         intakeButton.whileHeld(new IntakeBoulder());
         feedShooterButton = new JoystickButton(manipulator, 6);
