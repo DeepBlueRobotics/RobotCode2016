@@ -24,10 +24,11 @@ public class Path {
 	public Path(double x0, double y0, double x1, double y1, double angle0, double angle1, double k) {
 		double dx = x1-x0;
 		double dy = y1-y0;
-		double vx0 = Math.sin(Math.toRadians(angle0))*k*dx;
-		double vy0 = Math.cos(Math.toRadians(angle0))*k*dy; // Sam was here.
-		double vx1 = Math.sin(Math.toRadians(angle1))*k*dx;
-		double vy1 = Math.cos(Math.toRadians(angle1))*k*dy;
+		double d = Math.sqrt(dx*dx+dy*dy);
+		double vx0 = Math.sin(Math.toRadians(angle0))*k*d;
+		double vy0 = Math.cos(Math.toRadians(angle0))*k*d;
+		double vx1 = Math.sin(Math.toRadians(angle1))*k*d;
+		double vy1 = Math.cos(Math.toRadians(angle1))*k*d;
 		Ax = vx1+vx0-2*dx;
 		Bx = -vx1-2*vx0+3*dx;
 		Cx = vx0;
