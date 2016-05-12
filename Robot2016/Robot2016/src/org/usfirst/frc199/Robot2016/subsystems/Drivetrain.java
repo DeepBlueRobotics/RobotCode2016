@@ -66,7 +66,11 @@ public class Drivetrain extends Subsystem implements DashboardSubsystem {
     public void teleopDrive() {
     	// Arcade drive = 0, tank drive = 1
     	boolean arcadedrive = Robot.getPref("DriveMode", 0) == 0;
-    	if(arcadedrive){
+    	if(Robot.getPref("SafeMode", 0) > 0){
+    		double left = Robot.oi.getLeftJoystick().getY();
+			double right = Robot.oi.getRightJoystick().getY();
+			tankDrive(left * Robot.getPref("SafeSpeed", .7), right * Robot.getPref("SafeSpeed", .7));
+    	} else if(arcadedrive){
 			double x = -Robot.oi.getRightJoystick().getX();
 			double y = -Robot.oi.getLeftJoystick().getY();
 			x = Robot.oi.exponentiate(x);

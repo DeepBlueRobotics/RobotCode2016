@@ -39,25 +39,38 @@ public class OI {
     public InternalButton rightButton;
     
     public OI() {
-
-        leftJoystick = new Joystick(0);
-        intakeButton2 = new JoystickButton(leftJoystick, 1);
-        intakeButton2.whileHeld(new IntakeBoulder());
-        alignAngleButton = new JoystickButton(leftJoystick, 2);
-        alignAngleButton.whileHeld(new AutoAlignAngle());
-        forwardCameraButton = new JoystickButton(leftJoystick, 3);
-        forwardCameraButton.whenPressed(new ForwardCamera());
-        
-        rightJoystick = new Joystick(1);
-        gradualDriveButton = new JoystickButton(rightJoystick, 4);
-        gradualDriveButton.whileHeld(new GradualDrive());
-        alignDistanceButton = new JoystickButton(rightJoystick, 2);
-        alignDistanceButton.whileHeld(new AutoAlignDistance());
-        reverseCameraButton = new JoystickButton(rightJoystick, 3);
-        reverseCameraButton.whenPressed(new ReverseCamera());
-        shootLowButton2 = new JoystickButton(rightJoystick, 1);
-        shootLowButton2.whileHeld(new ShootLow());
-        
+    	if(Robot.getPref("SafeMode", 0) > 0) {
+	        leftJoystick = new Joystick(0);
+	        intakeButton2 = new JoystickButton(leftJoystick, 1);
+	        intakeButton2.whileHeld(new IntakeBoulder());
+	        alignAngleButton = new JoystickButton(leftJoystick, 2);
+	        alignAngleButton.whileHeld(new RunShooter());
+	        
+	        rightJoystick = new Joystick(1);
+	        alignDistanceButton = new JoystickButton(rightJoystick, 2);
+	        alignDistanceButton.whileHeld(new FeedShooter());
+	        shootLowButton2 = new JoystickButton(rightJoystick, 1);
+	        shootLowButton2.whileHeld(new ShootLow());
+    	}else {
+    		leftJoystick = new Joystick(0);
+	        intakeButton2 = new JoystickButton(leftJoystick, 1);
+	        intakeButton2.whileHeld(new IntakeBoulder());
+	        alignAngleButton = new JoystickButton(leftJoystick, 2);
+	        alignAngleButton.whileHeld(new AutoAlignAngle());
+	        forwardCameraButton = new JoystickButton(leftJoystick, 3);
+	        forwardCameraButton.whenPressed(new ForwardCamera());
+	        
+	        rightJoystick = new Joystick(1);
+	        gradualDriveButton = new JoystickButton(rightJoystick, 4);
+	        gradualDriveButton.whileHeld(new GradualDrive());
+	        alignDistanceButton = new JoystickButton(rightJoystick, 2);
+	        alignDistanceButton.whileHeld(new AutoAlignDistance());
+	        reverseCameraButton = new JoystickButton(rightJoystick, 3);
+	        reverseCameraButton.whenPressed(new ReverseCamera());
+	        shootLowButton2 = new JoystickButton(rightJoystick, 1);
+	        shootLowButton2.whileHeld(new ShootLow());
+    	}
+    	
         manipulator = new Joystick(2);
         retractClimberButton = new JoystickButton(manipulator, 1);
         retractClimberButton.whileHeld(new Winch());
