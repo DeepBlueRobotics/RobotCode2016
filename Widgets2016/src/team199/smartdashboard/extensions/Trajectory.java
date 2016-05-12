@@ -40,7 +40,7 @@ public class Trajectory {
         computeForwardTrajectory();
         computeReverseTrajectory();
     }
-
+        
     /**
      * Numerically computes the optimal velocity value at each point on the trajectory
      */
@@ -49,10 +49,11 @@ public class Trajectory {
             double vprev = velocities[i-1];
             double vmax1 = getVmax(i);
             double amax1 = getAmax(i, i+1, vprev);
-            if(vprev + amax1 < vmax1) {
-                    velocities[i] = vprev + amax1;
+            double v = Math.sqrt(vprev*vprev+2*amax1*path.getV(i)/velocities.length);
+            if(v < vmax1) {
+                velocities[i] = v;
             } else {
-                    velocities[i] = vmax1;
+                velocities[i] = vmax1;
             }
         }
     }
@@ -66,10 +67,11 @@ public class Trajectory {
             double vprev = velocities[i+1];
             double vmax1 = getVmax(i);
             double amax1 = getAmax(i, i-1, vprev);
-            if(vprev + amax1 < vmax1) {
-                    velocities[i] = Math.min(velocities[i], vprev + amax1);
+            double v = Math.sqrt(vprev*vprev+2*amax1*path.getV(i)/velocities.length);
+            if(v < vmax1) {
+                velocities[i] = Math.min(velocities[i], v);
             } else {
-                    velocities[i] = Math.min(velocities[i], vmax1);
+                velocities[i] = Math.min(velocities[i], vmax1);
             }
         }
     }
@@ -118,9 +120,9 @@ public class Trajectory {
             double sqrt = Math.sqrt(v*v+2*a*l);
             double alpha = Math.abs((w1*a*sqrt-w0*a*v)/(-v+sqrt));
             if(a<amax-amax*alpha/alphamax) {
-                    a+=amax/Math.pow(2, j);
+                a+=amax/Math.pow(2, j);
             } else {
-                    a-=amax/Math.pow(2, j);
+                a-=amax/Math.pow(2, j);
             }
         }
         return a;

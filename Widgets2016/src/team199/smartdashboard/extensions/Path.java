@@ -137,7 +137,7 @@ public class Path {
      */
     public double getL(double s) {
         double l = 0;
-        double ds = 0.001;
+        double ds = 0.1;
         for(double i = 0; i<s; i+=ds) {
             l+=getV(s)*ds;
         }

@@ -66,8 +66,9 @@ public class Trajectory {
 			double vprev = velocities[i-1];
 			double vmax1 = getVmax(i);
 			double amax1 = getAmax(i, i+1, vprev);
-			if(vprev + amax1 < vmax1) {
-				velocities[i] = vprev + amax1;
+			double v = Math.sqrt(vprev*vprev+2*amax1*path.getV(i)/velocities.length);
+			if(v < vmax1) {
+				velocities[i] = v;
 			} else {
 				velocities[i] = vmax1;
 			}
@@ -83,8 +84,9 @@ public class Trajectory {
 			double vprev = velocities[i+1];
 			double vmax1 = getVmax(i);
 			double amax1 = getAmax(i, i-1, vprev);
-			if(vprev + amax1 < vmax1) {
-				velocities[i] = Math.min(velocities[i], vprev + amax1);
+			double v = Math.sqrt(vprev*vprev+2*amax1*path.getV(i)/velocities.length);
+			if(v < vmax1) {
+				velocities[i] = Math.min(velocities[i], v);
 			} else {
 				velocities[i] = Math.min(velocities[i], vmax1);
 			}
